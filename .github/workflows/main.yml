@@ -8,7 +8,7 @@ jobs:
       - uses: mymindstorm/setup-emsdk@v11
 
       - name: EnvCheckPwd
-        run: echo "pwd: $(pwd)"
+        run: pwd
 
       - name: EnvCheckLs
         run: ls -al
