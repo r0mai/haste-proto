@@ -39,6 +39,9 @@
     <ClCompile Include="imgui_widgets.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imconfig.h">
@@ -67,6 +70,12 @@
     </ClInclude>
     <ClInclude Include="imgui_impl_opengl3_loader.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="emscripten_mainloop_stub.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
