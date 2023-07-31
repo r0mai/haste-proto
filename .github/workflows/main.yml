@@ -7,5 +7,7 @@ jobs:
     steps:
       - uses: mymindstorm/setup-emsdk@v11
 
+      - name: Compile
+        run: g++ --version
       - name: Verify
         run: emcc -v
