@@ -4,6 +4,11 @@
 
 namespace r0 {
 
+void ImGui_SetNextWindowPosition(float x, float y, float w, float h) {
+	ImGui::SetNextWindowPos(ImVec2{ x, y });
+	ImGui::SetNextWindowSize(ImVec2{ w, h });
+}
+
 bool ImGui_DrawAbility(Ability* ability, float abilitySize) {
 	ImGui::PushID(ability);
 

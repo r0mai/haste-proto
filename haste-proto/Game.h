@@ -12,7 +12,16 @@ public:
 	void Update();
 
 private:
-	void DrawAbilityBar();
+	void DrawHeroWidget();
+	void DrawAbilityButtonBar();
+	void DrawHealthBar();
+
+	static constexpr int kAbilitySlots = 8;
+	static constexpr float kAbilitySize = 96.0f; // square size
+	static constexpr float kHealthBarWidth = 128.0f;
+	static constexpr float kHealthBarHeight = 128.0f;
+	static constexpr float kManaBarWidth = 192.0f;
+	static constexpr float kManaBarHeight = 192.0f;
 
 	GLFWwindow* window_ = nullptr;
 	float windowWidth_ = 0.0f;
