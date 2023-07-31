@@ -3,6 +3,9 @@
 
 #include "ImguiDraw.h"
 
+#include <format>
+#include "tinyformat.h"
+
 namespace r0 {
 
 void Game::Init(GLFWwindow* window) {
@@ -43,7 +46,9 @@ void Game::DrawAbilityBar() {
 			for (int i = 0; i < slots; ++i) {
 				ImGui::TableNextColumn();
 				if (i < abilities.size()) {
-					ImGui_DrawAbility(&abilities[i]);
+					if (ImGui_DrawAbility(&abilities[i], abilitySize)) {
+						tfm::printfln("Ability %s clicked", i);
+					}
 				} else {
 					// TODO render empty ability
 				}

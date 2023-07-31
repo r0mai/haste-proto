@@ -4,6 +4,6 @@
 
 namespace r0 {
 
-void ImGui_DrawAbility(Ability* ability);
+bool ImGui_DrawAbility(Ability* ability, float abilitySize);
 
 } // namespace r0
