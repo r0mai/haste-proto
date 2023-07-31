@@ -1,8 +1,5 @@
 #include "Game.h"
 
-#define IMGUI_DEFINE_MATH_OPERATORS
-#include "imgui.h"
-
 #include "ImguiDraw.h"
 
 #include <format>
@@ -48,6 +45,15 @@ void Game::DrawHeroWidget() {
 	}
 	ImGui::End();
 
+	const float manaBarX = abilityBarX + abilityBarWidth;
+	const float manaBarY = windowHeight_ - kManaBarHeight;
+
+	ImGui_SetNextWindowPosition(manaBarX, manaBarY, kManaBarWidth, kManaBarHeight);
+	if (ImGui::Begin("mana-bar", nullptr, ImGuiWindowFlags_NoDecoration)) {
+		DrawManaBar();
+	}
+	ImGui::End();
+
 }
 
 void Game::DrawAbilityButtonBar() {
@@ -68,14 +74,20 @@ void Game::DrawAbilityButtonBar() {
 }
 
 void Game::DrawHealthBar() {
+	DrawResourceBar(IM_COL32(255, 0, 0, 255), state_.hero.hp / state_.hero.maxHp);
+}
+
+void Game::DrawManaBar() {
+	DrawResourceBar(IM_COL32(0, 0, 255, 255), state_.hero.mana / state_.hero.maxMana);
+}
+
+void Game::DrawResourceBar(const ImColor& color, float filledRatio) {
 	ImDrawList* drawList = ImGui::GetWindowDrawList();
 
 	auto origin = ImGui::GetWindowPos();
 	auto size = ImGui::GetWindowSize();
 
-	float filledRatio = state_.hero.hp / state_.hero.maxHp;
-
-	drawList->AddRectFilled(ImVec2{origin.x, origin.y + size.y * (1.0f - filledRatio)}, origin + size, IM_COL32(255, 0, 0, 255));
+	drawList->AddRectFilled(ImVec2{ origin.x, origin.y + size.y * (1.0f - filledRatio) }, origin + size, color);
 }
 
 } // namespace r0

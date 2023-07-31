@@ -4,6 +4,9 @@
 #include <GLFW/glfw3.h>
 #include <glm/vec2.hpp>
 
+#define IMGUI_DEFINE_MATH_OPERATORS
+#include "imgui.h"
+
 namespace r0 {
 
 class Game {
@@ -15,11 +18,13 @@ private:
 	void DrawHeroWidget();
 	void DrawAbilityButtonBar();
 	void DrawHealthBar();
+	void DrawManaBar();
+	void DrawResourceBar(const ImColor& color, float filledRatio);
 
 	static constexpr int kAbilitySlots = 8;
 	static constexpr float kAbilitySize = 96.0f; // square size
-	static constexpr float kHealthBarWidth = 128.0f;
-	static constexpr float kHealthBarHeight = 128.0f;
+	static constexpr float kHealthBarWidth = 192.0f;
+	static constexpr float kHealthBarHeight = 192.0f;
 	static constexpr float kManaBarWidth = 192.0f;
 	static constexpr float kManaBarHeight = 192.0f;
 
