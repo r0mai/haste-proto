@@ -23,7 +23,7 @@ void Game::Update() {
 
 void Game::DrawAbilityBar() {
 	const int slots = 8;
-	const float abilitySize = 64.0f; // square size
+	const float abilitySize = 96.0f; // square size
 	const float abilityBarWidth = slots * abilitySize;
 	const float abilityBarHeight = abilitySize;
 
