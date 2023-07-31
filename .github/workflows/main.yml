@@ -15,4 +15,4 @@ jobs:
         run: ls -al
 
       - name: Compile
-        run: ./compile.sh
+        run: bash ./compile.sh
