@@ -1,5 +1,14 @@
 name: "emsdk"
-on: [push]
+
+on:
+  push:
+    branches: ["master"]
+
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
   build:
@@ -12,8 +21,19 @@ jobs:
           version: 3.1.44
           actions-cache-folder: 'emsdk-cache'
 
-      - name: CheckEmccVersion
+      - name: Check emcc version
         run: emcc -v
 
       - name: Compile
         run: bash ./compile.sh
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+      
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: 'build' # just the build directory is fine
+
+      - name: "Deploy Pages"
+        uses: actions/deploy-pages@v2

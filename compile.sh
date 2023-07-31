@@ -7,4 +7,6 @@ cd build
 
 em++ ../haste-proto/*.cpp
 
+cp ../index.html .
+
 ls -al
