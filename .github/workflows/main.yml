@@ -8,8 +8,9 @@ jobs:
       - uses: actions/checkout@v3
 
       - uses: mymindstorm/setup-emsdk@v11
-        version: 3.1.44
-        actions-cache-folder: 'emsdk-cache'
+        with:
+          version: 3.1.44
+          actions-cache-folder: 'emsdk-cache'
 
       - name: CheckEmccVersion
         run: emcc -v
