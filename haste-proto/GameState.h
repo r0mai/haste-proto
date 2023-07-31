@@ -19,6 +19,7 @@ struct Encounter {
 struct Ability {
 	std::string name;
 	int castTime = 1;
+	int manaCost = 10;
 };
 
 struct Hero {

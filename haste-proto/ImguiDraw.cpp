@@ -14,7 +14,8 @@ bool ImGui_DrawAbility(Ability* ability, float abilitySize) {
 
 	auto cursorPos = ImGui::GetCursorPos();
 	ImGui::TextUnformatted(ability->name.c_str());
-	ImGui::Text("Cast: %d", ability->castTime);
+	ImGui::Text("Time: %d", ability->castTime);
+	ImGui::Text("Cost: %d", ability->manaCost);
 
 	ImGui::SetCursorPos(cursorPos);
 	bool result = ImGui::InvisibleButton("", ImVec2(abilitySize, abilitySize));

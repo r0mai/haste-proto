@@ -3,6 +3,7 @@
 #include "ImguiDraw.h"
 
 #include <format>
+#include <algorithm>
 #include "tinyformat.h"
 
 namespace r0 {
@@ -15,8 +16,10 @@ void Game::Init(GLFWwindow* window) {
 	windowHeight_ = float(h);
 
 	// init to something
-	state_.hero.abilities.push_back(Ability{ "Slice", 3 });
-	state_.hero.abilities.push_back(Ability{ "Defend", 5 });
+	state_.hero.abilities.push_back(Ability{ "Strike", 5, 30 });
+	state_.hero.abilities.push_back(Ability{ "Slice", 2, 10 });
+	state_.hero.abilities.push_back(Ability{ "Block", 1, 5 });
+	state_.hero.abilities.push_back(Ability{ "Rest", 8, -50 });
 }
 
 void Game::Update() {
@@ -62,8 +65,13 @@ void Game::DrawAbilityButtonBar() {
 		for (int i = 0; i < kAbilitySize; ++i) {
 			ImGui::TableNextColumn();
 			if (i < abilities.size()) {
-				if (ImGui_DrawAbility(&abilities[i], kAbilitySize)) {
-					tfm::printfln("Ability %s clicked", i);
+				auto& ability = abilities[i];
+				if (ImGui_DrawAbility(&ability, kAbilitySize)) {
+					if (state_.hero.mana - ability.manaCost >= 0) {
+						state_.hero.mana = std::clamp(state_.hero.mana - ability.manaCost, 0, state_.hero.maxMana);
+					} else {
+						// not enough mana
+					}
 				}
 			} else {
 				// TODO render empty ability
@@ -74,11 +82,11 @@ void Game::DrawAbilityButtonBar() {
 }
 
 void Game::DrawHealthBar() {
-	DrawResourceBar(IM_COL32(255, 0, 0, 255), state_.hero.hp / state_.hero.maxHp);
+	DrawResourceBar(IM_COL32(255, 0, 0, 255), float(state_.hero.hp) / state_.hero.maxHp);
 }
 
 void Game::DrawManaBar() {
-	DrawResourceBar(IM_COL32(0, 0, 255, 255), state_.hero.mana / state_.hero.maxMana);
+	DrawResourceBar(IM_COL32(0, 0, 255, 255), float(state_.hero.mana) / state_.hero.maxMana);
 }
 
 void Game::DrawResourceBar(const ImColor& color, float filledRatio) {
