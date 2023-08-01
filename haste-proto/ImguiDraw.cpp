@@ -18,6 +18,10 @@ bool ImGui_DrawAbility(Ability* ability) {
 	ImGui::TextUnformatted(ability->name.c_str());
 	ImGui::Text("Time: %d", ability->castTime);
 	ImGui::Text("Cost: %d", ability->manaCost);
+	if (ability->damage > 0) {
+		auto suffix = ability->targetType == TargetType::kNoTarget ? " AOE" : "";
+		ImGui::Text("Dmg: %d%s", ability->damage, suffix);
+	}
 
 	ImGui::SetCursorPos(origCursorPos);
 	bool result = ImGui::InvisibleButton("inv-button", availSize);
@@ -31,7 +35,9 @@ bool ImGui_DrawEnemy(Enemy* enemy) {
 	auto origCursorPos = ImGui::GetCursorPos();
 	auto availSize = ImGui::GetContentRegionAvail();
 
+	if (enemy->hp == 0) { ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(72, 72, 72, 255)); }
 	ImGui_CenteredUnformattedText(enemy->name.c_str());
+	if (enemy->hp == 0) { ImGui::PopStyleColor(); }
 
 	// HP bar
 	{
@@ -50,8 +56,8 @@ bool ImGui_DrawEnemy(Enemy* enemy) {
 		float fillRatio = float(enemy->hp) / enemy->maxHp;
 
 		drawList->AddRectFilled(
-			ImVec2{ cursor.x + hpBarX + (1.0f - fillRatio) * hpBarWidth, cursor.y},
-			ImVec2{ cursor.x + hpBarX + hpBarWidth, cursor.y + hpBarHeight },
+			ImVec2{ cursor.x + hpBarX, cursor.y },
+			ImVec2{ cursor.x + hpBarX + fillRatio * hpBarWidth, cursor.y + hpBarHeight },
 			IM_COL32(255, 0, 0, 255)
 		);
 

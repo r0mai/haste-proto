@@ -85,7 +85,7 @@ void Game::DrawAbilityButtonBar() {
 					if (HasEnoughMana(&ability)) {
 						switch (ability.targetType) {
 							case TargetType::kNoTarget:
-								CastAbility(&ability, -1);
+								CastAbility(&ability, nullptr);
 								break;
 							case TargetType::kEnemy:
 								state_.targeting = true;
@@ -108,7 +108,7 @@ bool Game::HasEnoughMana(Ability* ability) const {
 	return state_.hero.mana >= ability->manaCost;
 }
 
-void Game::CastAbility(Ability* ability, int targetEnemyIdx) {
+void Game::CastAbility(Ability* ability, Enemy* target) {
 	state_.targeting = false;
 	state_.targetingAbilityIdx = -1;
 
@@ -120,36 +120,24 @@ void Game::CastAbility(Ability* ability, int targetEnemyIdx) {
 
 	state_.hero.mana = std::clamp(state_.hero.mana - ability->manaCost, 0, state_.hero.maxMana);
 
-	assert((ability->targetType == TargetType::kNoTarget) == (targetEnemyIdx == -1));
+	assert((ability->targetType == TargetType::kNoTarget) == (target == nullptr));
 
 	auto& enemies = state_.encounter.enemies;
 	switch (ability->targetType) {
 		case TargetType::kNoTarget: 
-			for (int i = 0; i < enemies.size(); ++i) {
-				auto& enemy = enemies[i];
-				// TODO if enemies were in an intrusive list, we wouldn't have to juggle indices
-				if (DamageEnemy(&enemies[i], ability->damage)) {
-					enemies.erase(enemies.begin() + i);
-					--i;
-				}
+			for (auto& enemy : enemies) {
+				DamageEnemy(&enemy, ability->damage);
 			}
 			break;
 		case TargetType::kEnemy:
-			if (DamageEnemy(&enemies[targetEnemyIdx], ability->damage)) {
-				enemies.erase(enemies.begin() + targetEnemyIdx);
-			}
+			DamageEnemy(target, ability->damage);
 			break;
 	}
 }
 
 bool Game::DamageEnemy(Enemy* target, int dmg) {
-	if (target->hp <= dmg) {
-		// dead
-		return true;
-	}
-
-	target->hp -= dmg;
-	return false;
+	target->hp = std::max(target->hp - dmg, 0);
+	return target->hp == 0;
 }
 
 void Game::DrawHealthBar() {
@@ -182,7 +170,7 @@ void Game::DrawEnemyBar() {
 			ImGui::TableNextColumn();
 			bool enemyClicked = ImGui_DrawEnemy(&enemy);
 			if (state_.targeting && enemyClicked) {
-				CastAbility(&state_.hero.abilities[state_.targetingAbilityIdx], i);
+				CastAbility(&state_.hero.abilities[state_.targetingAbilityIdx], &enemy);
 			}
 		}
 		ImGui::EndTable();

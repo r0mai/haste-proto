@@ -24,7 +24,7 @@ private:
 
 	bool HasEnoughMana(Ability* ability) const;
 
-	void CastAbility(Ability* ability, int targetEnemyIdx);
+	void CastAbility(Ability* ability, Enemy* target);
 
 	// returns true if enemy dies
 	bool DamageEnemy(Enemy* target, int dmg);
