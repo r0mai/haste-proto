@@ -9,7 +9,10 @@ namespace r0 {
 struct Enemy {
 	std::string name;
 
-	// cast sequence
+	int hp = 100;
+	int maxHp = 100;
+
+	// TODO cast sequence
 };
 
 struct Encounter {

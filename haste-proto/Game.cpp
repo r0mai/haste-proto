@@ -101,6 +101,7 @@ void Game::DrawManaBar() {
 }
 
 void Game::DrawResourceBar(const ImColor& color, float filledRatio) {
+	// TODO this could go into ImguiDraw
 	ImDrawList* drawList = ImGui::GetWindowDrawList();
 
 	auto origin = ImGui::GetWindowPos();
