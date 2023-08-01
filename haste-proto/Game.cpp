@@ -20,6 +20,9 @@ void Game::Init(GLFWwindow* window) {
 	state_.hero.abilities.push_back(Ability{ "Slice", 2, 10 });
 	state_.hero.abilities.push_back(Ability{ "Block", 1, 5 });
 	state_.hero.abilities.push_back(Ability{ "Rest", 8, -50 });
+
+	state_.encounter.enemies.push_back(Enemy{ "Elden Beast" });
+	state_.encounter.enemies.push_back(Enemy{ "Diablo" });
 }
 
 void Game::Update() {
@@ -57,6 +60,14 @@ void Game::DrawHeroWidget() {
 	}
 	ImGui::End();
 
+	const float enemyBarX = 0.0f;
+	const float enemyBarY = 0.0f;
+	const float enemyBarWidth = windowWidth_;
+	ImGui_SetNextWindowPosition(enemyBarX, enemyBarY, enemyBarWidth, kEnemyBarHeight);
+	if (ImGui::Begin("enemy-bar", nullptr, ImGuiWindowFlags_NoDecoration)) {
+		DrawEnemyBar();
+	}
+	ImGui::End();
 }
 
 void Game::DrawAbilityButtonBar() {
@@ -96,6 +107,21 @@ void Game::DrawResourceBar(const ImColor& color, float filledRatio) {
 	auto size = ImGui::GetWindowSize();
 
 	drawList->AddRectFilled(ImVec2{ origin.x, origin.y + size.y * (1.0f - filledRatio) }, origin + size, color);
+}
+
+void Game::DrawEnemyBar() {
+	auto& enemies = state_.encounter.enemies;
+	if (enemies.empty()) {
+		return;
+	}
+
+	if (ImGui::BeginTable("enemy-table", enemies.size())) {
+		for (auto& enemy : enemies) {
+			ImGui::TableNextColumn();
+			ImGui_DrawEnemy(&enemy);
+		}
+		ImGui::EndTable();
+	}
 }
 
 } // namespace r0

@@ -20,6 +20,7 @@ private:
 	void DrawHealthBar();
 	void DrawManaBar();
 	void DrawResourceBar(const ImColor& color, float filledRatio);
+	void DrawEnemyBar();
 
 	static constexpr int kAbilitySlots = 8;
 	static constexpr float kAbilitySize = 96.0f; // square size
@@ -27,6 +28,7 @@ private:
 	static constexpr float kHealthBarHeight = 192.0f;
 	static constexpr float kManaBarWidth = 192.0f;
 	static constexpr float kManaBarHeight = 192.0f;
+	static constexpr float kEnemyBarHeight = 192.0f;
 
 	GLFWwindow* window_ = nullptr;
 	float windowWidth_ = 0.0f;

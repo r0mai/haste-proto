@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <variant>
 
 namespace r0 {
 
@@ -36,6 +37,5 @@ struct GameState {
 	Encounter encounter;
 	Hero hero;
 };
-
 
 } // namespace r0

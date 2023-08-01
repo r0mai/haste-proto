@@ -23,4 +23,21 @@ bool ImGui_DrawAbility(Ability* ability, float abilitySize) {
 	return result;
 }
 
+void ImGui_DrawEnemy(Enemy* enemy) {
+	ImGui::PushID(enemy);
+
+	ImGui_CenteredUnformattedText(enemy->name.c_str());
+
+	ImGui::PopID();
+}
+
+void ImGui_CenteredUnformattedText(const char* text) {
+	auto avail = ImGui::GetContentRegionAvail().x;
+	auto textWidth = ImGui::CalcTextSize(text).x;
+	auto offset = (avail - textWidth) * 0.5f;
+
+	ImGui::SetCursorPosX(ImGui::GetCursorPosX() + offset);
+	ImGui::TextUnformatted(text);
+}
+
 } // namespace r0
