@@ -16,12 +16,12 @@ void Game::Init(GLFWwindow* window) {
 	windowHeight_ = float(h);
 
 	// init to something
-	state_.hero.abilities.push_back(Ability{ "Strike", 5, 30, TargetType::kEnemy });
-	state_.hero.abilities.push_back(Ability{ "Slice", 2, 10, TargetType::kEnemy });
-	state_.hero.abilities.push_back(Ability{ "Stomp", 5, 30, TargetType::kNoTarget });
-	state_.hero.abilities.push_back(Ability{ "Slash", 2, 10, TargetType::kNoTarget });
-	state_.hero.abilities.push_back(Ability{ "Block", 1, 5, TargetType::kNoTarget });
-	state_.hero.abilities.push_back(Ability{ "Rest", 8, -50, TargetType::kNoTarget });
+	state_.hero.abilities.push_back(Ability{ "Strike", 5, 30, 20, TargetType::kEnemy });
+	state_.hero.abilities.push_back(Ability{ "Slice", 2, 10, 8, TargetType::kEnemy });
+	state_.hero.abilities.push_back(Ability{ "Stomp", 5, 30, 15, TargetType::kNoTarget });
+	state_.hero.abilities.push_back(Ability{ "Slash", 2, 10, 6, TargetType::kNoTarget });
+	state_.hero.abilities.push_back(Ability{ "Block", 1, 5, 0, TargetType::kNoTarget });
+	state_.hero.abilities.push_back(Ability{ "Rest", 8, -50, 0, TargetType::kNoTarget });
 
 	state_.encounter.enemies.push_back(Enemy{ "Elden Beast" });
 	state_.encounter.enemies.push_back(Enemy{ "Diablo" });
@@ -85,7 +85,7 @@ void Game::DrawAbilityButtonBar() {
 					if (HasEnoughMana(&ability)) {
 						switch (ability.targetType) {
 							case TargetType::kNoTarget:
-								CastAbility(&ability, nullptr);
+								CastAbility(&ability, -1);
 								break;
 							case TargetType::kEnemy:
 								state_.targeting = true;
@@ -108,7 +108,7 @@ bool Game::HasEnoughMana(Ability* ability) const {
 	return state_.hero.mana >= ability->manaCost;
 }
 
-void Game::CastAbility(Ability* ability, Enemy* target) {
+void Game::CastAbility(Ability* ability, int targetEnemyIdx) {
 	state_.targeting = false;
 	state_.targetingAbilityIdx = -1;
 
@@ -120,7 +120,36 @@ void Game::CastAbility(Ability* ability, Enemy* target) {
 
 	state_.hero.mana = std::clamp(state_.hero.mana - ability->manaCost, 0, state_.hero.maxMana);
 
-	tfm::printfln("Casting %s on %s", ability, target);
+	assert((ability->targetType == TargetType::kNoTarget) == (targetEnemyIdx == -1));
+
+	auto& enemies = state_.encounter.enemies;
+	switch (ability->targetType) {
+		case TargetType::kNoTarget: 
+			for (int i = 0; i < enemies.size(); ++i) {
+				auto& enemy = enemies[i];
+				// TODO if enemies were in an intrusive list, we wouldn't have to juggle indices
+				if (DamageEnemy(&enemies[i], ability->damage)) {
+					enemies.erase(enemies.begin() + i);
+					--i;
+				}
+			}
+			break;
+		case TargetType::kEnemy:
+			if (DamageEnemy(&enemies[targetEnemyIdx], ability->damage)) {
+				enemies.erase(enemies.begin() + targetEnemyIdx);
+			}
+			break;
+	}
+}
+
+bool Game::DamageEnemy(Enemy* target, int dmg) {
+	if (target->hp <= dmg) {
+		// dead
+		return true;
+	}
+
+	target->hp -= dmg;
+	return false;
 }
 
 void Game::DrawHealthBar() {
@@ -148,11 +177,12 @@ void Game::DrawEnemyBar() {
 	}
 
 	if (ImGui::BeginTable("enemy-table", enemies.size())) {
-		for (auto& enemy : enemies) {
+		for (int i = 0; i < enemies.size(); ++i) {
+			auto& enemy = enemies[i];
 			ImGui::TableNextColumn();
 			bool enemyClicked = ImGui_DrawEnemy(&enemy);
 			if (state_.targeting && enemyClicked) {
-				CastAbility(&state_.hero.abilities[state_.targetingAbilityIdx], &enemy);
+				CastAbility(&state_.hero.abilities[state_.targetingAbilityIdx], i);
 			}
 		}
 		ImGui::EndTable();

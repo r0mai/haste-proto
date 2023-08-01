@@ -24,7 +24,10 @@ private:
 
 	bool HasEnoughMana(Ability* ability) const;
 
-	void CastAbility(Ability* ability, Enemy* target);
+	void CastAbility(Ability* ability, int targetEnemyIdx);
+
+	// returns true if enemy dies
+	bool DamageEnemy(Enemy* target, int dmg);
 
 	static constexpr int kAbilitySlots = 8;
 	static constexpr float kAbilitySize = 96.0f; // square size

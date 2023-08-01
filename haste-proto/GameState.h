@@ -29,6 +29,9 @@ struct Ability {
 	std::string name;
 	int castTime = 1;
 	int manaCost = 10;
+	
+	int damage = 0; /*should be an Effect list*/
+
 	TargetType targetType = TargetType::kNoTarget;
 };
 
