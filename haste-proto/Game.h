@@ -22,6 +22,10 @@ private:
 	void DrawResourceBar(const ImColor& color, float filledRatio);
 	void DrawEnemyBar();
 
+	bool HasEnoughMana(Ability* ability) const;
+
+	void CastAbility(Ability* ability, Enemy* target);
+
 	static constexpr int kAbilitySlots = 8;
 	static constexpr float kAbilitySize = 96.0f; // square size
 	static constexpr float kHealthBarWidth = 192.0f;

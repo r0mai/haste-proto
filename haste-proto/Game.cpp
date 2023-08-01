@@ -16,13 +16,17 @@ void Game::Init(GLFWwindow* window) {
 	windowHeight_ = float(h);
 
 	// init to something
-	state_.hero.abilities.push_back(Ability{ "Strike", 5, 30 });
-	state_.hero.abilities.push_back(Ability{ "Slice", 2, 10 });
-	state_.hero.abilities.push_back(Ability{ "Block", 1, 5 });
-	state_.hero.abilities.push_back(Ability{ "Rest", 8, -50 });
+	state_.hero.abilities.push_back(Ability{ "Strike", 5, 30, TargetType::kEnemy });
+	state_.hero.abilities.push_back(Ability{ "Slice", 2, 10, TargetType::kEnemy });
+	state_.hero.abilities.push_back(Ability{ "Stomp", 5, 30, TargetType::kNoTarget });
+	state_.hero.abilities.push_back(Ability{ "Slash", 2, 10, TargetType::kNoTarget });
+	state_.hero.abilities.push_back(Ability{ "Block", 1, 5, TargetType::kNoTarget });
+	state_.hero.abilities.push_back(Ability{ "Rest", 8, -50, TargetType::kNoTarget });
 
 	state_.encounter.enemies.push_back(Enemy{ "Elden Beast" });
 	state_.encounter.enemies.push_back(Enemy{ "Diablo" });
+	state_.encounter.enemies.push_back(Enemy{ "Lich King" });
+	state_.encounter.enemies.push_back(Enemy{ "Dumbledore" });
 }
 
 void Game::Update() {
@@ -77,11 +81,19 @@ void Game::DrawAbilityButtonBar() {
 			ImGui::TableNextColumn();
 			if (i < abilities.size()) {
 				auto& ability = abilities[i];
-				if (ImGui_DrawAbility(&ability, kAbilitySize)) {
-					if (state_.hero.mana - ability.manaCost >= 0) {
-						state_.hero.mana = std::clamp(state_.hero.mana - ability.manaCost, 0, state_.hero.maxMana);
+				if (ImGui_DrawAbility(&ability)) {
+					if (HasEnoughMana(&ability)) {
+						switch (ability.targetType) {
+							case TargetType::kNoTarget:
+								CastAbility(&ability, nullptr);
+								break;
+							case TargetType::kEnemy:
+								state_.targeting = true;
+								state_.targetingAbilityIdx = i;
+								break;
+						}
 					} else {
-						// not enough mana
+						tfm::printfln("Not enough mana to case %s", ability.name);
 					}
 				}
 			} else {
@@ -90,6 +102,25 @@ void Game::DrawAbilityButtonBar() {
 		}
 		ImGui::EndTable();
 	}
+}
+
+bool Game::HasEnoughMana(Ability* ability) const {
+	return state_.hero.mana >= ability->manaCost;
+}
+
+void Game::CastAbility(Ability* ability, Enemy* target) {
+	state_.targeting = false;
+	state_.targetingAbilityIdx = -1;
+
+	// check for mana again just in case
+	if (!HasEnoughMana(ability)) {
+		tfm::printfln("Not enough mana to case %s [when casting!]", ability->name);
+		return;
+	}
+
+	state_.hero.mana = std::clamp(state_.hero.mana - ability->manaCost, 0, state_.hero.maxMana);
+
+	tfm::printfln("Casting %s on %s", ability, target);
 }
 
 void Game::DrawHealthBar() {
@@ -119,7 +150,10 @@ void Game::DrawEnemyBar() {
 	if (ImGui::BeginTable("enemy-table", enemies.size())) {
 		for (auto& enemy : enemies) {
 			ImGui::TableNextColumn();
-			ImGui_DrawEnemy(&enemy);
+			bool enemyClicked = ImGui_DrawEnemy(&enemy);
+			if (state_.targeting && enemyClicked) {
+				CastAbility(&state_.hero.abilities[state_.targetingAbilityIdx], &enemy);
+			}
 		}
 		ImGui::EndTable();
 	}

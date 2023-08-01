@@ -9,22 +9,27 @@ void ImGui_SetNextWindowPosition(float x, float y, float w, float h) {
 	ImGui::SetNextWindowSize(ImVec2{ w, h });
 }
 
-bool ImGui_DrawAbility(Ability* ability, float abilitySize) {
+bool ImGui_DrawAbility(Ability* ability) {
 	ImGui::PushID(ability);
 
-	auto cursorPos = ImGui::GetCursorPos();
+	auto origCursorPos = ImGui::GetCursorPos();
+	auto availSize = ImGui::GetContentRegionAvail();
+
 	ImGui::TextUnformatted(ability->name.c_str());
 	ImGui::Text("Time: %d", ability->castTime);
 	ImGui::Text("Cost: %d", ability->manaCost);
 
-	ImGui::SetCursorPos(cursorPos);
-	bool result = ImGui::InvisibleButton("", ImVec2(abilitySize, abilitySize));
+	ImGui::SetCursorPos(origCursorPos);
+	bool result = ImGui::InvisibleButton("inv-button", availSize);
 	ImGui::PopID();
 	return result;
 }
 
-void ImGui_DrawEnemy(Enemy* enemy) {
+bool ImGui_DrawEnemy(Enemy* enemy) {
 	ImGui::PushID(enemy);
+
+	auto origCursorPos = ImGui::GetCursorPos();
+	auto availSize = ImGui::GetContentRegionAvail();
 
 	ImGui_CenteredUnformattedText(enemy->name.c_str());
 
@@ -58,7 +63,11 @@ void ImGui_DrawEnemy(Enemy* enemy) {
 		ImGui::SetCursorPosY(cursor.y + hpBarHeight);
 	}
 
+	ImGui::SetCursorPos(origCursorPos);
+	bool result = ImGui::InvisibleButton("inv-button", availSize);
+
 	ImGui::PopID();
+	return result;
 }
 
 void ImGui_CenteredUnformattedText(const char* text) {
