@@ -13,30 +13,18 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="3rd">
+      <UniqueIdentifier>{adbba7df-2138-418c-9722-85f694c0948e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rd\imgui">
+      <UniqueIdentifier>{e63c5e9a-aea1-442f-91ad-0310cc06e916}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rd\tinyformat">
+      <UniqueIdentifier>{d9f8d7e0-dfd9-43b6-8d8a-cebd04c9f5c9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui_demo.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui_draw.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui_impl_glfw.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui_impl_opengl3.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui_tables.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui_widgets.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Game.cpp">
@@ -45,38 +33,29 @@
     <ClCompile Include="ImguiDraw.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="imgui.cpp">
+      <Filter>3rd\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_demo.cpp">
+      <Filter>3rd\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_draw.cpp">
+      <Filter>3rd\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_impl_glfw.cpp">
+      <Filter>3rd\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_impl_opengl3.cpp">
+      <Filter>3rd\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_tables.cpp">
+      <Filter>3rd\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_widgets.cpp">
+      <Filter>3rd\imgui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="imconfig.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui_impl_glfw.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui_impl_opengl3.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui_internal.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="imstb_rectpack.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="imstb_textedit.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="imstb_truetype.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui_impl_opengl3_loader.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="emscripten_mainloop_stub.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="Game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -86,8 +65,38 @@
     <ClInclude Include="ImguiDraw.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="imgui.h">
+      <Filter>3rd\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imconfig.h">
+      <Filter>3rd\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="emscripten_mainloop_stub.h">
+      <Filter>3rd\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_impl_glfw.h">
+      <Filter>3rd\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_impl_opengl3.h">
+      <Filter>3rd\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_impl_opengl3_loader.h">
+      <Filter>3rd\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_internal.h">
+      <Filter>3rd\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imstb_rectpack.h">
+      <Filter>3rd\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imstb_textedit.h">
+      <Filter>3rd\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imstb_truetype.h">
+      <Filter>3rd\imgui</Filter>
+    </ClInclude>
     <ClInclude Include="tinyformat.h">
-      <Filter>Source Files</Filter>
+      <Filter>3rd\tinyformat</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

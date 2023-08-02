@@ -1,6 +1,5 @@
 #include "ImguiDraw.h"
-
-#include "imgui.h"
+#include "tinyformat.h"
 
 namespace r0 {
 
@@ -23,10 +22,9 @@ bool ImGui_DrawAbility(Ability* ability) {
 		ImGui::Text("Dmg: %d%s", ability->damage, suffix);
 	}
 
-	ImGui::SetCursorPos(origCursorPos);
-	bool result = ImGui::InvisibleButton("inv-button", availSize);
+	bool isPressed = ImGui_HighlightButton(origCursorPos, availSize);
 	ImGui::PopID();
-	return result;
+	return isPressed;
 }
 
 bool ImGui_DrawEnemy(Enemy* enemy) {
@@ -39,12 +37,13 @@ bool ImGui_DrawEnemy(Enemy* enemy) {
 	ImGui_CenteredUnformattedText(enemy->name.c_str());
 	if (enemy->hp == 0) { ImGui::PopStyleColor(); }
 
+	ImDrawList* drawList = ImGui::GetWindowDrawList();
+
 	// HP bar
 	{
 		const float hpBarHeight = 32.0f;
 		const float hpBarMaxWidth = 128.0f;
 
-		ImDrawList* drawList = ImGui::GetWindowDrawList();
 		auto avail = ImGui::GetContentRegionAvail().x;
 
 		float hpBarWidth = std::min(avail, hpBarMaxWidth);
@@ -69,11 +68,9 @@ bool ImGui_DrawEnemy(Enemy* enemy) {
 		ImGui::SetCursorPosY(cursor.y + hpBarHeight);
 	}
 
-	ImGui::SetCursorPos(origCursorPos);
-	bool result = ImGui::InvisibleButton("inv-button", availSize);
-
+	bool isPressed = ImGui_HighlightButton(origCursorPos, availSize);
 	ImGui::PopID();
-	return result;
+	return isPressed;
 }
 
 void ImGui_CenteredUnformattedText(const char* text) {
@@ -83,6 +80,24 @@ void ImGui_CenteredUnformattedText(const char* text) {
 
 	ImGui::SetCursorPosX(ImGui::GetCursorPosX() + offset);
 	ImGui::TextUnformatted(text);
+}
+
+bool ImGui_HighlightButton(
+	const ImVec2& origin,
+	const ImVec2& size
+) {
+	auto* drawList = ImGui::GetWindowDrawList();
+	auto windowOrigin = ImGui::GetWindowPos();
+
+	ImGui::SetCursorPos(origin);
+	bool isPressed = ImGui::InvisibleButton("inv-button", size);
+	bool isHovered = ImGui::IsItemHovered();
+
+	if (isHovered) {
+		drawList->AddRect(windowOrigin + origin, windowOrigin + origin + size, IM_COL32(72, 72, 72, 255));
+	}
+
+	return isPressed;
 }
 
 } // namespace r0
