@@ -88,8 +88,9 @@ void Game::DrawAbilityButtonBar() {
 								CastAbility(&ability, nullptr);
 								break;
 							case TargetType::kEnemy:
-								state_.targeting = true;
-								state_.targetingAbilityIdx = i;
+								if (state_.targetedEnemyIdx != -1) {
+									CastAbility(&ability, &state_.encounter.enemies[state_.targetedEnemyIdx]);
+								}
 								break;
 						}
 					} else {
@@ -109,9 +110,6 @@ bool Game::HasEnoughMana(Ability* ability) const {
 }
 
 void Game::CastAbility(Ability* ability, Enemy* target) {
-	state_.targeting = false;
-	state_.targetingAbilityIdx = -1;
-
 	// check for mana again just in case
 	if (!HasEnoughMana(ability)) {
 		tfm::printfln("Not enough mana to case %s [when casting!]", ability->name);
@@ -169,8 +167,8 @@ void Game::DrawEnemyBar() {
 			auto& enemy = enemies[i];
 			ImGui::TableNextColumn();
 			bool enemyClicked = ImGui_DrawEnemy(&enemy);
-			if (state_.targeting && enemyClicked) {
-				CastAbility(&state_.hero.abilities[state_.targetingAbilityIdx], &enemy);
+			if (enemyClicked) {
+				state_.targetedEnemyIdx = i;
 			}
 		}
 		ImGui::EndTable();

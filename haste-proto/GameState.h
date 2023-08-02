@@ -45,13 +45,14 @@ struct Hero {
 	int maxMana = 100;
 };
 
+constexpr int kNoTarget = -1;
+
 struct GameState {
 	Encounter encounter;
 	Hero hero;
 
 	// InteractionState
-	bool targeting = false;
-	int targetingAbilityIdx = -1;
+	int targetedEnemyIdx = kNoTarget;
 };
 
 } // namespace r0
