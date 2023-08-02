@@ -100,7 +100,9 @@ bool ImGui_HighlightButton(
 	} else if (isHovered) {
 		borderColor = kHighlightedBorderColor;
 	}
-	drawList->AddRect(windowOrigin + origin, windowOrigin + origin + size, borderColor);
+
+	const ImVec2 expandBorder = ImVec2(2, 2);
+	drawList->AddRect(windowOrigin + origin - expandBorder, windowOrigin + origin + size + ImVec2(2, 2) * expandBorder, borderColor);
 
 	return isPressed;
 }
