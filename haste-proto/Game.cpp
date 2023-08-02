@@ -50,7 +50,7 @@ void Game::DrawHeroWidget() {
 	const float healthBarY = windowHeight_ - kHealthBarHeight;
 
 	ImGui_SetNextWindowPosition(healthBarX, healthBarY, kHealthBarWidth, kHealthBarHeight);
-	if (ImGui::Begin("health-bar", nullptr, ImGuiWindowFlags_NoDecoration)) {
+	if (ImGui::Begin("health-bar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground)) {
 		DrawHealthBar();
 	}
 	ImGui::End();
@@ -59,7 +59,7 @@ void Game::DrawHeroWidget() {
 	const float manaBarY = windowHeight_ - kManaBarHeight;
 
 	ImGui_SetNextWindowPosition(manaBarX, manaBarY, kManaBarWidth, kManaBarHeight);
-	if (ImGui::Begin("mana-bar", nullptr, ImGuiWindowFlags_NoDecoration)) {
+	if (ImGui::Begin("mana-bar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground)) {
 		DrawManaBar();
 	}
 	ImGui::End();
@@ -79,26 +79,33 @@ void Game::DrawAbilityButtonBar() {
 	if (ImGui::BeginTable("ability-table", kAbilitySlots)) {
 		for (int i = 0; i < kAbilitySize; ++i) {
 			ImGui::TableNextColumn();
-			if (i < abilities.size()) {
-				auto& ability = abilities[i];
-				if (ImGui_DrawAbility(&ability)) {
-					if (HasEnoughMana(&ability)) {
-						switch (ability.targetType) {
-							case TargetType::kNoTarget:
-								CastAbility(&ability, nullptr);
-								break;
-							case TargetType::kEnemy:
-								if (state_.targetedEnemyIdx != -1) {
-									CastAbility(&ability, &state_.encounter.enemies[state_.targetedEnemyIdx]);
-								}
-								break;
-						}
-					} else {
-						tfm::printfln("Not enough mana to case %s", ability.name);
-					}
-				}
-			} else {
+			if (i >= abilities.size()) {
 				// TODO render empty ability
+				continue;
+			}
+
+			auto& ability = abilities[i];
+			bool isPressed = ImGui_DrawAbility(&ability);
+			if (!isPressed) {
+				continue;
+			}
+
+			if (!HasEnoughMana(&ability)) {
+				tfm::printfln("Not enough mana to case %s", ability.name);
+				continue;
+			}
+
+			switch (ability.targetType) {
+				case TargetType::kNoTarget:
+					CastAbility(&ability, nullptr);
+					break;
+				case TargetType::kEnemy:
+					if (state_.targetedEnemyIdx != -1) {
+						CastAbility(&ability, &state_.encounter.enemies[state_.targetedEnemyIdx]);
+					} else {
+						tfm::printfln("This ability needs a target");
+					}
+					break;
 			}
 		}
 		ImGui::EndTable();
