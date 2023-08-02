@@ -6,9 +6,24 @@
 
 namespace r0 {
 
+// Spell: enemy
+// Ability: hero
+
 enum class TargetType {
 	kNoTarget = 0,
 	kEnemy = 1,
+};
+
+struct Spell {
+	int damage = 10;
+	int castTime = 4;
+};
+
+struct SpellSequence {
+	SpellSequence() = default;
+	SpellSequence(std::vector<Spell> spells) : spells(std::move(spells)) {}
+	int currentIdx = 0;
+	std::vector<Spell> spells;
 };
 
 struct Enemy {
@@ -17,7 +32,7 @@ struct Enemy {
 	int hp = 100;
 	int maxHp = 100;
 
-	// TODO cast sequence
+	SpellSequence sequence;
 };
 
 struct Encounter {

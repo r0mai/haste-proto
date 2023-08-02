@@ -34,7 +34,7 @@ bool ImGui_DrawEnemy(Enemy* enemy, bool selected) {
 	auto availSize = ImGui::GetContentRegionAvail();
 
 	if (enemy->hp == 0) { ImGui::PushStyleColor(ImGuiCol_Text, kHighlightedBorderColor); }
-	ImGui_CenteredUnformattedText(enemy->name.c_str());
+	ImGui_CenteredTextUnformatted(enemy->name.c_str());
 	if (enemy->hp == 0) { ImGui::PopStyleColor(); }
 
 	ImDrawList* drawList = ImGui::GetWindowDrawList();
@@ -68,12 +68,35 @@ bool ImGui_DrawEnemy(Enemy* enemy, bool selected) {
 		ImGui::SetCursorPosY(cursor.y + hpBarHeight);
 	}
 
+	// SpellSequence
+	if (!enemy->sequence.spells.empty()) {
+		auto& sequence = enemy->sequence;
+		// spells to reveal
+		int revealedSpells = 3;
+		if (ImGui::BeginTable("spell-table", revealedSpells)) {
+			for (int i = 0; i < revealedSpells; ++i) {
+				ImGui::TableNextColumn();
+				int spellIdx = (sequence.currentIdx + i) % sequence.spells.size();
+				auto& spell = sequence.spells[spellIdx];
+				ImGui_DrawSpell(&spell);
+			}
+			ImGui::EndTable();
+		}
+
+	}
+
+
 	bool isPressed = ImGui_HighlightButton(origCursorPos, availSize, selected);
 	ImGui::PopID();
 	return isPressed;
 }
 
-void ImGui_CenteredUnformattedText(const char* text) {
+void ImGui_DrawSpell(Spell* spell) {
+	ImGui_CenteredTextUnformatted(tfm::format("%s damage", spell->damage).c_str());
+	ImGui_CenteredTextUnformatted(tfm::format("%s turns", spell->castTime).c_str());
+}
+
+void ImGui_CenteredTextUnformatted(const char* text) {
 	auto avail = ImGui::GetContentRegionAvail().x;
 	auto textWidth = ImGui::CalcTextSize(text).x;
 	auto offset = (avail - textWidth) * 0.5f;

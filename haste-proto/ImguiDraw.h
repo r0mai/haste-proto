@@ -12,10 +12,11 @@ constexpr ImU32 kHighlightedBorderColor = IM_COL32(72, 72, 72, 255);
 constexpr ImU32 kSelectedBorderColor = IM_COL32(144, 144, 144, 255);
 
 void ImGui_SetNextWindowPosition(float x, float y, float w, float h);
-void ImGui_CenteredUnformattedText(const char* text);
+void ImGui_CenteredTextUnformatted(const char* text);
 
 bool ImGui_DrawAbility(Ability* ability);
 bool ImGui_DrawEnemy(Enemy* enemy, bool selected);
+void ImGui_DrawSpell(Spell* spell);
 
 bool ImGui_HighlightButton(
 	const ImVec2& origin,

@@ -19,10 +19,10 @@ void Game::Init(GLFWwindow* window) {
 	state_.hero.abilities.push_back(Ability{ "Block", 1, 5, 0, TargetType::kNoTarget });
 	state_.hero.abilities.push_back(Ability{ "Rest", 8, -50, 0, TargetType::kNoTarget });
 
-	state_.encounter.enemies.push_back(Enemy{ "Elden Beast" });
-	state_.encounter.enemies.push_back(Enemy{ "Diablo" });
-	state_.encounter.enemies.push_back(Enemy{ "Lich King" });
-	state_.encounter.enemies.push_back(Enemy{ "Dumbledore" });
+	state_.encounter.enemies.push_back(Enemy{ "Elden Beast", 100, 100, SpellSequence({Spell{10, 2}, Spell{20}}) });
+	state_.encounter.enemies.push_back(Enemy{ "Diablo", 100, 100, SpellSequence({Spell{5, 1}, Spell{20}}) });
+	state_.encounter.enemies.push_back(Enemy{ "Lich King", 100, 100 });
+	state_.encounter.enemies.push_back(Enemy{ "Dumbledore", 100, 100, SpellSequence({Spell{10}, Spell{20}, Spell{15}}) });
 }
 
 void Game::Update() {
