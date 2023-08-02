@@ -22,18 +22,18 @@ bool ImGui_DrawAbility(Ability* ability) {
 		ImGui::Text("Dmg: %d%s", ability->damage, suffix);
 	}
 
-	bool isPressed = ImGui_HighlightButton(origCursorPos, availSize);
+	bool isPressed = ImGui_HighlightButton(origCursorPos, availSize, false);
 	ImGui::PopID();
 	return isPressed;
 }
 
-bool ImGui_DrawEnemy(Enemy* enemy) {
+bool ImGui_DrawEnemy(Enemy* enemy, bool selected) {
 	ImGui::PushID(enemy);
 
 	auto origCursorPos = ImGui::GetCursorPos();
 	auto availSize = ImGui::GetContentRegionAvail();
 
-	if (enemy->hp == 0) { ImGui::PushStyleColor(ImGuiCol_Text, kBorderColor); }
+	if (enemy->hp == 0) { ImGui::PushStyleColor(ImGuiCol_Text, kHighlightedBorderColor); }
 	ImGui_CenteredUnformattedText(enemy->name.c_str());
 	if (enemy->hp == 0) { ImGui::PopStyleColor(); }
 
@@ -68,7 +68,7 @@ bool ImGui_DrawEnemy(Enemy* enemy) {
 		ImGui::SetCursorPosY(cursor.y + hpBarHeight);
 	}
 
-	bool isPressed = ImGui_HighlightButton(origCursorPos, availSize);
+	bool isPressed = ImGui_HighlightButton(origCursorPos, availSize, selected);
 	ImGui::PopID();
 	return isPressed;
 }
@@ -84,7 +84,8 @@ void ImGui_CenteredUnformattedText(const char* text) {
 
 bool ImGui_HighlightButton(
 	const ImVec2& origin,
-	const ImVec2& size
+	const ImVec2& size,
+	bool selected
 ) {
 	auto* drawList = ImGui::GetWindowDrawList();
 	auto windowOrigin = ImGui::GetWindowPos();
@@ -93,9 +94,13 @@ bool ImGui_HighlightButton(
 	bool isPressed = ImGui::InvisibleButton("inv-button", size);
 	bool isHovered = ImGui::IsItemHovered();
 
-	if (isHovered) {
-		drawList->AddRect(windowOrigin + origin, windowOrigin + origin + size, kBorderColor);
+	ImU32 borderColor = kDefaultBorderColor;
+	if (selected) {
+		borderColor = kSelectedBorderColor;
+	} else if (isHovered) {
+		borderColor = kHighlightedBorderColor;
 	}
+	drawList->AddRect(windowOrigin + origin, windowOrigin + origin + size, borderColor);
 
 	return isPressed;
 }

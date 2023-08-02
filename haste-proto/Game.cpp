@@ -166,9 +166,10 @@ void Game::DrawEnemyBar() {
 		for (int i = 0; i < enemies.size(); ++i) {
 			auto& enemy = enemies[i];
 			ImGui::TableNextColumn();
-			bool enemyClicked = ImGui_DrawEnemy(&enemy);
+			bool isSelected = state_.targetedEnemyIdx == i;
+			bool enemyClicked = ImGui_DrawEnemy(&enemy, isSelected);
 			if (enemyClicked) {
-				state_.targetedEnemyIdx = i;
+				state_.targetedEnemyIdx = isSelected ? -1 : i;
 			}
 		}
 		ImGui::EndTable();
