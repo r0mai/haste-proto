@@ -33,7 +33,7 @@ bool ImGui_DrawEnemy(Enemy* enemy) {
 	auto origCursorPos = ImGui::GetCursorPos();
 	auto availSize = ImGui::GetContentRegionAvail();
 
-	if (enemy->hp == 0) { ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(72, 72, 72, 255)); }
+	if (enemy->hp == 0) { ImGui::PushStyleColor(ImGuiCol_Text, kBorderColor); }
 	ImGui_CenteredUnformattedText(enemy->name.c_str());
 	if (enemy->hp == 0) { ImGui::PopStyleColor(); }
 
@@ -94,7 +94,7 @@ bool ImGui_HighlightButton(
 	bool isHovered = ImGui::IsItemHovered();
 
 	if (isHovered) {
-		drawList->AddRect(windowOrigin + origin, windowOrigin + origin + size, IM_COL32(72, 72, 72, 255));
+		drawList->AddRect(windowOrigin + origin, windowOrigin + origin + size, kBorderColor);
 	}
 
 	return isPressed;
