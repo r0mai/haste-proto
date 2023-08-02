@@ -21,6 +21,7 @@ struct Enemy {
 };
 
 struct Encounter {
+	int turnIdx = 1;
 	std::vector<Enemy> enemies;
 };
 

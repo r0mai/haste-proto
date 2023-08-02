@@ -10,10 +10,6 @@ namespace r0 {
 
 void Game::Init(GLFWwindow* window) {
 	window_ = window;
-	int w, h;
-	glfwGetWindowSize(window_, &w, &h);
-	windowWidth_ = float(w);
-	windowHeight_ = float(h);
 
 	// init to something
 	state_.hero.abilities.push_back(Ability{ "Strike", 5, 30, 20, TargetType::kEnemy });
@@ -34,42 +30,35 @@ void Game::Update() {
 }
 
 void Game::DrawHeroWidget() {
-	const float abilityBarWidth = kAbilitySlots * kAbilitySize;
-	const float abilityBarHeight = kAbilitySize;
-	const float abilityBarX = (windowWidth_ - abilityBarWidth) * 0.5f;
-	const float abilityBarY = windowHeight_ - abilityBarHeight;
 
-	ImGui_SetNextWindowPosition(abilityBarX, abilityBarY, abilityBarWidth, abilityBarHeight);
+	ImGui_SetNextWindowPosition(kAbilityBarX, kAbilityBarY, kAbilityBarWidth, kAbilityBarHeight);
 	if (ImGui::Begin("ability-button-bar", nullptr, ImGuiWindowFlags_NoDecoration)) {
 		DrawAbilityButtonBar();
 	}
 	ImGui::End();
 
 
-	const float healthBarX = abilityBarX - kHealthBarWidth;
-	const float healthBarY = windowHeight_ - kHealthBarHeight;
-
-	ImGui_SetNextWindowPosition(healthBarX, healthBarY, kHealthBarWidth, kHealthBarHeight);
+	ImGui_SetNextWindowPosition(kHealthBarX, kHealthBarY, kHealthBarWidth, kHealthBarHeight);
 	if (ImGui::Begin("health-bar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground)) {
 		DrawHealthBar();
 	}
 	ImGui::End();
 
-	const float manaBarX = abilityBarX + abilityBarWidth;
-	const float manaBarY = windowHeight_ - kManaBarHeight;
-
-	ImGui_SetNextWindowPosition(manaBarX, manaBarY, kManaBarWidth, kManaBarHeight);
+	ImGui_SetNextWindowPosition(kManaBarX, kManaBarY, kManaBarWidth, kManaBarHeight);
 	if (ImGui::Begin("mana-bar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground)) {
 		DrawManaBar();
 	}
 	ImGui::End();
 
-	const float enemyBarX = 0.0f;
-	const float enemyBarY = 0.0f;
-	const float enemyBarWidth = windowWidth_;
-	ImGui_SetNextWindowPosition(enemyBarX, enemyBarY, enemyBarWidth, kEnemyBarHeight);
+	ImGui_SetNextWindowPosition(kEnemyBarX, kEnemyBarY, kEnemyBarWidth, kEnemyBarHeight);
 	if (ImGui::Begin("enemy-bar", nullptr, ImGuiWindowFlags_NoDecoration)) {
 		DrawEnemyBar();
+	}
+	ImGui::End();
+
+	ImGui_SetNextWindowPosition(kInfoPanelX, kInfoPanelY, kInfoPanelWidth, kInfoPanelHeight);
+	if (ImGui::Begin("info-panel", nullptr, ImGuiWindowFlags_NoDecoration)) {
+		DrawInfoPanel();
 	}
 	ImGui::End();
 }
@@ -181,6 +170,10 @@ void Game::DrawEnemyBar() {
 		}
 		ImGui::EndTable();
 	}
+}
+
+void Game::DrawInfoPanel() {
+	ImGui::Text("Turn %d", state_.encounter.turnIdx);
 }
 
 } // namespace r0
