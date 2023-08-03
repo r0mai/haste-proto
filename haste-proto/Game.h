@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ImguiDraw.h"
 #include "GameState.h"
 #include <GLFW/glfw3.h>
 #include <glm/vec2.hpp>
@@ -29,6 +30,11 @@ private:
 
 	// returns true if enemy dies
 	bool DamageEnemy(Enemy* target, int dmg);
+
+	// returns true if hero dies
+	bool DamageHero(int dmg);
+
+	void AdvanceTurn();
 	
 	static constexpr float kWindowWidth = 1280.0f;
 	static constexpr float kWindowHeight = 720.0f;

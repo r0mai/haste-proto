@@ -37,36 +37,12 @@ bool ImGui_DrawEnemy(Enemy* enemy, bool selected) {
 	ImGui_CenteredTextUnformatted(enemy->name.c_str());
 	if (enemy->hp == 0) { ImGui::PopStyleColor(); }
 
-	ImDrawList* drawList = ImGui::GetWindowDrawList();
+	const float kBarMaxWidth = 128.0f;
+	const float kBarHeight = 32.0f;
 
-	// HP bar
-	{
-		const float hpBarHeight = 32.0f;
-		const float hpBarMaxWidth = 128.0f;
+	float hpFillRatio = float(enemy->hp) / enemy->maxHp;
 
-		auto avail = ImGui::GetContentRegionAvail().x;
-
-		float hpBarWidth = std::min(avail, hpBarMaxWidth);
-
-		float hpBarX = (avail - hpBarWidth) * 0.5f;
-
-		auto cursor = ImGui::GetCursorPos();
-
-		float fillRatio = float(enemy->hp) / enemy->maxHp;
-
-		drawList->AddRectFilled(
-			ImVec2{ cursor.x + hpBarX, cursor.y },
-			ImVec2{ cursor.x + hpBarX + fillRatio * hpBarWidth, cursor.y + hpBarHeight },
-			IM_COL32(255, 0, 0, 255)
-		);
-
-		drawList->AddRect(
-			ImVec2{ cursor.x + hpBarX, cursor.y },
-			ImVec2{ cursor.x + hpBarX + hpBarWidth, cursor.y + hpBarHeight },
-			IM_COL32(72, 72, 72, 255)
-		);
-		ImGui::SetCursorPosY(cursor.y + hpBarHeight);
-	}
+	ImGui_HorizonalBar(kBarMaxWidth, kBarHeight, hpFillRatio, kHPBarColor);
 
 	// SpellSequence
 	if (!enemy->sequence.spells.empty()) {
@@ -83,6 +59,8 @@ bool ImGui_DrawEnemy(Enemy* enemy, bool selected) {
 			ImGui::EndTable();
 		}
 
+		float castFillRatio = float(enemy->castTime) / sequence.spells[sequence.currentIdx].castTime;
+		ImGui_HorizonalBar(kBarMaxWidth, kBarHeight, castFillRatio, kCastTimeColor);
 	}
 
 
@@ -128,6 +106,36 @@ bool ImGui_HighlightButton(
 	drawList->AddRect(windowOrigin + origin - expandBorder, windowOrigin + origin + size + ImVec2(2, 2) * expandBorder, borderColor);
 
 	return isPressed;
+}
+
+void ImGui_HorizonalBar(
+	float maxWidth,
+	float height,
+	float fillRatio,
+	ImU32 fillColor
+) {
+	ImDrawList* drawList = ImGui::GetWindowDrawList();
+
+	auto avail = ImGui::GetContentRegionAvail().x;
+
+	float width = std::min(avail, maxWidth);
+
+	float hpBarX = (avail - width) * 0.5f;
+
+	auto cursor = ImGui::GetCursorPos();
+
+	drawList->AddRectFilled(
+		ImVec2{ cursor.x + hpBarX, cursor.y },
+		ImVec2{ cursor.x + hpBarX + fillRatio * width, cursor.y + height },
+		fillColor
+	);
+
+	drawList->AddRect(
+		ImVec2{ cursor.x + hpBarX, cursor.y },
+		ImVec2{ cursor.x + hpBarX + width, cursor.y + height },
+		kHighlightedBorderColor
+	);
+	ImGui::SetCursorPosY(cursor.y + height);
 }
 
 } // namespace r0

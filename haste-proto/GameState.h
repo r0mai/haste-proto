@@ -33,6 +33,8 @@ struct Enemy {
 	int maxHp = 100;
 
 	SpellSequence sequence;
+
+	int castTime = 0;
 };
 
 struct Encounter {

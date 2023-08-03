@@ -1,7 +1,5 @@
 #include "Game.h"
 
-#include "ImguiDraw.h"
-
 #include <format>
 #include <algorithm>
 #include "tinyformat.h"
@@ -134,12 +132,17 @@ bool Game::DamageEnemy(Enemy* target, int dmg) {
 	return target->hp == 0;
 }
 
+bool Game::DamageHero(int dmg) {
+	state_.hero.hp = std::max(state_.hero.hp - dmg, 0);
+	return state_.hero.hp == 0;
+}
+
 void Game::DrawHealthBar() {
-	DrawResourceBar(IM_COL32(255, 0, 0, 255), float(state_.hero.hp) / state_.hero.maxHp);
+	DrawResourceBar(kHPBarColor, float(state_.hero.hp) / state_.hero.maxHp);
 }
 
 void Game::DrawManaBar() {
-	DrawResourceBar(IM_COL32(0, 0, 255, 255), float(state_.hero.mana) / state_.hero.maxMana);
+	DrawResourceBar(kManaBarColor, float(state_.hero.mana) / state_.hero.maxMana);
 }
 
 void Game::DrawResourceBar(const ImColor& color, float filledRatio) {
@@ -174,6 +177,30 @@ void Game::DrawEnemyBar() {
 
 void Game::DrawInfoPanel() {
 	ImGui::Text("Turn %d", state_.encounter.turnIdx);
+	if (ImGui::Button("Next turn")) {
+		AdvanceTurn();
+	}
+}
+
+void Game::AdvanceTurn() {
+	++state_.encounter.turnIdx;
+
+	auto& enemies = state_.encounter.enemies;
+	for (auto& enemy : enemies) {
+		if (enemy.sequence.spells.empty()) {
+			continue;
+		}
+		++enemy.castTime;
+		auto& currentSpell = enemy.sequence.spells[enemy.sequence.currentIdx];
+		if (enemy.castTime >= currentSpell.castTime) {
+			// casting enemy spell
+			DamageHero(currentSpell.damage);
+			enemy.castTime = 0;
+			enemy.sequence.currentIdx = (enemy.sequence.currentIdx + 1) % enemy.sequence.spells.size();
+		} else {
+			++enemy.castTime;
+		}
+	}
 }
 
 } // namespace r0
