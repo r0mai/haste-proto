@@ -151,4 +151,19 @@ void ImGui_HorizonalBar(
 	ImGui::SetCursorPos(ImVec2(cursor.x, cursor.y + height));
 }
 
+void ImGui_ResourceBar(
+	int value,
+	int maxValue,
+	ImU32 fillColor
+) {
+	ImDrawList* drawList = ImGui::GetWindowDrawList();
+
+	auto origin = ImGui::GetWindowPos();
+	auto size = ImGui::GetWindowSize();
+
+	float fillRatio = float(value) / maxValue;
+
+	drawList->AddRectFilled(ImVec2{ origin.x, origin.y + size.y * (1.0f - fillRatio) }, origin + size, fillColor);
+}
+
 } // namespace r0

@@ -138,21 +138,11 @@ bool Game::DamageHero(int dmg) {
 }
 
 void Game::DrawHealthBar() {
-	DrawResourceBar(kHPBarColor, float(state_.hero.hp) / state_.hero.maxHp);
+	ImGui_ResourceBar(state_.hero.hp, state_.hero.maxHp, kHPBarColor);
 }
 
 void Game::DrawManaBar() {
-	DrawResourceBar(kManaBarColor, float(state_.hero.mana) / state_.hero.maxMana);
-}
-
-void Game::DrawResourceBar(const ImColor& color, float filledRatio) {
-	// TODO this could go into ImguiDraw
-	ImDrawList* drawList = ImGui::GetWindowDrawList();
-
-	auto origin = ImGui::GetWindowPos();
-	auto size = ImGui::GetWindowSize();
-
-	drawList->AddRectFilled(ImVec2{ origin.x, origin.y + size.y * (1.0f - filledRatio) }, origin + size, color);
+	ImGui_ResourceBar(state_.hero.mana, state_.hero.maxMana, kManaBarColor);
 }
 
 void Game::DrawEnemyBar() {

@@ -1,4 +1,4 @@
-#pragma once
+#pragma once	
 
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include "imgui.h"
@@ -34,5 +34,10 @@ void ImGui_HorizonalBar(
 	int maxValue,
 	ImU32 fillColor
 );
+
+void ImGui_ResourceBar(
+	int value,
+	int maxValue,
+	ImU32 fillColor);
 
 } // namespace r0

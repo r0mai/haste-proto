@@ -20,7 +20,6 @@ private:
 	void DrawAbilityButtonBar();
 	void DrawHealthBar();
 	void DrawManaBar();
-	void DrawResourceBar(const ImColor& color, float filledRatio);
 	void DrawEnemyBar();
 	void DrawInfoPanel();
 
