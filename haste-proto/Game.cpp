@@ -197,9 +197,7 @@ void Game::AdvanceTurn() {
 			DamageHero(currentSpell.damage);
 			enemy.castTime = 0;
 			enemy.sequence.currentIdx = (enemy.sequence.currentIdx + 1) % enemy.sequence.spells.size();
-		} else {
-			++enemy.castTime;
-		}
+		} 
 	}
 }
 
