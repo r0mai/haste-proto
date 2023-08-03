@@ -30,7 +30,8 @@ bool ImGui_HighlightButton(
 void ImGui_HorizonalBar(
 	float maxWidth,
 	float height,
-	float fillRatio,
+	int value,
+	int maxValue,
 	ImU32 fillColor
 );
 

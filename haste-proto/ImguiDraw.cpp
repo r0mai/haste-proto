@@ -40,9 +40,7 @@ bool ImGui_DrawEnemy(Enemy* enemy, bool selected) {
 	const float kBarMaxWidth = 128.0f;
 	const float kBarHeight = 32.0f;
 
-	float hpFillRatio = float(enemy->hp) / enemy->maxHp;
-
-	ImGui_HorizonalBar(kBarMaxWidth, kBarHeight, hpFillRatio, kHPBarColor);
+	ImGui_HorizonalBar(kBarMaxWidth, kBarHeight, enemy->hp, enemy->maxHp, kHPBarColor);
 
 	// SpellSequence
 	if (!enemy->sequence.spells.empty()) {
@@ -59,8 +57,10 @@ bool ImGui_DrawEnemy(Enemy* enemy, bool selected) {
 			ImGui::EndTable();
 		}
 
-		float castFillRatio = float(enemy->castTime) / sequence.spells[sequence.currentIdx].castTime;
-		ImGui_HorizonalBar(kBarMaxWidth, kBarHeight, castFillRatio, kCastTimeColor);
+		ImGui_HorizonalBar(
+			kBarMaxWidth, kBarHeight,
+			enemy->castTime, sequence.spells[sequence.currentIdx].castTime,
+			kCastTimeColor);
 	}
 
 
@@ -111,7 +111,8 @@ bool ImGui_HighlightButton(
 void ImGui_HorizonalBar(
 	float maxWidth,
 	float height,
-	float fillRatio,
+	int value,
+	int maxValue,
 	ImU32 fillColor
 ) {
 	ImDrawList* drawList = ImGui::GetWindowDrawList();
@@ -120,22 +121,34 @@ void ImGui_HorizonalBar(
 
 	float width = std::min(avail, maxWidth);
 
-	float hpBarX = (avail - width) * 0.5f;
+	float barX = (avail - width) * 0.5f;
 
 	auto cursor = ImGui::GetCursorPos();
 
+
+	float fillRatio = float(value) / maxValue;
+
 	drawList->AddRectFilled(
-		ImVec2{ cursor.x + hpBarX, cursor.y },
-		ImVec2{ cursor.x + hpBarX + fillRatio * width, cursor.y + height },
+		ImVec2{ cursor.x + barX, cursor.y },
+		ImVec2{ cursor.x + barX + fillRatio * width, cursor.y + height },
 		fillColor
 	);
 
 	drawList->AddRect(
-		ImVec2{ cursor.x + hpBarX, cursor.y },
-		ImVec2{ cursor.x + hpBarX + width, cursor.y + height },
+		ImVec2{ cursor.x + barX, cursor.y },
+		ImVec2{ cursor.x + barX + width, cursor.y + height },
 		kHighlightedBorderColor
 	);
-	ImGui::SetCursorPosY(cursor.y + height);
+
+	auto text = tfm::format("%d/%d", value, maxValue);
+
+	auto textSize = ImGui::CalcTextSize(text.c_str());
+	ImGui::SetCursorPosY(cursor.y + (height - textSize.y) * 0.5f);
+	ImGui::SetCursorPosX(cursor.x + barX + (width - textSize.x) * 0.5f);
+
+	ImGui::TextUnformatted(text.c_str());
+
+	ImGui::SetCursorPos(ImVec2(cursor.x, cursor.y + height));
 }
 
 } // namespace r0
