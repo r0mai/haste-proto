@@ -34,7 +34,8 @@ void ImGui_HorizonalBar(
 	float height,
 	int value,
 	int maxValue,
-	ImU32 fillColor
+	ImU32 fillColor,
+	const char* prefix = ""
 );
 
 void ImGui_ResourceBar(

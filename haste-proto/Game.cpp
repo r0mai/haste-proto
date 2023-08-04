@@ -186,7 +186,10 @@ void Game::DrawHeroCastBar() {
 		return;
 	}
 	auto& ability = state_.hero.abilities[state_.castedAbilityIdx];
-	ImGui_HorizonalBar(kHeroCastBarWidth, kHorizonalBarHeight, state_.hero.castTime, ability.castTime, kCastTimeColor);
+	ImGui_HorizonalBar(
+		kHeroCastBarWidth, kHorizonalBarHeight,
+		state_.hero.castTime, ability.castTime,
+		kCastTimeColor, ability.name.c_str());
 }
 
 void Game::AdvanceTurn() {

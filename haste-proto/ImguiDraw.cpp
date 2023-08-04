@@ -112,7 +112,8 @@ void ImGui_HorizonalBar(
 	float height,
 	int value,
 	int maxValue,
-	ImU32 fillColor
+	ImU32 fillColor,
+	const char* prefix
 ) {
 	ImDrawList* drawList = ImGui::GetWindowDrawList();
 	auto windowPos = ImGui::GetWindowPos();
@@ -140,7 +141,7 @@ void ImGui_HorizonalBar(
 		kHighlightedBorderColor
 	);
 
-	auto text = tfm::format("%d/%d", value, maxValue);
+	auto text = tfm::format("%s%s%d/%d", prefix, *prefix ? ": " : "", value, maxValue);
 
 	auto textSize = ImGui::CalcTextSize(text.c_str());
 	ImGui::SetCursorPosY(cursor.y + (height - textSize.y) * 0.5f);
