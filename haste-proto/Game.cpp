@@ -89,14 +89,16 @@ void Game::DrawAbilityButtonBar() {
 
 			switch (ability.targetType) {
 				case TargetType::kNoTarget:
-					CastAbility(&ability, nullptr);
+					state_.castedAbilityIdx = i;
+					state_.hero.castTime = 0;
 					break;
 				case TargetType::kEnemy:
-					if (state_.targetedEnemyIdx != -1) {
-						CastAbility(&ability, &state_.encounter.enemies[state_.targetedEnemyIdx]);
-					} else {
+					if (state_.targetedEnemyIdx == kNoTarget) {
 						tfm::printfln("This ability needs a target");
+						continue;
 					}
+					state_.castedAbilityIdx = i;
+					state_.hero.castTime = 0;
 					break;
 			}
 		}
@@ -163,7 +165,9 @@ void Game::DrawEnemyBar() {
 			bool isSelected = state_.targetedEnemyIdx == i;
 			bool enemyClicked = ImGui_DrawEnemy(&enemy, isSelected);
 			if (enemyClicked) {
-				state_.targetedEnemyIdx = isSelected ? -1 : i;
+				state_.targetedEnemyIdx = isSelected ? kNoTarget : i;
+				state_.hero.castTime = 0;
+				state_.castedAbilityIdx = kNoAbility;
 			}
 		}
 		ImGui::EndTable();
@@ -178,11 +182,39 @@ void Game::DrawInfoPanel() {
 }
 
 void Game::DrawHeroCastBar() {
-	ImGui_HorizonalBar(kHeroCastBarWidth, kHorizonalBarHeight, 2, 2, kCastTimeColor);
+	if (state_.castedAbilityIdx == kNoAbility) {
+		return;
+	}
+	auto& ability = state_.hero.abilities[state_.castedAbilityIdx];
+	ImGui_HorizonalBar(kHeroCastBarWidth, kHorizonalBarHeight, state_.hero.castTime, ability.castTime, kCastTimeColor);
 }
 
 void Game::AdvanceTurn() {
 	++state_.encounter.turnIdx;
+
+	if (state_.castedAbilityIdx != kNoAbility) {
+		auto& hero = state_.hero;
+		++hero.castTime;
+
+		auto& ability = hero.abilities[state_.castedAbilityIdx];
+
+		if (hero.castTime >= ability.castTime) {
+			switch (ability.targetType) {
+			case TargetType::kNoTarget:
+				CastAbility(&ability, nullptr);
+				break;
+			case TargetType::kEnemy:
+				if (state_.targetedEnemyIdx != -1) {
+					CastAbility(&ability, &state_.encounter.enemies[state_.targetedEnemyIdx]);
+				} else {
+					tfm::printfln("This ability needs a target");
+				}
+				break;
+			}
+			state_.hero.castTime = 0;
+			state_.castedAbilityIdx = kNoAbility;
+		}
+	}
 
 	auto& enemies = state_.encounter.enemies;
 	for (auto& enemy : enemies) {

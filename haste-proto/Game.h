@@ -49,7 +49,7 @@ private:
 
 	// Hero cast bar
 	static constexpr float kHeroCastBarWidth = 256.0f + 4.0f;
-	static constexpr float kHeroCastBarHeight = kHorizonalBarHeight + 4.0f;
+	static constexpr float kHeroCastBarHeight = kHorizonalBarHeight + 16.0f;
 	static constexpr float kHeroCastBarX = (kWindowWidth - kHeroCastBarWidth) * 0.5f;
 	static constexpr float kHeroCastBarY = kAbilityBarY - kHeroCastBarHeight - kHeroCastBarHeight;
 
@@ -76,7 +76,7 @@ private:
 	static constexpr float kInfoPanelX = kAbilityBarX;
 	static constexpr float kInfoPanelY = kEnemyBarHeight;
 	static constexpr float kInfoPanelWidth = kAbilityBarWidth;
-	static constexpr float kInfoPanelHeight = kWindowHeight - kAbilityBarHeight - kEnemyBarHeight;
+	static constexpr float kInfoPanelHeight = kHeroCastBarY - kEnemyBarHeight;
 
 
 	GLFWwindow* window_;

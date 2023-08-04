@@ -66,6 +66,7 @@ struct Hero {
 };
 
 constexpr int kNoTarget = -1;
+constexpr int kNoAbility = -1;
 
 struct GameState {
 	Encounter encounter;
@@ -73,6 +74,7 @@ struct GameState {
 
 	// InteractionState
 	int targetedEnemyIdx = kNoTarget;
+	int castedAbilityIdx = kNoAbility;
 };
 
 } // namespace r0
