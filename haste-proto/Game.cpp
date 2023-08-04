@@ -28,7 +28,6 @@ void Game::Update() {
 }
 
 void Game::DrawHeroWidget() {
-
 	ImGui_SetNextWindowPosition(kAbilityBarX, kAbilityBarY, kAbilityBarWidth, kAbilityBarHeight);
 	if (ImGui::Begin("ability-button-bar", nullptr, ImGuiWindowFlags_NoDecoration)) {
 		DrawAbilityButtonBar();
@@ -57,6 +56,12 @@ void Game::DrawHeroWidget() {
 	ImGui_SetNextWindowPosition(kInfoPanelX, kInfoPanelY, kInfoPanelWidth, kInfoPanelHeight);
 	if (ImGui::Begin("info-panel", nullptr, ImGuiWindowFlags_NoDecoration)) {
 		DrawInfoPanel();
+	}
+	ImGui::End();
+
+	ImGui_SetNextWindowPosition(kHeroCastBarX, kHeroCastBarY, kHeroCastBarWidth, kHeroCastBarHeight);
+	if (ImGui::Begin("hero-cast-bar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground)) {
+		DrawHeroCastBar();
 	}
 	ImGui::End();
 }
@@ -170,6 +175,10 @@ void Game::DrawInfoPanel() {
 	if (ImGui::Button("Next turn")) {
 		AdvanceTurn();
 	}
+}
+
+void Game::DrawHeroCastBar() {
+	ImGui_HorizonalBar(kHeroCastBarWidth, kHorizonalBarHeight, 2, 2, kCastTimeColor);
 }
 
 void Game::AdvanceTurn() {

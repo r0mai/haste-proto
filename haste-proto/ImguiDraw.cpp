@@ -38,9 +38,8 @@ bool ImGui_DrawEnemy(Enemy* enemy, bool selected) {
 	if (enemy->hp == 0) { ImGui::PopStyleColor(); }
 
 	const float kBarMaxWidth = 128.0f;
-	const float kBarHeight = 32.0f;
 
-	ImGui_HorizonalBar(kBarMaxWidth, kBarHeight, enemy->hp, enemy->maxHp, kHPBarColor);
+	ImGui_HorizonalBar(kBarMaxWidth, kHorizonalBarHeight, enemy->hp, enemy->maxHp, kHPBarColor);
 
 	// SpellSequence
 	if (!enemy->sequence.spells.empty()) {
@@ -58,7 +57,7 @@ bool ImGui_DrawEnemy(Enemy* enemy, bool selected) {
 		}
 
 		ImGui_HorizonalBar(
-			kBarMaxWidth, kBarHeight,
+			kBarMaxWidth, kHorizonalBarHeight,
 			enemy->castTime, sequence.spells[sequence.currentIdx].castTime,
 			kCastTimeColor);
 	}
@@ -116,6 +115,7 @@ void ImGui_HorizonalBar(
 	ImU32 fillColor
 ) {
 	ImDrawList* drawList = ImGui::GetWindowDrawList();
+	auto windowPos = ImGui::GetWindowPos();
 
 	auto avail = ImGui::GetContentRegionAvail().x;
 
@@ -129,14 +129,14 @@ void ImGui_HorizonalBar(
 	float fillRatio = float(value) / maxValue;
 
 	drawList->AddRectFilled(
-		ImVec2{ cursor.x + barX, cursor.y },
-		ImVec2{ cursor.x + barX + fillRatio * width, cursor.y + height },
+		windowPos + cursor + ImVec2{ barX, 0 },
+		windowPos + cursor + ImVec2{ barX + fillRatio * width, height },
 		fillColor
 	);
 
 	drawList->AddRect(
-		ImVec2{ cursor.x + barX, cursor.y },
-		ImVec2{ cursor.x + barX + width, cursor.y + height },
+		windowPos + cursor + ImVec2{ barX, 0 },
+		windowPos + cursor + ImVec2{ barX + width, height },
 		kHighlightedBorderColor
 	);
 

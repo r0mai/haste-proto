@@ -22,6 +22,7 @@ private:
 	void DrawManaBar();
 	void DrawEnemyBar();
 	void DrawInfoPanel();
+	void DrawHeroCastBar();
 
 	bool HasEnoughMana(Ability* ability) const;
 
@@ -45,6 +46,13 @@ private:
 	static constexpr float kAbilityBarHeight = kAbilitySize;
 	static constexpr float kAbilityBarX = (kWindowWidth - kAbilityBarWidth) * 0.5f;
 	static constexpr float kAbilityBarY = kWindowHeight - kAbilityBarHeight;
+
+	// Hero cast bar
+	static constexpr float kHeroCastBarWidth = 256.0f + 4.0f;
+	static constexpr float kHeroCastBarHeight = kHorizonalBarHeight + 4.0f;
+	static constexpr float kHeroCastBarX = (kWindowWidth - kHeroCastBarWidth) * 0.5f;
+	static constexpr float kHeroCastBarY = kAbilityBarY - kHeroCastBarHeight - kHeroCastBarHeight;
+
 
 	// Health bar
 	static constexpr float kHealthBarWidth = 192.0f;

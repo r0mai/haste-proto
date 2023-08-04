@@ -61,6 +61,8 @@ struct Hero {
 
 	int mana = 100;
 	int maxMana = 100;
+
+	int castTime = 0;
 };
 
 constexpr int kNoTarget = -1;
