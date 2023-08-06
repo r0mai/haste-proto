@@ -103,7 +103,7 @@ void Game::DrawAbilityButtonBar() {
 			}
 
 			if (!HasEnoughMana(&ability)) {
-				tfm::printfln("Not enough mana to case %s", ability.name);
+				Log("Not enough mana to cast %s", ability.name);
 				continue;
 			}
 
@@ -113,7 +113,7 @@ void Game::DrawAbilityButtonBar() {
 					break;
 				case TargetType::kEnemy:
 					if (state_.targetedEnemyIdx == kNoTarget) {
-						tfm::printfln("This ability needs a target");
+						Log("%s ability needs a target", ability.name);
 						continue;
 					}
 					StartCastingAbility(i);
@@ -139,7 +139,7 @@ void Game::StartCastingAbility(int abilityIdx) {
 void Game::CastAbility(Ability* ability, Enemy* target) {
 	// check for mana again just in case
 	if (!HasEnoughMana(ability)) {
-		tfm::printfln("Not enough mana to case %s [when casting!]", ability->name);
+		Log("Not enough mana to case %s [when casting!]", ability->name);
 		return;
 	}
 
@@ -207,6 +207,13 @@ void Game::DrawInfoPanel() {
 			AdvanceTurn();
 		}
 	}
+
+	if (ImGui::BeginChild("log")) {
+		for (const auto& line : logLines_) {
+			ImGui::Text(line.c_str());
+		}
+	}
+	ImGui::EndChild();
 }
 
 void Game::DrawHeroCastBar() {
@@ -240,7 +247,7 @@ bool Game::AdvanceTurn() {
 				if (state_.targetedEnemyIdx != -1) {
 					CastAbility(&ability, &state_.encounter.enemies[state_.targetedEnemyIdx]);
 				} else {
-					tfm::printfln("This ability needs a target");
+					Log("%s ability needs a target [when casting]", ability.name);
 				}
 				break;
 			}
@@ -266,6 +273,11 @@ bool Game::AdvanceTurn() {
 	}
 
 	return finishedCasting;
+}
+
+template<typename... Args>
+void Game::Log(const char* format, const Args&... args) {
+	logLines_.push_back(tfm::format(format, args...));
 }
 
 } // namespace r0

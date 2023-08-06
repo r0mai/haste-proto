@@ -41,6 +41,9 @@ private:
 	// returns true if hero's casting is finished
 	bool AdvanceTurn();
 
+	template<typename... Args>
+	void Log(const char* format, const Args&... args);
+
 	static constexpr float kTimeBetweenTurns = 0.5f; // seconds
 	
 	static constexpr float kWindowWidth = 1280.0f;
@@ -88,6 +91,8 @@ private:
 
 	GLFWwindow* window_;
 	GameState state_;
+
+	std::vector<std::string> logLines_;
 };
 
 } // namespace r0
