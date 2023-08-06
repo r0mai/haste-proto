@@ -68,6 +68,11 @@ struct Hero {
 constexpr int kNoTarget = -1;
 constexpr int kNoAbility = -1;
 
+enum class InteractionState {
+	kChoosingAbility,
+	kAnimatingTurns
+};
+
 struct GameState {
 	Encounter encounter;
 	Hero hero;
@@ -75,6 +80,9 @@ struct GameState {
 	// InteractionState
 	int targetedEnemyIdx = kNoTarget;
 	int castedAbilityIdx = kNoAbility;
+
+	InteractionState interactionState = InteractionState::kChoosingAbility;
+	float timeSinceLastTurn = 0.0f;
 };
 
 } // namespace r0

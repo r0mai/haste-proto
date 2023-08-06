@@ -13,9 +13,12 @@ namespace r0 {
 class Game {
 public:
 	void Init(GLFWwindow* window);
+
 	void Update();
 
 private:
+	void LogicUpdate(float delatTime);
+
 	void DrawHeroWidget();
 	void DrawAbilityButtonBar();
 	void DrawHealthBar();
@@ -26,6 +29,7 @@ private:
 
 	bool HasEnoughMana(Ability* ability) const;
 
+	void StartCastingAbility(int abilityIdx);
 	void CastAbility(Ability* ability, Enemy* target);
 
 	// returns true if enemy dies
@@ -34,7 +38,10 @@ private:
 	// returns true if hero dies
 	bool DamageHero(int dmg);
 
-	void AdvanceTurn();
+	// returns true if hero's casting is finished
+	bool AdvanceTurn();
+
+	static constexpr float kTimeBetweenTurns = 0.5f; // seconds
 	
 	static constexpr float kWindowWidth = 1280.0f;
 	static constexpr float kWindowHeight = 720.0f;

@@ -24,7 +24,27 @@ void Game::Init(GLFWwindow* window) {
 }
 
 void Game::Update() {
+	float deltaTime = ImGui::GetIO().DeltaTime;
+	LogicUpdate(deltaTime);
 	DrawHeroWidget();
+}
+
+void Game::LogicUpdate(float deltaTime) {
+	switch (state_.interactionState) {
+	case InteractionState::kChoosingAbility:
+		// nothing to do
+		break;
+	case InteractionState::kAnimatingTurns:
+		state_.timeSinceLastTurn += deltaTime;
+		while (state_.timeSinceLastTurn >= kTimeBetweenTurns) {
+			if (AdvanceTurn()) {
+				state_.interactionState = InteractionState::kChoosingAbility;
+				break;
+			}
+			state_.timeSinceLastTurn -= kTimeBetweenTurns;
+		}
+		break;
+	}
 }
 
 void Game::DrawHeroWidget() {
@@ -89,16 +109,14 @@ void Game::DrawAbilityButtonBar() {
 
 			switch (ability.targetType) {
 				case TargetType::kNoTarget:
-					state_.castedAbilityIdx = i;
-					state_.hero.castTime = 0;
+					StartCastingAbility(i);
 					break;
 				case TargetType::kEnemy:
 					if (state_.targetedEnemyIdx == kNoTarget) {
 						tfm::printfln("This ability needs a target");
 						continue;
 					}
-					state_.castedAbilityIdx = i;
-					state_.hero.castTime = 0;
+					StartCastingAbility(i);
 					break;
 			}
 		}
@@ -108,6 +126,14 @@ void Game::DrawAbilityButtonBar() {
 
 bool Game::HasEnoughMana(Ability* ability) const {
 	return state_.hero.mana >= ability->manaCost;
+}
+
+
+void Game::StartCastingAbility(int abilityIdx) {
+	state_.castedAbilityIdx = abilityIdx;
+	state_.hero.castTime = 0;
+	state_.interactionState = InteractionState::kAnimatingTurns;
+	state_.timeSinceLastTurn = 0.0f;
 }
 
 void Game::CastAbility(Ability* ability, Enemy* target) {
@@ -176,8 +202,10 @@ void Game::DrawEnemyBar() {
 
 void Game::DrawInfoPanel() {
 	ImGui::Text("Turn %d", state_.encounter.turnIdx);
-	if (ImGui::Button("Next turn")) {
-		AdvanceTurn();
+	if (state_.interactionState == InteractionState::kChoosingAbility) {
+		if (ImGui::Button("Pass")) {
+			AdvanceTurn();
+		}
 	}
 }
 
@@ -192,8 +220,10 @@ void Game::DrawHeroCastBar() {
 		kCastTimeColor, ability.name.c_str());
 }
 
-void Game::AdvanceTurn() {
+bool Game::AdvanceTurn() {
 	++state_.encounter.turnIdx;
+
+	bool finishedCasting = false;
 
 	if (state_.castedAbilityIdx != kNoAbility) {
 		auto& hero = state_.hero;
@@ -214,6 +244,7 @@ void Game::AdvanceTurn() {
 				}
 				break;
 			}
+			finishedCasting = true;
 			state_.hero.castTime = 0;
 			state_.castedAbilityIdx = kNoAbility;
 		}
@@ -233,6 +264,8 @@ void Game::AdvanceTurn() {
 			enemy.sequence.currentIdx = (enemy.sequence.currentIdx + 1) % enemy.sequence.spells.size();
 		} 
 	}
+
+	return finishedCasting;
 }
 
 } // namespace r0
