@@ -230,7 +230,8 @@ void Game::ApplyAbilityEffect(AbilityEffect* effect, int targetEnemyIdx) {
 		[&](const HeroHealEffect& e) {
 			HealHero(e.heal);
 		},
-		[](const ManaRestoreEffect& e) {
+		[&](const ManaRestoreEffect& e) {
+			RestoreMana(e.mana);
 		},
 	}, *effect);
 }
@@ -249,6 +250,11 @@ bool Game::DamageHero(int dmg) {
 void Game::HealHero(int heal) {
 	assert(heal >= 0);
 	state_.hero.hp = std::min(state_.hero.hp + heal, state_.hero.maxHp);
+}
+
+void Game::RestoreMana(int mana) {
+	assert(mana >= 0);
+	state_.hero.mana = std::min(state_.hero.mana + mana, state_.hero.maxMana);
 }
 
 void Game::DrawHealthBar() {

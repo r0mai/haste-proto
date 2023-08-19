@@ -41,6 +41,8 @@ private:
 
 	void HealHero(int heal);
 
+	void RestoreMana(int mana);
+
 	// returns true if hero's casting is finished
 	bool AdvanceTurn();
 
