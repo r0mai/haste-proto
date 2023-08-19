@@ -20,6 +20,9 @@ constexpr float kHorizonalBarHeight = 32.0f;
 void ImGui_SetNextWindowPosition(float x, float y, float w, float h);
 void ImGui_CenteredTextUnformatted(const char* text);
 
+// [0, 1]
+void ImGui_AlignedTextUnformatted(const char* text, const ImVec2& align);
+
 bool ImGui_DrawAbility(Ability* ability);
 void ImGui_DrawAbilityEffect(AbilityEffect* effect);
 bool ImGui_DrawEnemy(Enemy* enemy, bool selected);

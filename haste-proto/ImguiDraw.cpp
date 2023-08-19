@@ -117,6 +117,23 @@ void ImGui_CenteredTextUnformatted(const char* text) {
 	ImGui::TextUnformatted(text);
 }
 
+void ImGui_AlignedTextUnformatted(const char* text, const ImVec2& align) {
+	auto availSize = ImGui::GetContentRegionAvail();
+	auto textSize = ImGui::CalcTextSize(text);
+
+	auto cursorPos = ImGui::GetCursorPos();
+
+	auto align0 = cursorPos;
+	auto align1 = cursorPos + (availSize - textSize);
+
+	float xPos = std::lerp(align0.x, align1.x, align.x);
+	float yPos = std::lerp(align0.y, align1.y, align.y);
+
+	ImGui::SetCursorPos(ImVec2{ xPos, yPos });
+
+	ImGui::TextUnformatted(text);
+}
+
 HighlightButtonResult ImGui_HighlightButton(
 	const ImVec2& origin,
 	const ImVec2& size,
@@ -202,7 +219,7 @@ void ImGui_ResourceBar(
 	drawList->AddRectFilled(ImVec2{ origin.x, origin.y + size.y * (1.0f - fillRatio) }, origin + size, fillColor);
 
 	auto text = tfm::format("%s/%s", value, maxValue);
-	ImGui_CenteredTextUnformatted(text.c_str());
+	ImGui_AlignedTextUnformatted(text.c_str(), ImVec2{ 0.5f, 1.0f });
 }
 
 void ImGui_HealthBar(
@@ -243,7 +260,7 @@ void ImGui_HealthBar(
 	if (block > 0) {
 		hpText += tfm::format(" (+%s)", block);
 	}
-	ImGui_CenteredTextUnformatted(hpText.c_str());
+	ImGui_AlignedTextUnformatted(hpText.c_str(), ImVec2{ 0.5f, 1.0f });
 }
 
 } // namespace r0

@@ -91,7 +91,7 @@ struct Hero {
 
 	// temporary hp over the real hp
 	// lost on first damage
-	int block = 10;
+	int block = 0;
 
 	int castTime = 0;
 };
