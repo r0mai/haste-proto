@@ -39,6 +39,8 @@ private:
 	// returns true if hero dies
 	bool DamageHero(int dmg);
 
+	void HealHero(int heal);
+
 	// returns true if hero's casting is finished
 	bool AdvanceTurn();
 
