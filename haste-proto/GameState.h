@@ -42,15 +42,42 @@ struct Encounter {
 	std::vector<Enemy> enemies;
 };
 
+struct DamageEffect {
+	int damage = 0;
+
+	// 0: just the target
+	// -1: AOE
+	int radius = 0;
+};
+
+struct BlockEffect {
+	int block = 0;
+};
+
+struct HeroHealEffect {
+	int heal = 0;
+};
+
+struct ManaRestoreEffect {
+	int mana = 0;
+};
+
+using AbilityEffect = std::variant<
+	DamageEffect,
+	BlockEffect,
+	HeroHealEffect,
+	ManaRestoreEffect
+>;
+
 
 struct Ability {
 	std::string name;
 	int castTime = 1;
 	int manaCost = 10;
-	
-	int damage = 0; /*should be an Effect list*/
 
 	TargetType targetType = TargetType::kNoTarget;
+	
+	std::vector<AbilityEffect> effects;
 };
 
 struct Hero {

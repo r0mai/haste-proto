@@ -1,5 +1,6 @@
 #include "ImguiDraw.h"
 #include "tinyformat.h"
+#include "Overloaded.h"
 
 namespace r0 {
 
@@ -17,14 +18,48 @@ bool ImGui_DrawAbility(Ability* ability) {
 	ImGui::TextUnformatted(ability->name.c_str());
 	ImGui::Text("Time: %d", ability->castTime);
 	ImGui::Text("Cost: %d", ability->manaCost);
-	if (ability->damage > 0) {
-		auto suffix = ability->targetType == TargetType::kNoTarget ? " AOE" : "";
-		ImGui::Text("Dmg: %d%s", ability->damage, suffix);
+
+	if (ability->effects.size() == 1) {
+		ImGui_DrawAbilityEffect(&ability->effects[0]);
+	} else {
+		ImGui::Text("%d effects", ability->effects.size());
 	}
 
-	bool isPressed = ImGui_HighlightButton(origCursorPos, availSize, false);
+	auto [isPressed, isHovered] = ImGui_HighlightButton(origCursorPos, availSize, false);
+
+	if (isHovered) {
+		ImGui::BeginTooltip();
+		for (auto& effect : ability->effects) {
+			ImGui_DrawAbilityEffect(&effect);
+		}
+		ImGui::EndTooltip();
+	}
+
 	ImGui::PopID();
 	return isPressed;
+}
+
+void ImGui_DrawAbilityEffect(AbilityEffect* effect) {
+	std::visit(Overloaded{
+		[&](const DamageEffect& e) {
+			if (e.radius == -1) {
+				ImGui::Text("%d AOE dmg", e.damage);
+			} else if (e.radius == 0) {
+				ImGui::Text("%d dmg", e.damage);
+			} else {
+				ImGui::Text("%d dmg r=%d", e.damage, e.radius);
+			}
+		},
+		[](const BlockEffect& e) {
+			ImGui::Text("%d block", e.block);
+		},
+		[](const HeroHealEffect& e) {
+			ImGui::Text("Heal %d", e.heal);
+		},
+		[](const ManaRestoreEffect& e) {
+			ImGui::Text("Mana +%d", e.mana);
+		},
+	}, *effect);
 }
 
 bool ImGui_DrawEnemy(Enemy* enemy, bool selected) {
@@ -63,7 +98,7 @@ bool ImGui_DrawEnemy(Enemy* enemy, bool selected) {
 	}
 
 
-	bool isPressed = ImGui_HighlightButton(origCursorPos, availSize, selected);
+	auto [isPressed, _] = ImGui_HighlightButton(origCursorPos, availSize, selected);
 	ImGui::PopID();
 	return isPressed;
 }
@@ -82,7 +117,7 @@ void ImGui_CenteredTextUnformatted(const char* text) {
 	ImGui::TextUnformatted(text);
 }
 
-bool ImGui_HighlightButton(
+HighlightButtonResult ImGui_HighlightButton(
 	const ImVec2& origin,
 	const ImVec2& size,
 	bool selected
@@ -104,7 +139,7 @@ bool ImGui_HighlightButton(
 	const ImVec2 expandBorder = ImVec2(2, 2);
 	drawList->AddRect(windowOrigin + origin - expandBorder, windowOrigin + origin + size + ImVec2(2, 2) * expandBorder, borderColor);
 
-	return isPressed;
+	return { .isPressed = isPressed, .isHovered = isHovered };
 }
 
 void ImGui_HorizonalBar(

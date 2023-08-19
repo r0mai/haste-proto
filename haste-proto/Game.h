@@ -30,7 +30,8 @@ private:
 	bool HasEnoughMana(Ability* ability) const;
 
 	void StartCastingAbility(int abilityIdx);
-	void CastAbility(Ability* ability, Enemy* target);
+	void CastAbility(Ability* ability, int targetEnemyIdx);
+	void ApplyAbilityEffect(AbilityEffect* effect, int targetEnemyIdx);
 
 	// returns true if enemy dies
 	bool DamageEnemy(Enemy* target, int dmg);

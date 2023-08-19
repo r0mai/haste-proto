@@ -3,19 +3,73 @@
 #include <format>
 #include <algorithm>
 #include "tinyformat.h"
+#include "Overloaded.h"
 
 namespace r0 {
 
 void Game::Init(GLFWwindow* window) {
 	window_ = window;
 
+	Ability strikeAbility{
+		.name = "Strike",
+		.castTime = 5,
+		.manaCost = 30,
+		.targetType = TargetType::kEnemy,
+		.effects = {DamageEffect{.damage = 20, .radius = 0}}
+	};
+
+	Ability sliceAbility{
+		.name = "Slice",
+		.castTime = 2,
+		.manaCost = 10,
+		.targetType = TargetType::kEnemy,
+		.effects = {DamageEffect{.damage = 8, .radius = 0}}
+	};
+
+	Ability stompAbility{
+		.name = "Stomp",
+		.castTime = 5,
+		.manaCost = 30,
+		.targetType = TargetType::kNoTarget,
+		.effects = {DamageEffect{.damage = 8, .radius = -1}}
+	};
+
+	Ability slashAbility{
+		.name = "Slash",
+		.castTime = 2,
+		.manaCost = 10,
+		.targetType = TargetType::kEnemy,
+		.effects = {DamageEffect{.damage = 6, .radius = 1}}
+	};
+
+	Ability blockAbility{
+		.name = "Block",
+		.castTime = 1,
+		.manaCost = 5,
+		.targetType = TargetType::kNoTarget,
+		.effects = {BlockEffect{.block = 20}}
+	};
+
+	Ability restAbility{
+		.name = "Rest",
+		.castTime = 8,
+		.manaCost = 0,
+		.targetType = TargetType::kNoTarget,
+		.effects = {
+			HeroHealEffect{.heal = 50},
+			ManaRestoreEffect{.mana = 50}
+		}
+	};
+
 	// init to something
-	state_.hero.abilities.push_back(Ability{ "Strike", 5, 30, 20, TargetType::kEnemy });
-	state_.hero.abilities.push_back(Ability{ "Slice", 2, 10, 8, TargetType::kEnemy });
-	state_.hero.abilities.push_back(Ability{ "Stomp", 5, 30, 15, TargetType::kNoTarget });
-	state_.hero.abilities.push_back(Ability{ "Slash", 2, 10, 6, TargetType::kNoTarget });
-	state_.hero.abilities.push_back(Ability{ "Block", 1, 5, 0, TargetType::kNoTarget });
-	state_.hero.abilities.push_back(Ability{ "Rest", 8, -50, 0, TargetType::kNoTarget });
+	state_.hero.abilities = {
+		strikeAbility,
+		sliceAbility,
+		stompAbility,
+		slashAbility,
+		blockAbility,
+		restAbility,
+	};
 
 	state_.encounter.enemies.push_back(Enemy{ "Elden Beast", 100, 100, SpellSequence({Spell{10, 2}, Spell{20}}) });
 	state_.encounter.enemies.push_back(Enemy{ "Diablo", 100, 100, SpellSequence({Spell{5, 1}, Spell{20}}) });
@@ -136,7 +190,7 @@ void Game::StartCastingAbility(int abilityIdx) {
 	state_.timeSinceLastTurn = 0.0f;
 }
 
-void Game::CastAbility(Ability* ability, Enemy* target) {
+void Game::CastAbility(Ability* ability, int targetEnemyIdx) {
 	// check for mana again just in case
 	if (!HasEnoughMana(ability)) {
 		Log("Not enough mana to case %s [when casting!]", ability->name);
@@ -145,19 +199,39 @@ void Game::CastAbility(Ability* ability, Enemy* target) {
 
 	state_.hero.mana = std::clamp(state_.hero.mana - ability->manaCost, 0, state_.hero.maxMana);
 
-	assert((ability->targetType == TargetType::kNoTarget) == (target == nullptr));
+	assert((ability->targetType == TargetType::kNoTarget) == (targetEnemyIdx == kNoTarget));
 
 	auto& enemies = state_.encounter.enemies;
-	switch (ability->targetType) {
-		case TargetType::kNoTarget: 
-			for (auto& enemy : enemies) {
-				DamageEnemy(&enemy, ability->damage);
-			}
-			break;
-		case TargetType::kEnemy:
-			DamageEnemy(target, ability->damage);
-			break;
+	for (auto& effect : ability->effects) {
+		ApplyAbilityEffect(&effect, targetEnemyIdx);
 	}
+}
+
+void Game::ApplyAbilityEffect(AbilityEffect* effect, int targetEnemyIdx) {
+	std::visit(Overloaded{
+		[&](const DamageEffect& e) {
+			auto& enemies = state_.encounter.enemies;
+			int beginIdx;
+			int endIdx;
+			if (e.radius == -1) {
+				beginIdx = 0;
+				endIdx = enemies.size();
+			} else {
+				assert(targetEnemyIdx != kNoTarget);
+				beginIdx = std::max(0, targetEnemyIdx - e.radius);
+				endIdx = std::min(int(enemies.size()), targetEnemyIdx + e.radius + 1);
+			}
+			for (int i = beginIdx; i < endIdx; ++i) {
+				DamageEnemy(&enemies[i], e.damage);
+			}
+		},
+		[](const BlockEffect& e) {
+		},
+		[](const HeroHealEffect& e) {
+		},
+		[](const ManaRestoreEffect& e) {
+		},
+	}, *effect);
 }
 
 bool Game::DamageEnemy(Enemy* target, int dmg) {
@@ -190,7 +264,7 @@ void Game::DrawEnemyBar() {
 	float padding = (windowWidth - columnWidth * enemies.size()) / 2.0f;
 	ImGui::Indent(padding);
 
-	if (ImGui::BeginTable("enemy-table", enemies.size())) {
+	if (ImGui::BeginTable("enemy-table", int(enemies.size()))) {
 		for (int i = 0; i < enemies.size(); ++i) {
 			ImGui::TableSetupColumn(std::to_string(i).c_str(), ImGuiTableColumnFlags_WidthFixed, columnWidth);
 		}
@@ -251,11 +325,11 @@ bool Game::AdvanceTurn() {
 		if (hero.castTime >= ability.castTime) {
 			switch (ability.targetType) {
 			case TargetType::kNoTarget:
-				CastAbility(&ability, nullptr);
+				CastAbility(&ability, kNoTarget);
 				break;
 			case TargetType::kEnemy:
 				if (state_.targetedEnemyIdx != -1) {
-					CastAbility(&ability, &state_.encounter.enemies[state_.targetedEnemyIdx]);
+					CastAbility(&ability, state_.targetedEnemyIdx);
 				} else {
 					Log("%s ability needs a target [when casting]", ability.name);
 				}

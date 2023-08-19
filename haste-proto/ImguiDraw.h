@@ -20,10 +20,16 @@ void ImGui_SetNextWindowPosition(float x, float y, float w, float h);
 void ImGui_CenteredTextUnformatted(const char* text);
 
 bool ImGui_DrawAbility(Ability* ability);
+void ImGui_DrawAbilityEffect(AbilityEffect* effect);
 bool ImGui_DrawEnemy(Enemy* enemy, bool selected);
 void ImGui_DrawSpell(Spell* spell);
 
-bool ImGui_HighlightButton(
+struct HighlightButtonResult {
+	bool isPressed = false;
+	bool isHovered = false;
+};
+
+HighlightButtonResult ImGui_HighlightButton(
 	const ImVec2& origin,
 	const ImVec2& size,
 	bool selected

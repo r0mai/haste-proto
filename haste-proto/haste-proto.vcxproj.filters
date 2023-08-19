@@ -98,5 +98,8 @@
     <ClInclude Include="tinyformat.h">
       <Filter>3rd\tinyformat</Filter>
     </ClInclude>
+    <ClInclude Include="Overloaded.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
