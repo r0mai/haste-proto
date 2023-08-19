@@ -225,7 +225,8 @@ void Game::ApplyAbilityEffect(AbilityEffect* effect, int targetEnemyIdx) {
 				DamageEnemy(&enemies[i], e.damage);
 			}
 		},
-		[](const BlockEffect& e) {
+		[&](const BlockEffect& e) {
+			ApplyBlock(e.block);
 		},
 		[&](const HeroHealEffect& e) {
 			HealHero(e.heal);
@@ -243,7 +244,11 @@ bool Game::DamageEnemy(Enemy* target, int dmg) {
 
 bool Game::DamageHero(int dmg) {
 	assert(dmg >= 0);
-	state_.hero.hp = std::max(state_.hero.hp - dmg, 0);
+	dmg -= state_.hero.block;
+	if (dmg > 0) {
+		state_.hero.hp = std::max(state_.hero.hp - dmg, 0);
+	}
+	state_.hero.block = 0;
 	return state_.hero.hp == 0;
 }
 
@@ -257,8 +262,13 @@ void Game::RestoreMana(int mana) {
 	state_.hero.mana = std::min(state_.hero.mana + mana, state_.hero.maxMana);
 }
 
+void Game::ApplyBlock(int block) {
+	assert(block >= 0);
+	state_.hero.block += block;
+}
+
 void Game::DrawHealthBar() {
-	ImGui_ResourceBar(state_.hero.hp, state_.hero.maxHp, kHPBarColor);
+	ImGui_HealthBar(state_.hero.hp, state_.hero.maxHp, state_.hero.block);
 }
 
 void Game::DrawManaBar() {

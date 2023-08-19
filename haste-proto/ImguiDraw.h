@@ -11,6 +11,7 @@ constexpr ImU32 kDefaultBorderColor = IM_COL32(24, 24, 24, 255);
 constexpr ImU32 kHighlightedBorderColor = IM_COL32(72, 72, 72, 255);
 constexpr ImU32 kSelectedBorderColor = IM_COL32(144, 144, 144, 255);
 constexpr ImU32 kHPBarColor = IM_COL32(255, 0, 0, 255);
+constexpr ImU32 kBlockColor = IM_COL32(0, 255, 255, 255);
 constexpr ImU32 kManaBarColor = IM_COL32(0, 0, 255, 255);
 constexpr ImU32 kCastTimeColor = IM_COL32(0xF6, 0xBE, 0x00, 255);
 
@@ -48,5 +49,10 @@ void ImGui_ResourceBar(
 	int value,
 	int maxValue,
 	ImU32 fillColor);
+
+void ImGui_HealthBar(
+	int hp,
+	int maxHp,
+	int block);
 
 } // namespace r0

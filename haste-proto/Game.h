@@ -43,6 +43,8 @@ private:
 
 	void RestoreMana(int mana);
 
+	void ApplyBlock(int block);
+
 	// returns true if hero's casting is finished
 	bool AdvanceTurn();
 

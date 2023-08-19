@@ -89,6 +89,10 @@ struct Hero {
 	int mana = 100;
 	int maxMana = 100;
 
+	// temporary hp over the real hp
+	// lost on first damage
+	int block = 10;
+
 	int castTime = 0;
 };
 

@@ -202,4 +202,39 @@ void ImGui_ResourceBar(
 	drawList->AddRectFilled(ImVec2{ origin.x, origin.y + size.y * (1.0f - fillRatio) }, origin + size, fillColor);
 }
 
+void ImGui_HealthBar(
+	int hp,
+	int maxHp,
+	int block) 
+{
+	ImDrawList* drawList = ImGui::GetWindowDrawList();
+
+	auto origin = ImGui::GetWindowPos();
+	auto size = ImGui::GetWindowSize();
+
+	float fillRatio = float(hp) / maxHp;
+
+	float hpBarTop = origin.y + size.y * (1.0f - fillRatio);
+
+	drawList->AddRectFilled(ImVec2{ origin.x, hpBarTop }, origin + size, kHPBarColor);
+
+	if (block > 0) {
+		float blockFillRatio = std::min(1.0f, float(hp + block) / maxHp);
+
+		float blockBarTop = origin.y + size.y * (1.0f - blockFillRatio);
+
+		drawList->AddRectFilled(
+			ImVec2{
+				origin.x,
+				blockBarTop,
+			},
+			ImVec2{
+				origin.x + size.x,
+				hpBarTop /*make sure at least one pixel is visible*/ + 2.0f,
+			},
+			kBlockColor
+		);
+	}
+}
+
 } // namespace r0
