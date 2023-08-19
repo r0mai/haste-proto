@@ -146,6 +146,7 @@
     <ClCompile Include="imgui_tables.cpp" />
     <ClCompile Include="imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Scenario.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="emscripten_mainloop_stub.h" />
@@ -163,6 +164,7 @@
     <ClInclude Include="imstb_truetype.h" />
     <ClInclude Include="Overloaded.h" />
     <ClInclude Include="Scenario.h" />
+    <ClInclude Include="ScenarioEditor.h" />
     <ClInclude Include="tinyformat.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

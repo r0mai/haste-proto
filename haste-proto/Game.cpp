@@ -10,81 +10,18 @@ namespace r0 {
 void Game::Init(GLFWwindow* window) {
 	window_ = window;
 
-	ScenarioData scenario;
-
-	AbilityData strikeAbility{
-		.name = "Strike",
-		.castTime = 5,
-		.manaCost = 30,
-		.targetType = TargetType::kEnemy,
-		.effects = {DamageEffect{.damage = 20, .radius = 0}}
-	};
-
-	AbilityData sliceAbility{
-		.name = "Slice",
-		.castTime = 2,
-		.manaCost = 10,
-		.targetType = TargetType::kEnemy,
-		.effects = {DamageEffect{.damage = 8, .radius = 0}}
-	};
-
-	AbilityData stompAbility{
-		.name = "Stomp",
-		.castTime = 5,
-		.manaCost = 30,
-		.targetType = TargetType::kNoTarget,
-		.effects = {DamageEffect{.damage = 8, .radius = -1}}
-	};
-
-	AbilityData slashAbility{
-		.name = "Slash",
-		.castTime = 2,
-		.manaCost = 10,
-		.targetType = TargetType::kEnemy,
-		.effects = {DamageEffect{.damage = 6, .radius = 1}}
-	};
-
-	AbilityData blockAbility{
-		.name = "Block",
-		.castTime = 1,
-		.manaCost = 5,
-		.targetType = TargetType::kNoTarget,
-		.effects = {BlockEffect{.block = 20}}
-	};
-
-	AbilityData restAbility{
-		.name = "Rest",
-		.castTime = 8,
-		.manaCost = 0,
-		.targetType = TargetType::kNoTarget,
-		.effects = {
-			HeroHealEffect{.heal = 50},
-			ManaRestoreEffect{.mana = 50}
-		}
-	};
-
-	// init to something
-	scenario.hero.abilities = {
-		strikeAbility,
-		sliceAbility,
-		stompAbility,
-		slashAbility,
-		blockAbility,
-		restAbility,
-	};
-
-	scenario.enemies.push_back(EnemyData{ "Elden Beast", 100, SpellSequenceData({Spell{10, 2}, Spell{20}}) });
-	scenario.enemies.push_back(EnemyData{ "Diablo", 100, SpellSequenceData({Spell{5, 1}, Spell{20}}) });
-	scenario.enemies.push_back(EnemyData{ "Lich King", 100, {} });
-	scenario.enemies.push_back(EnemyData{ "Dumbledore", 100, SpellSequenceData({Spell{10}, Spell{20}, Spell{15}}) });
-
-	state_ = GameState{ scenario };
+	Reload();
 }
 
 void Game::Update() {
 	float deltaTime = ImGui::GetIO().DeltaTime;
 	LogicUpdate(deltaTime);
 	DrawHeroWidget();
+}
+
+void Game::Reload() {
+	state_ = GameState{ editor_.scenario };
+	logLines_.clear();
 }
 
 void Game::LogicUpdate(float deltaTime) {
@@ -132,8 +69,8 @@ void Game::DrawHeroWidget() {
 	ImGui::End();
 
 	ImGui_SetNextWindowPosition(kInfoPanelX, kInfoPanelY, kInfoPanelWidth, kInfoPanelHeight);
-	if (ImGui::Begin("info-panel", nullptr, ImGuiWindowFlags_NoDecoration)) {
-		DrawInfoPanel();
+	if (ImGui::Begin("central-panel", nullptr, ImGuiWindowFlags_NoDecoration)) {
+		DrawCentralPanel();
 	}
 	ImGui::End();
 
@@ -311,20 +248,35 @@ void Game::DrawEnemyBar() {
 	}
 }
 
-void Game::DrawInfoPanel() {
-	ImGui::Text("Turn %d", state_.turnIdx);
-	if (state_.interactionState == InteractionState::kChoosingAbility) {
-		if (ImGui::Button("Pass")) {
-			AdvanceTurn();
-		}
-	}
+void Game::DrawCentralPanel() {
+	if (ImGui::BeginTabBar("tabs")) {
+		if (ImGui::BeginTabItem("Game")) {
 
-	if (ImGui::BeginChild("log")) {
-		for (const auto& line : logLines_) {
-			ImGui::Text(line.c_str());
+			ImGui::Text("Turn %d", state_.turnIdx);
+			if (state_.interactionState == InteractionState::kChoosingAbility) {
+				if (ImGui::Button("Pass")) {
+					AdvanceTurn();
+				}
+			}
+
+			if (ImGui::BeginChild("log")) {
+				for (const auto& line : logLines_) {
+					ImGui::Text(line.c_str());
+				}
+			}
+			ImGui::EndChild();
+
+			ImGui::EndTabItem();
 		}
+		if (ImGui::BeginTabItem("Editor")) {
+			if (editor_.DrawUI()) {
+				Reload();
+			}
+
+			ImGui::EndTabItem();
+		}
+		ImGui::EndTabBar();
 	}
-	ImGui::EndChild();
 }
 
 void Game::DrawHeroCastBar() {

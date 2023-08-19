@@ -2,6 +2,7 @@
 
 #include "ImguiDraw.h"
 #include "GameState.h"
+#include "ScenarioEditor.h"
 #include <GLFW/glfw3.h>
 #include <glm/vec2.hpp>
 
@@ -17,6 +18,8 @@ public:
 	void Update();
 
 private:
+	void Reload();
+
 	void LogicUpdate(float delatTime);
 
 	void DrawHeroWidget();
@@ -24,7 +27,7 @@ private:
 	void DrawHealthBar();
 	void DrawManaBar();
 	void DrawEnemyBar();
-	void DrawInfoPanel();
+	void DrawCentralPanel();
 	void DrawHeroCastBar();
 
 	bool HasEnoughMana(Ability* ability) const;
@@ -97,6 +100,7 @@ private:
 
 
 	GLFWwindow* window_;
+	ScenarioEditor editor_;
 	GameState state_;
 
 	std::vector<std::string> logLines_;
