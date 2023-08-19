@@ -4,29 +4,27 @@
 #include <vector>
 #include <variant>
 
+#include "Scenario.h"
+
 namespace r0 {
 
-// Spell: enemy
-// Ability: hero
+// Spell: enemy castable
+// Ability: hero castable
 
-enum class TargetType {
-	kNoTarget = 0,
-	kEnemy = 1,
-};
-
-struct Spell {
-	int damage = 10;
-	int castTime = 4;
-};
+using Spell = SpellData;
 
 struct SpellSequence {
 	SpellSequence() = default;
-	SpellSequence(std::vector<Spell> spells) : spells(std::move(spells)) {}
+	SpellSequence(const SpellSequenceData& data);
+
 	int currentIdx = 0;
 	std::vector<Spell> spells;
 };
 
 struct Enemy {
+	Enemy() = default;
+	Enemy(const EnemyData& enemy);
+
 	std::string name;
 
 	int hp = 100;
@@ -38,60 +36,31 @@ struct Enemy {
 };
 
 struct Encounter {
-	int turnIdx = 1;
-	std::vector<Enemy> enemies;
 };
 
-struct DamageEffect {
-	int damage = 0;
+using DamageEffect = DamageEffectData;
+using BlockEffect = BlockEffectData;
+using HeroHealEffect = HeroHealEffectData;
+using ManaRestoreEffect = ManaRestoreEffectData;
+using AbilityEffect = AbilityEffectData;
 
-	// 0: just the target
-	// -1: AOE
-	int radius = 0;
-};
-
-struct BlockEffect {
-	int block = 0;
-};
-
-struct HeroHealEffect {
-	int heal = 0;
-};
-
-struct ManaRestoreEffect {
-	int mana = 0;
-};
-
-using AbilityEffect = std::variant<
-	DamageEffect,
-	BlockEffect,
-	HeroHealEffect,
-	ManaRestoreEffect
->;
-
-
-struct Ability {
-	std::string name;
-	int castTime = 1;
-	int manaCost = 10;
-
-	TargetType targetType = TargetType::kNoTarget;
-	
-	std::vector<AbilityEffect> effects;
-};
+using Ability = AbilityData;
 
 struct Hero {
+	Hero() = default;
+	Hero(const HeroData& data);
+
 	std::vector<Ability> abilities;
 
 	int hp = 100;
 	int maxHp = 100;
 
-	int mana = 100;
-	int maxMana = 100;
-
 	// temporary hp over the real hp
 	// lost on first damage
 	int block = 0;
+
+	int mana = 100;
+	int maxMana = 100;
 
 	int castTime = 0;
 };
@@ -105,15 +74,20 @@ enum class InteractionState {
 };
 
 struct GameState {
-	Encounter encounter;
+	GameState() = default;
+	GameState(const ScenarioData& scenario);
+
 	Hero hero;
+	std::vector<Enemy> enemies;
+
+	int turnIdx = 1;
 
 	// InteractionState
-	int targetedEnemyIdx = kNoTarget;
-	int castedAbilityIdx = kNoAbility;
+	int targetedEnemyIdx = kNoTarget; // runtime state
+	int castedAbilityIdx = kNoAbility; // runtime state
 
-	InteractionState interactionState = InteractionState::kChoosingAbility;
-	float timeSinceLastTurn = 0.0f;
+	InteractionState interactionState = InteractionState::kChoosingAbility; // runtime state
+	float timeSinceLastTurn = 0.0f; // runtime state
 };
 
 } // namespace r0

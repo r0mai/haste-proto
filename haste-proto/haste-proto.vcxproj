@@ -136,6 +136,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GameState.cpp" />
     <ClCompile Include="imgui.cpp" />
     <ClCompile Include="ImguiDraw.cpp" />
     <ClCompile Include="imgui_demo.cpp" />
@@ -161,6 +162,7 @@
     <ClInclude Include="imstb_textedit.h" />
     <ClInclude Include="imstb_truetype.h" />
     <ClInclude Include="Overloaded.h" />
+    <ClInclude Include="Scenario.h" />
     <ClInclude Include="tinyformat.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

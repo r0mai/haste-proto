@@ -54,6 +54,9 @@
     <ClCompile Include="imgui_widgets.cpp">
       <Filter>3rd\imgui</Filter>
     </ClCompile>
+    <ClCompile Include="GameState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -99,6 +102,9 @@
       <Filter>3rd\tinyformat</Filter>
     </ClInclude>
     <ClInclude Include="Overloaded.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Scenario.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

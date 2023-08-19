@@ -10,7 +10,9 @@ namespace r0 {
 void Game::Init(GLFWwindow* window) {
 	window_ = window;
 
-	Ability strikeAbility{
+	ScenarioData scenario;
+
+	AbilityData strikeAbility{
 		.name = "Strike",
 		.castTime = 5,
 		.manaCost = 30,
@@ -18,7 +20,7 @@ void Game::Init(GLFWwindow* window) {
 		.effects = {DamageEffect{.damage = 20, .radius = 0}}
 	};
 
-	Ability sliceAbility{
+	AbilityData sliceAbility{
 		.name = "Slice",
 		.castTime = 2,
 		.manaCost = 10,
@@ -26,7 +28,7 @@ void Game::Init(GLFWwindow* window) {
 		.effects = {DamageEffect{.damage = 8, .radius = 0}}
 	};
 
-	Ability stompAbility{
+	AbilityData stompAbility{
 		.name = "Stomp",
 		.castTime = 5,
 		.manaCost = 30,
@@ -34,7 +36,7 @@ void Game::Init(GLFWwindow* window) {
 		.effects = {DamageEffect{.damage = 8, .radius = -1}}
 	};
 
-	Ability slashAbility{
+	AbilityData slashAbility{
 		.name = "Slash",
 		.castTime = 2,
 		.manaCost = 10,
@@ -42,7 +44,7 @@ void Game::Init(GLFWwindow* window) {
 		.effects = {DamageEffect{.damage = 6, .radius = 1}}
 	};
 
-	Ability blockAbility{
+	AbilityData blockAbility{
 		.name = "Block",
 		.castTime = 1,
 		.manaCost = 5,
@@ -50,7 +52,7 @@ void Game::Init(GLFWwindow* window) {
 		.effects = {BlockEffect{.block = 20}}
 	};
 
-	Ability restAbility{
+	AbilityData restAbility{
 		.name = "Rest",
 		.castTime = 8,
 		.manaCost = 0,
@@ -62,7 +64,7 @@ void Game::Init(GLFWwindow* window) {
 	};
 
 	// init to something
-	state_.hero.abilities = {
+	scenario.hero.abilities = {
 		strikeAbility,
 		sliceAbility,
 		stompAbility,
@@ -71,10 +73,12 @@ void Game::Init(GLFWwindow* window) {
 		restAbility,
 	};
 
-	state_.encounter.enemies.push_back(Enemy{ "Elden Beast", 100, 100, SpellSequence({Spell{10, 2}, Spell{20}}) });
-	state_.encounter.enemies.push_back(Enemy{ "Diablo", 100, 100, SpellSequence({Spell{5, 1}, Spell{20}}) });
-	state_.encounter.enemies.push_back(Enemy{ "Lich King", 100, 100 });
-	state_.encounter.enemies.push_back(Enemy{ "Dumbledore", 100, 100, SpellSequence({Spell{10}, Spell{20}, Spell{15}}) });
+	scenario.enemies.push_back(EnemyData{ "Elden Beast", 100, SpellSequenceData({Spell{10, 2}, Spell{20}}) });
+	scenario.enemies.push_back(EnemyData{ "Diablo", 100, SpellSequenceData({Spell{5, 1}, Spell{20}}) });
+	scenario.enemies.push_back(EnemyData{ "Lich King", 100, {} });
+	scenario.enemies.push_back(EnemyData{ "Dumbledore", 100, SpellSequenceData({Spell{10}, Spell{20}, Spell{15}}) });
+
+	state_ = GameState{ scenario };
 }
 
 void Game::Update() {
@@ -201,7 +205,7 @@ void Game::CastAbility(Ability* ability, int targetEnemyIdx) {
 
 	assert((ability->targetType == TargetType::kNoTarget) == (targetEnemyIdx == kNoTarget));
 
-	auto& enemies = state_.encounter.enemies;
+	auto& enemies = state_.enemies;
 	for (auto& effect : ability->effects) {
 		ApplyAbilityEffect(&effect, targetEnemyIdx);
 	}
@@ -210,7 +214,7 @@ void Game::CastAbility(Ability* ability, int targetEnemyIdx) {
 void Game::ApplyAbilityEffect(AbilityEffect* effect, int targetEnemyIdx) {
 	std::visit(Overloaded{
 		[&](const DamageEffect& e) {
-			auto& enemies = state_.encounter.enemies;
+			auto& enemies = state_.enemies;
 			int beginIdx;
 			int endIdx;
 			if (e.radius == -1) {
@@ -276,7 +280,7 @@ void Game::DrawManaBar() {
 }
 
 void Game::DrawEnemyBar() {
-	auto& enemies = state_.encounter.enemies;
+	auto& enemies = state_.enemies;
 	if (enemies.empty()) {
 		return;
 	}
@@ -308,7 +312,7 @@ void Game::DrawEnemyBar() {
 }
 
 void Game::DrawInfoPanel() {
-	ImGui::Text("Turn %d", state_.encounter.turnIdx);
+	ImGui::Text("Turn %d", state_.turnIdx);
 	if (state_.interactionState == InteractionState::kChoosingAbility) {
 		if (ImGui::Button("Pass")) {
 			AdvanceTurn();
@@ -335,7 +339,7 @@ void Game::DrawHeroCastBar() {
 }
 
 bool Game::AdvanceTurn() {
-	++state_.encounter.turnIdx;
+	++state_.turnIdx;
 
 	bool finishedCasting = false;
 
@@ -364,7 +368,7 @@ bool Game::AdvanceTurn() {
 		}
 	}
 
-	auto& enemies = state_.encounter.enemies;
+	auto& enemies = state_.enemies;
 	for (auto& enemy : enemies) {
 		if (enemy.sequence.spells.empty()) {
 			continue;
