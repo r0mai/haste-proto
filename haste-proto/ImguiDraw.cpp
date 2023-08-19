@@ -91,9 +91,11 @@ bool ImGui_DrawEnemy(Enemy* enemy, bool selected) {
 			ImGui::EndTable();
 		}
 
+		auto spellCastTime = sequence.spells[sequence.currentIdx].castTime;
+
 		ImGui_HorizonalBar(
 			kBarMaxWidth, kHorizonalBarHeight,
-			enemy->castTime, sequence.spells[sequence.currentIdx].castTime,
+			spellCastTime - enemy->castTime, spellCastTime,
 			kCastTimeColor);
 	}
 
