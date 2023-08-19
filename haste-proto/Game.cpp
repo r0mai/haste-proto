@@ -184,7 +184,17 @@ void Game::DrawEnemyBar() {
 		return;
 	}
 
+	auto windowWidth = ImGui::GetContentRegionAvail().x;
+	auto columnWidth = std::min(256.0f, windowWidth / enemies.size());
+
+	float padding = (windowWidth - columnWidth * enemies.size()) / 2.0f;
+	ImGui::Indent(padding);
+
 	if (ImGui::BeginTable("enemy-table", enemies.size())) {
+		for (int i = 0; i < enemies.size(); ++i) {
+			ImGui::TableSetupColumn(std::to_string(i).c_str(), ImGuiTableColumnFlags_WidthFixed, columnWidth);
+		}
+
 		for (int i = 0; i < enemies.size(); ++i) {
 			auto& enemy = enemies[i];
 			ImGui::TableNextColumn();
