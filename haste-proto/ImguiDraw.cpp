@@ -200,6 +200,9 @@ void ImGui_ResourceBar(
 	float fillRatio = float(value) / maxValue;
 
 	drawList->AddRectFilled(ImVec2{ origin.x, origin.y + size.y * (1.0f - fillRatio) }, origin + size, fillColor);
+
+	auto text = tfm::format("%s/%s", value, maxValue);
+	ImGui_CenteredTextUnformatted(text.c_str());
 }
 
 void ImGui_HealthBar(
@@ -235,6 +238,12 @@ void ImGui_HealthBar(
 			kBlockColor
 		);
 	}
+
+	auto hpText = tfm::format("%s/%s", hp, maxHp);
+	if (block > 0) {
+		hpText += tfm::format(" (+%s)", block);
+	}
+	ImGui_CenteredTextUnformatted(hpText.c_str());
 }
 
 } // namespace r0
