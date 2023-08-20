@@ -74,6 +74,7 @@ ScenarioEditor::ScenarioEditor() {
 }
 
 bool ScenarioEditor::DrawUI() {
+	ImGui::PushItemWidth(120.0f);
 	if (ImGui::BeginTabBar("editor-tab-bar")) {
 		if (ImGui::BeginTabItem("Abilities")) {
 			DrawEffectEditor(&scenario.hero.abilities[0].effects[0]);
@@ -81,6 +82,7 @@ bool ScenarioEditor::DrawUI() {
 		}
 		ImGui::EndTabBar();
 	}
+	ImGui::PopItemWidth();
 
 	bool reload = ImGui::Button("Restart");
 
@@ -88,6 +90,16 @@ bool ScenarioEditor::DrawUI() {
 }
 
 void ScenarioEditor::DrawEffectEditor(AbilityEffectData* data) {
+	ImGui::TextUnformatted("Type:");
+	ImGui::SameLine();
+	ImGui::RadioButton("Damage", &data->which, data->IndexOf<DamageEffectData>());
+	ImGui::SameLine();
+	ImGui::RadioButton("Block", &data->which, data->IndexOf<BlockEffectData>());
+	ImGui::SameLine();
+	ImGui::RadioButton("HeroHeal", &data->which, data->IndexOf<HeroHealEffectData>());
+	ImGui::SameLine();
+	ImGui::RadioButton("ManaRestore", &data->which, data->IndexOf<ManaRestoreEffectData>());
+
 	data->Visit<void>([this](auto& subData) {
 		DrawEffectEditor(&subData);
 	});
