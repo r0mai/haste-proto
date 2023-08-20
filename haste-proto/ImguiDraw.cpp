@@ -22,7 +22,7 @@ bool ImGui_DrawAbility(Ability* ability) {
 	if (ability->effects.size() == 1) {
 		ImGui_DrawAbilityEffect(&ability->effects[0]);
 	} else {
-		ImGui::Text("%d effects", ability->effects.size());
+		ImGui::Text("%d effects", int(ability->effects.size()));
 	}
 
 	auto [isPressed, isHovered] = ImGui_HighlightButton(origCursorPos, availSize, false);

@@ -261,7 +261,7 @@ void Game::DrawCentralPanel() {
 
 			if (ImGui::BeginChild("log")) {
 				for (const auto& line : logLines_) {
-					ImGui::Text(line.c_str());
+					ImGui::TextUnformatted(line.c_str());
 				}
 			}
 			ImGui::EndChild();
