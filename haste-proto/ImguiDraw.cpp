@@ -265,4 +265,8 @@ void ImGui_HealthBar(
 	ImGui_AlignedTextUnformatted(hpText.c_str(), ImVec2{ 0.5f, 1.0f });
 }
 
+void ImGui_IntegerSlider(const char* label, int* v) {
+	ImGui::DragInt(label, v, 0.2f, 0, 1000);
+}
+
 } // namespace r0

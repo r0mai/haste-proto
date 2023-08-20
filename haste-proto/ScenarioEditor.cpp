@@ -1,6 +1,7 @@
 #include "imgui.h"
 
 #include "ScenarioEditor.h"
+#include "ImguiDraw.h"
 
 namespace r0 {
 
@@ -73,10 +74,46 @@ ScenarioEditor::ScenarioEditor() {
 }
 
 bool ScenarioEditor::DrawUI() {
+	if (ImGui::BeginTabBar("editor-tab-bar")) {
+		if (ImGui::BeginTabItem("Abilities")) {
+			DrawEffectEditor(&scenario.hero.abilities[0].effects[0]);
+			ImGui::EndTabItem();
+		}
+		ImGui::EndTabBar();
+	}
 
-	bool reload = ImGui::Button("reload");
+	bool reload = ImGui::Button("Restart");
 
 	return reload;
+}
+
+void ScenarioEditor::DrawEffectEditor(AbilityEffectData* data) {
+	data->Visit<void>([this](auto& subData) {
+		DrawEffectEditor(&subData);
+	});
+}
+
+void ScenarioEditor::DrawEffectEditor(DamageEffectData* data) {
+	ImGui_IntegerSlider("damage", &data->damage);
+	bool isAOE = data->radius == -1;
+	if (ImGui::Checkbox("AOE", &isAOE)) {
+		data->radius = isAOE ? -1 : 0;
+	}
+	if (!isAOE) {
+		ImGui_IntegerSlider("radius", &data->radius);
+	}
+}
+
+void ScenarioEditor::DrawEffectEditor(BlockEffectData* data) {
+	ImGui_IntegerSlider("block", &data->block);
+}
+
+void ScenarioEditor::DrawEffectEditor(HeroHealEffectData* data) {
+	ImGui_IntegerSlider("heal", &data->heal);
+}
+
+void ScenarioEditor::DrawEffectEditor(ManaRestoreEffectData* data) {
+	ImGui_IntegerSlider("mana", &data->mana);
 }
 
 } // namespace r0

@@ -12,6 +12,13 @@ public:
 	bool DrawUI();
 
 	ScenarioData scenario;
+
+private:
+	void DrawEffectEditor(AbilityEffectData* data);
+	void DrawEffectEditor(DamageEffectData* data);
+	void DrawEffectEditor(BlockEffectData* data);
+	void DrawEffectEditor(HeroHealEffectData* data);
+	void DrawEffectEditor(ManaRestoreEffectData* data);
 };
 
 } // namespace r0

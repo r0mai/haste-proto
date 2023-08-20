@@ -58,4 +58,6 @@ void ImGui_HealthBar(
 	int maxHp,
 	int block);
 
+void ImGui_IntegerSlider(const char* label, int* v);
+
 } // namespace r0

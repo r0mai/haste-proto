@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <variant>
+#include "ExpandedVariant.h"
 
 namespace r0 {
 
@@ -51,7 +52,7 @@ struct ManaRestoreEffectData {
 	int mana = 0;
 };
 
-using AbilityEffectData = std::variant<
+using AbilityEffectData = ExpandedVariant<
 	DamageEffectData,
 	BlockEffectData,
 	HeroHealEffectData,

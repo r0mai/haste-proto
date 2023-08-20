@@ -35,16 +35,31 @@ struct Enemy {
 	int castTime = 0;
 };
 
-struct Encounter {
-};
-
 using DamageEffect = DamageEffectData;
 using BlockEffect = BlockEffectData;
 using HeroHealEffect = HeroHealEffectData;
 using ManaRestoreEffect = ManaRestoreEffectData;
-using AbilityEffect = AbilityEffectData;
 
-using Ability = AbilityData;
+using AbilityEffect = std::variant<
+	DamageEffect,
+	BlockEffect,
+	HeroHealEffect,
+	ManaRestoreEffect
+>;
+
+struct Ability {
+	Ability() = default;
+	Ability(const AbilityData& data);
+
+	std::string name;
+	int castTime = 1;
+	int manaCost = 10;
+
+	// TODO optimize this out
+	TargetType targetType = TargetType::kNoTarget;
+	
+	std::vector<AbilityEffect> effects;
+};
 
 struct Hero {
 	Hero() = default;
