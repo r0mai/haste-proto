@@ -14,6 +14,9 @@ public:
 	ScenarioData scenario;
 
 private:
+	void DrawAbilitiesEditor(std::vector<AbilityData>* data);
+	void DrawAbilityEditor(AbilityData* data);
+
 	void DrawEffectEditor(AbilityEffectData* data);
 	void DrawEffectEditor(DamageEffectData* data);
 	void DrawEffectEditor(BlockEffectData* data);

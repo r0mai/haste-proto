@@ -3,6 +3,8 @@
 #include "ScenarioEditor.h"
 #include "ImguiDraw.h"
 
+#include "tinyformat.h"
+
 namespace r0 {
 
 ScenarioEditor::ScenarioEditor() {
@@ -77,7 +79,7 @@ bool ScenarioEditor::DrawUI() {
 	ImGui::PushItemWidth(120.0f);
 	if (ImGui::BeginTabBar("editor-tab-bar")) {
 		if (ImGui::BeginTabItem("Abilities")) {
-			DrawEffectEditor(&scenario.hero.abilities[0].effects[0]);
+			DrawAbilitiesEditor(&scenario.hero.abilities);
 			ImGui::EndTabItem();
 		}
 		ImGui::EndTabBar();
@@ -87,6 +89,62 @@ bool ScenarioEditor::DrawUI() {
 	bool reload = ImGui::Button("Restart");
 
 	return reload;
+}
+
+void ScenarioEditor::DrawAbilitiesEditor(std::vector<AbilityData>* data) {
+	auto tabName = [](const char* name, int i) {
+		return tfm::format("%s###%s", name, i);
+	};
+	if (ImGui::BeginTabBar("abilities-tab-bar")) {
+		for (int i = 0; i < data->size(); ++i) {
+			auto& ability = (*data)[i];
+			if (ImGui::BeginTabItem(tabName(ability.name.c_str(), i).c_str())) {
+				if (ImGui::Button("Delete")) {
+					data->erase(data->begin() + i);
+					ImGui::EndTabItem();
+					continue;
+				}
+
+				ImGui::BeginDisabled(i <= 0);
+				ImGui::SameLine();
+				if (ImGui::Button("Move Left")) {
+					ImGui::SameLine();
+					std::swap((*data)[i], (*data)[i - 1]);
+					ImGui::EndTabItem();
+					continue;
+				}
+				ImGui::EndDisabled();
+
+				ImGui::BeginDisabled(i >= data->size() - 1);
+				ImGui::SameLine();
+				if (ImGui::Button("Move Right")) {
+					std::swap((*data)[i], (*data)[i + 1]);
+					ImGui::EndTabItem();
+					continue;
+				}
+				ImGui::EndDisabled();
+
+				DrawAbilityEditor(&ability);
+				ImGui::EndTabItem();
+			}
+		}
+		if (data->size() < 8) {
+			// using a negative index here to have some compromise regarding automatic tab switching
+			if (ImGui::BeginTabItem(tabName("+", -int(data->size())).c_str())) {
+				data->push_back(AbilityData{});
+				data->back().name = "New";
+
+				ImGui::EndTabItem();
+			}
+		}
+		ImGui::EndTabBar();
+	}
+}
+
+void ScenarioEditor::DrawAbilityEditor(AbilityData* data) {
+	if (data->effects.size() > 0) {
+		DrawEffectEditor(&data->effects[0]);
+	}
 }
 
 void ScenarioEditor::DrawEffectEditor(AbilityEffectData* data) {
