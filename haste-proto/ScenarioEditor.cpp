@@ -92,53 +92,11 @@ bool ScenarioEditor::DrawUI() {
 }
 
 void ScenarioEditor::DrawAbilitiesEditor(std::vector<AbilityData>* data) {
-	auto tabName = [](const char* name, int i) {
-		return tfm::format("%s###%s", name, i);
-	};
-	if (ImGui::BeginTabBar("abilities-tab-bar")) {
-		for (int i = 0; i < data->size(); ++i) {
-			auto& ability = (*data)[i];
-			if (ImGui::BeginTabItem(tabName(ability.name.c_str(), i).c_str())) {
-				if (ImGui::Button("Delete")) {
-					data->erase(data->begin() + i);
-					ImGui::EndTabItem();
-					continue;
-				}
-
-				ImGui::BeginDisabled(i <= 0);
-				ImGui::SameLine();
-				if (ImGui::Button("Move Left")) {
-					ImGui::SameLine();
-					std::swap((*data)[i], (*data)[i - 1]);
-					ImGui::EndTabItem();
-					continue;
-				}
-				ImGui::EndDisabled();
-
-				ImGui::BeginDisabled(i >= data->size() - 1);
-				ImGui::SameLine();
-				if (ImGui::Button("Move Right")) {
-					std::swap((*data)[i], (*data)[i + 1]);
-					ImGui::EndTabItem();
-					continue;
-				}
-				ImGui::EndDisabled();
-
-				DrawAbilityEditor(&ability);
-				ImGui::EndTabItem();
-			}
-		}
-		if (data->size() < 8) {
-			// using a negative index here to have some compromise regarding automatic tab switching
-			if (ImGui::BeginTabItem(tabName("+", -int(data->size())).c_str())) {
-				data->push_back(AbilityData{});
-				data->back().name = "New";
-
-				ImGui::EndTabItem();
-			}
-		}
-		ImGui::EndTabBar();
-	}
+	ImGui_VectorEditor("abilities", data, 8,
+		[](AbilityData* ability) { return ability->name; },
+		[this](AbilityData* ability) { DrawAbilityEditor(ability); },
+		[]() { return AbilityData{ .name = "New" }; }
+	);
 }
 
 void ScenarioEditor::DrawAbilityEditor(AbilityData* data) {

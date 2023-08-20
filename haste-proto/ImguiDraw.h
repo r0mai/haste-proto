@@ -2,6 +2,7 @@
 
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include "imgui.h"
+#include "tinyformat.h"
 
 #include "GameState.h"
 
@@ -48,6 +49,8 @@ void ImGui_HorizonalBar(
 	const char* prefix = ""
 );
 
+bool ImGui_DisabledButton(const char* label, bool disabled = true);
+
 void ImGui_ResourceBar(
 	int value,
 	int maxValue,
@@ -59,5 +62,57 @@ void ImGui_HealthBar(
 	int block);
 
 void ImGui_IntegerSlider(const char* label, int* v);
+
+template<typename T, typename NameFunc, typename DrawFunc, typename NewItemFunc>
+void ImGui_VectorEditor(
+	const char* label,
+	std::vector<T>* data,
+	int maxSize,
+	NameFunc nameFunc,
+	DrawFunc drawFunc,
+	NewItemFunc newItemFunc)
+{
+	auto tabName = [](auto name, int i) {
+		return tfm::format("%s###%s", name, i);
+	};
+	if (ImGui::BeginTabBar(label)) {
+		for (int i = 0; i < data->size(); ++i) {
+			auto* item = &(*data)[i];
+			if (ImGui::BeginTabItem(tabName(nameFunc(item), i).c_str())) {
+				if (ImGui::Button("Delete")) {
+					data->erase(data->begin() + i);
+					ImGui::EndTabItem();
+					continue;
+				}
+
+				ImGui::SameLine();
+				if (ImGui_DisabledButton("Move Left", i <= 0)) {
+					std::swap((*data)[i], (*data)[i - 1]);
+					ImGui::EndTabItem();
+					continue;
+				}
+
+				ImGui::SameLine();
+				if (ImGui_DisabledButton("Move Right", i >= data->size() - 1)) {
+					std::swap((*data)[i], (*data)[i + 1]);
+					ImGui::EndTabItem();
+					continue;
+				}
+
+				drawFunc(item);
+				ImGui::EndTabItem();
+			}
+		}
+		if (data->size() < maxSize) {
+			// using a negative index here to have some compromise regarding automatic tab switching
+			if (ImGui::BeginTabItem(tabName("+", -int(data->size())).c_str())) {
+				data->push_back(newItemFunc());
+
+				ImGui::EndTabItem();
+			}
+		}
+		ImGui::EndTabBar();
+	}
+}
 
 } // namespace r0

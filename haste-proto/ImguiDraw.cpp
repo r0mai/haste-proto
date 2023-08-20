@@ -206,6 +206,13 @@ void ImGui_HorizonalBar(
 	ImGui::SetCursorPos(ImVec2(cursor.x, cursor.y + height));
 }
 
+bool ImGui_DisabledButton(const char* label, bool disabled) {
+	ImGui::BeginDisabled(disabled);
+	bool res = ImGui::Button(label);
+	ImGui::EndDisabled();
+	return res;
+}
+
 void ImGui_ResourceBar(
 	int value,
 	int maxValue,
