@@ -60,6 +60,9 @@
     <ClCompile Include="ScenarioEditor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="imgui_stdlib.cpp">
+      <Filter>3rd\imgui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -115,6 +118,9 @@
     </ClInclude>
     <ClInclude Include="ExpandedVariant.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_stdlib.h">
+      <Filter>3rd\imgui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
