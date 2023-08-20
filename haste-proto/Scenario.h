@@ -59,6 +59,11 @@ using AbilityEffectData = ExpandedVariant<
 	ManaRestoreEffectData
 >;
 
+inline const char* AbilityEffectName(const DamageEffectData&) { return "Damage"; }
+inline const char* AbilityEffectName(const BlockEffectData&) { return "Block"; }
+inline const char* AbilityEffectName(const HeroHealEffectData&) { return "HeroHeal"; }
+inline const char* AbilityEffectName(const ManaRestoreEffectData&) { return "ManaRestore"; }
+
 struct AbilityData {
 	std::string name;
 	int castTime = 1;

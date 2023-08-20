@@ -100,9 +100,13 @@ void ScenarioEditor::DrawAbilitiesEditor(std::vector<AbilityData>* data) {
 }
 
 void ScenarioEditor::DrawAbilityEditor(AbilityData* data) {
-	if (data->effects.size() > 0) {
-		DrawEffectEditor(&data->effects[0]);
-	}
+	ImGui_VectorEditor("effects", &data->effects, 8,
+		[](AbilityEffectData* effect) {
+			return effect->Visit<const char*>([](const auto& x) { return AbilityEffectName(x); });
+		},
+		[this](AbilityEffectData* effect) { DrawEffectEditor(effect); },
+		[]() { return AbilityEffectData{}; }
+	);
 }
 
 void ScenarioEditor::DrawEffectEditor(AbilityEffectData* data) {
