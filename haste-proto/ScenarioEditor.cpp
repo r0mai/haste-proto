@@ -104,6 +104,13 @@ void ScenarioEditor::DrawAbilityEditor(AbilityData* data) {
 	ImGui::InputText("Name", &data->name);
 	ImGui_IntegerSlider("Mana cost", &data->manaCost);
 	ImGui_IntegerSlider("Cast time", &data->castTime);
+
+	{
+		bool needsTarget = data->targetType == TargetType::kEnemy;
+		ImGui::Checkbox("Needs a target", &needsTarget);
+		data->targetType = needsTarget ? TargetType::kEnemy : TargetType::kNoTarget;
+	}
+
 	ImGui::TextUnformatted("Effects:");
 	ImGui_VectorEditor("effects", &data->effects, 8,
 		[](AbilityEffectData* effect) {
