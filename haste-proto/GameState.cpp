@@ -1,4 +1,5 @@
 #include "GameState.h"
+#include "Overloaded.h"
 
 #include <ranges>
 
@@ -37,8 +38,22 @@ Ability::Ability(const AbilityData& data)
 	: name(data.name)
 	, castTime(data.castTime)
 	, manaCost(data.manaCost)
-	, targetType(data.targetType)
 	, effects(Convert(data.effects)) {}
+
+bool Ability::NeedsTarget() const {
+	for (auto& effect : effects) {
+		bool needsTarget = std::visit(Overloaded{
+			[](const DamageEffect& e) {
+				return e.radius >= 0;
+			},
+			[](const auto&) { return false; }
+		}, effect);
+		if (needsTarget) {
+			return true;
+		}
+	}
+	return false;
+}
 
 Hero::Hero(const HeroData& data)
 	: abilities(Convert(data.abilities))

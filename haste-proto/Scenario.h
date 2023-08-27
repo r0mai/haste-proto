@@ -68,9 +68,6 @@ struct AbilityData {
 	std::string name;
 	int castTime = 1;
 	int manaCost = 10;
-
-	// TODO optimize this out
-	TargetType targetType = TargetType::kNoTarget;
 	
 	std::vector<AbilityEffectData> effects;
 };

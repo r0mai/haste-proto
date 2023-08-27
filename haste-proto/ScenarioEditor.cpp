@@ -13,7 +13,6 @@ ScenarioEditor::ScenarioEditor() {
 		.name = "Strike",
 		.castTime = 5,
 		.manaCost = 30,
-		.targetType = TargetType::kEnemy,
 		.effects = {DamageEffectData{.damage = 20, .radius = 0}}
 	};
 
@@ -21,7 +20,6 @@ ScenarioEditor::ScenarioEditor() {
 		.name = "Slice",
 		.castTime = 2,
 		.manaCost = 10,
-		.targetType = TargetType::kEnemy,
 		.effects = {DamageEffectData{.damage = 8, .radius = 0}}
 	};
 
@@ -29,7 +27,6 @@ ScenarioEditor::ScenarioEditor() {
 		.name = "Stomp",
 		.castTime = 5,
 		.manaCost = 30,
-		.targetType = TargetType::kNoTarget,
 		.effects = {DamageEffectData{.damage = 8, .radius = -1}}
 	};
 
@@ -37,7 +34,6 @@ ScenarioEditor::ScenarioEditor() {
 		.name = "Slash",
 		.castTime = 2,
 		.manaCost = 10,
-		.targetType = TargetType::kEnemy,
 		.effects = {DamageEffectData{.damage = 6, .radius = 1}}
 	};
 
@@ -45,7 +41,6 @@ ScenarioEditor::ScenarioEditor() {
 		.name = "Block",
 		.castTime = 1,
 		.manaCost = 5,
-		.targetType = TargetType::kNoTarget,
 		.effects = {BlockEffectData{.block = 20}}
 	};
 
@@ -53,7 +48,6 @@ ScenarioEditor::ScenarioEditor() {
 		.name = "Rest",
 		.castTime = 8,
 		.manaCost = 0,
-		.targetType = TargetType::kNoTarget,
 		.effects = {
 			HeroHealEffectData{.heal = 50},
 			ManaRestoreEffectData{.mana = 50}
@@ -114,13 +108,6 @@ void ScenarioEditor::DrawAbilityEditor(AbilityData* data) {
 	ImGui::InputText("Name", &data->name);
 	ImGui_IntegerSlider("Mana cost", &data->manaCost);
 	ImGui_IntegerSlider("Cast time", &data->castTime);
-
-	{
-		bool needsTarget = data->targetType == TargetType::kEnemy;
-		ImGui::Checkbox("Needs a target", &needsTarget);
-		data->targetType = needsTarget ? TargetType::kEnemy : TargetType::kNoTarget;
-	}
-
 	ImGui::TextUnformatted("Effects:");
 	ImGui_VectorEditor("effects", &data->effects, 8,
 		[](AbilityEffectData* effect) {

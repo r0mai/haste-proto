@@ -102,17 +102,14 @@ void Game::DrawAbilityButtonBar() {
 				continue;
 			}
 
-			switch (ability.targetType) {
-				case TargetType::kNoTarget:
-					StartCastingAbility(i);
-					break;
-				case TargetType::kEnemy:
-					if (state_.targetedEnemyIdx == kNoTarget) {
-						Log("%s ability needs a target", ability.name);
-						continue;
-					}
-					StartCastingAbility(i);
-					break;
+			if (ability.NeedsTarget()) {
+				if (state_.targetedEnemyIdx == kNoTarget) {
+					Log("%s ability needs a target", ability.name);
+					continue;
+				}
+				StartCastingAbility(i);
+			} else {
+				StartCastingAbility(i);
 			}
 		}
 		ImGui::EndTable();
@@ -140,7 +137,7 @@ void Game::CastAbility(Ability* ability, int targetEnemyIdx) {
 
 	state_.hero.mana = std::clamp(state_.hero.mana - ability->manaCost, 0, state_.hero.maxMana);
 
-	assert((ability->targetType == TargetType::kNoTarget) == (targetEnemyIdx == kNoTarget));
+	assert(ability->NeedsTarget() != (targetEnemyIdx == kNoTarget));
 
 	auto& enemies = state_.enemies;
 	for (auto& effect : ability->effects) {
@@ -302,17 +299,14 @@ bool Game::AdvanceTurn() {
 		auto& ability = hero.abilities[state_.castedAbilityIdx];
 
 		if (hero.castTime >= ability.castTime) {
-			switch (ability.targetType) {
-			case TargetType::kNoTarget:
-				CastAbility(&ability, kNoTarget);
-				break;
-			case TargetType::kEnemy:
+			if (ability.NeedsTarget()) {
 				if (state_.targetedEnemyIdx != -1) {
 					CastAbility(&ability, state_.targetedEnemyIdx);
 				} else {
 					Log("%s ability needs a target [when casting]", ability.name);
 				}
-				break;
+			} else {
+				CastAbility(&ability, kNoTarget);
 			}
 			finishedCasting = true;
 			state_.hero.castTime = 0;

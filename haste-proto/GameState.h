@@ -55,8 +55,7 @@ struct Ability {
 	int castTime = 1;
 	int manaCost = 10;
 
-	// TODO optimize this out
-	TargetType targetType = TargetType::kNoTarget;
+	bool NeedsTarget() const;
 	
 	std::vector<AbilityEffect> effects;
 };
