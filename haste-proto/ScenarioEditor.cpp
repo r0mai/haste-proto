@@ -81,8 +81,12 @@ bool ScenarioEditor::DrawUI() {
 
 	ImGui::PushItemWidth(120.0f);
 	if (ImGui::BeginTabBar("editor-tab-bar")) {
-		if (ImGui::BeginTabItem("Abilities")) {
-			DrawAbilitiesEditor(&scenario.hero.abilities);
+		if (ImGui::BeginTabItem("Hero")) {
+			DrawHeroEditor(&scenario.hero);
+			ImGui::EndTabItem();
+		}
+		if (ImGui::BeginTabItem("Enemies")) {
+			DrawEnemiesEditor(&scenario.enemies);
 			ImGui::EndTabItem();
 		}
 		ImGui::EndTabBar();
@@ -92,7 +96,13 @@ bool ScenarioEditor::DrawUI() {
 	return reload;
 }
 
+void ScenarioEditor::DrawHeroEditor(HeroData* data) {
+	ImGui_IntegerSlider("Max HP", &data->maxHp);
+	DrawAbilitiesEditor(&scenario.hero.abilities);
+}
+
 void ScenarioEditor::DrawAbilitiesEditor(std::vector<AbilityData>* data) {
+	ImGui::Text("Abilities:");
 	ImGui_VectorEditor("abilities", data, 8,
 		[](AbilityData* ability) { return ability->name; },
 		[this](AbilityData* ability) { DrawAbilityEditor(ability); },
@@ -158,6 +168,72 @@ void ScenarioEditor::DrawEffectEditor(HeroHealEffectData* data) {
 
 void ScenarioEditor::DrawEffectEditor(ManaRestoreEffectData* data) {
 	ImGui_IntegerSlider("mana", &data->mana);
+}
+
+void ScenarioEditor::DrawEnemiesEditor(std::vector<EnemyData>* data) {
+	ImGui_VectorEditor("enemies", data, 5,
+		[](EnemyData* enemy) {
+			return enemy->name.c_str();
+		},
+		[this](EnemyData* enemy) { DrawEnemyEditor(enemy); },
+		[]() {
+			EnemyData enemy;
+			enemy.name = "Goblin";
+			return enemy;
+		}
+	);
+}
+
+void ScenarioEditor::DrawEnemyEditor(EnemyData* data) {
+	ImGui::InputText("Name", &data->name);
+	ImGui_IntegerSlider("Max HP", &data->maxHp);
+	DrawSpellSequenceEditor(&data->sequence);
+}
+
+void ScenarioEditor::DrawSpellSequenceEditor(SpellSequenceData* data) {
+	ImGui::TextUnformatted("Spell sequence:");
+	DrawSpellListEditor(&data->spells);
+}
+
+void ScenarioEditor::DrawSpellListEditor(std::vector<SpellData>* data) {
+	for (int i = 0; i < data->size(); ++i) {
+		ImGui::PushID(i);
+		auto* item = &(*data)[i];
+		DrawSpellEditor(item);
+
+		ImGui::SameLine();
+		if (ImGui::Button("X")) {
+			data->erase(data->begin() + i);
+			ImGui::PopID();
+			continue;
+		}
+
+		ImGui::SameLine();
+		if (ImGui_DisabledButton("^", i <= 0)) {
+			std::swap((*data)[i], (*data)[i - 1]);
+			ImGui::PopID();
+			continue;
+		}
+
+		ImGui::SameLine();
+		if (ImGui_DisabledButton("v", i >= data->size() - 1)) {
+			std::swap((*data)[i], (*data)[i + 1]);
+			ImGui::PopID();
+			continue;
+		}
+
+		ImGui::PopID();
+	}
+
+	if (ImGui::Button("+")) {
+		data->push_back(SpellData{ .damage = 5, .castTime = 5 });
+	}
+}
+
+void ScenarioEditor::DrawSpellEditor(SpellData* data) {
+	ImGui_IntegerSlider("Cast", &data->castTime);
+	ImGui::SameLine();
+	ImGui_IntegerSlider("Damage", &data->damage);
 }
 
 } // namespace r0
