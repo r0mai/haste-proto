@@ -189,7 +189,7 @@ void ScenarioEditor::DrawSpellListEditor(std::vector<SpellData>* data) {
 		DrawSpellEditor(item);
 
 		ImGui::SameLine();
-		if (ImGui::Button("X")) {
+		if (ImGui_RedButton("X")) {
 			data->erase(data->begin() + i);
 			ImGui::PopID();
 			continue;

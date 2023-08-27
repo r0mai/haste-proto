@@ -50,6 +50,7 @@ void ImGui_HorizonalBar(
 );
 
 bool ImGui_DisabledButton(const char* label, bool disabled = true);
+bool ImGui_RedButton(const char* label);
 
 void ImGui_ResourceBar(
 	int value,
@@ -79,7 +80,7 @@ void ImGui_VectorEditor(
 		for (int i = 0; i < data->size(); ++i) {
 			auto* item = &(*data)[i];
 			if (ImGui::BeginTabItem(tabName(nameFunc(item), i).c_str())) {
-				if (ImGui::Button("Delete")) {
+				if (ImGui_RedButton("Delete")) {
 					data->erase(data->begin() + i);
 					ImGui::EndTabItem();
 					continue;

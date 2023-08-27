@@ -213,6 +213,15 @@ bool ImGui_DisabledButton(const char* label, bool disabled) {
 	return res;
 }
 
+bool ImGui_RedButton(const char* label) {
+	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.98f, 0.39f, 0.26f, 0.40f));
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.98f, 0.39f, 0.26f, 1.00f));
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.98f, 0.33f, 0.06f, 1.00f));
+	bool res = ImGui::Button(label);
+	ImGui::PopStyleColor(3);
+	return res;
+}
+
 void ImGui_ResourceBar(
 	int value,
 	int maxValue,
