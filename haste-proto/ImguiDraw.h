@@ -80,21 +80,21 @@ void ImGui_VectorEditor(
 		for (int i = 0; i < data->size(); ++i) {
 			auto* item = &(*data)[i];
 			if (ImGui::BeginTabItem(tabName(nameFunc(item), i).c_str())) {
-				if (ImGui_RedButton("Delete")) {
+				if (ImGui_RedButton("X")) {
 					data->erase(data->begin() + i);
 					ImGui::EndTabItem();
 					continue;
 				}
 
 				ImGui::SameLine();
-				if (ImGui_DisabledButton("Move Left", i <= 0)) {
+				if (ImGui_DisabledButton("<", i <= 0)) {
 					std::swap((*data)[i], (*data)[i - 1]);
 					ImGui::EndTabItem();
 					continue;
 				}
 
 				ImGui::SameLine();
-				if (ImGui_DisabledButton("Move Right", i >= data->size() - 1)) {
+				if (ImGui_DisabledButton(">", i >= data->size() - 1)) {
 					std::swap((*data)[i], (*data)[i + 1]);
 					ImGui::EndTabItem();
 					continue;
