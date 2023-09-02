@@ -148,6 +148,7 @@
     <ClCompile Include="imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ScenarioEditor.cpp" />
+    <ClCompile Include="Serialization.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="emscripten_mainloop_stub.h" />
@@ -164,9 +165,11 @@
     <ClInclude Include="imstb_rectpack.h" />
     <ClInclude Include="imstb_textedit.h" />
     <ClInclude Include="imstb_truetype.h" />
+    <ClInclude Include="json.hpp" />
     <ClInclude Include="Overloaded.h" />
     <ClInclude Include="Scenario.h" />
     <ClInclude Include="ScenarioEditor.h" />
+    <ClInclude Include="Serialization.h" />
     <ClInclude Include="tinyformat.h" />
     <ClInclude Include="ExpandedVariant.h" />
   </ItemGroup>

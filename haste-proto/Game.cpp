@@ -4,6 +4,7 @@
 #include <algorithm>
 #include "tinyformat.h"
 #include "Overloaded.h"
+#include "Serialization.h"
 
 namespace r0 {
 
@@ -22,6 +23,11 @@ void Game::Update() {
 void Game::Reload() {
 	state_ = GameState{ editor_.scenario };
 	logLines_.clear();
+
+	{
+		auto json = Write(editor_.scenario);
+		std::cout << json.dump(4) << std::endl;
+	}
 }
 
 void Game::LogicUpdate(float deltaTime) {

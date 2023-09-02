@@ -22,6 +22,9 @@
     <Filter Include="3rd\tinyformat">
       <UniqueIdentifier>{d9f8d7e0-dfd9-43b6-8d8a-cebd04c9f5c9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="3rd\json">
+      <UniqueIdentifier>{8632d6be-897a-42c2-8b11-362d160ec226}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -62,6 +65,9 @@
     </ClCompile>
     <ClCompile Include="imgui_stdlib.cpp">
       <Filter>3rd\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Serialization.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -121,6 +127,12 @@
     </ClInclude>
     <ClInclude Include="imgui_stdlib.h">
       <Filter>3rd\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="json.hpp">
+      <Filter>3rd\json</Filter>
+    </ClInclude>
+    <ClInclude Include="Serialization.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
