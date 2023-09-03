@@ -61,6 +61,9 @@ void ImGui_DrawAbilityEffect(AbilityEffect* effect) {
 		[](const ManaRestoreEffect& e) {
 			ImGui::Text("Mana +%d", e.mana);
 		},
+		[](const SlowEffect& e) {
+			ImGui::Text("Slow %d", e.slow);
+		},
 	}, *effect);
 }
 
@@ -80,22 +83,20 @@ bool ImGui_DrawEnemy(Enemy* enemy, bool selected) {
 
 	ImGui_VerticalSpacing(20.0f);
 
-	// SpellSequence
-	if (!enemy->sequence.spells.empty()) {
-		auto& sequence = enemy->sequence;
+	auto* nextSpell = enemy->GetNextSpell();
 
-		auto& nextSpell = sequence.spells[sequence.currentIdx];
-		ImGui_DrawSpell(&nextSpell);
+	// SpellSequence
+	if (nextSpell) {
+		ImGui_DrawSpell(nextSpell);
 
 		ImGui_VerticalSpacing(16.0f);
 
-		int turnsLeft = nextSpell.castTime - enemy->castTime;
+		int turnsLeft = nextSpell->castTime - enemy->castTime;
 		ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(246, 190, 0, 255));
 		ImGui_CenteredTextUnformatted(tfm::format("%s", turnsLeft).c_str());
 		ImGui_CenteredTextUnformatted(tfm::format("turn%s", turnsLeft > 1 ? "s" : "").c_str());
 		ImGui::PopStyleColor();
 	}
-
 
 	auto [isPressed, _] = ImGui_HighlightButton(origCursorPos, availSize, selected);
 	ImGui::PopID();

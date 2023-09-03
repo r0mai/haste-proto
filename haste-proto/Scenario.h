@@ -86,17 +86,29 @@ struct ManaRestoreEffectData {
 	}
 };
 
+// increases cast time of current spell of the enemy
+struct SlowEffectData {
+	int slow = 0;
+
+	template<typename Self, typename Visitor>
+	static void ApplyVisitor(Self& self, Visitor& visitor) {
+		visitor.Visit(self.slow, "slow");
+	}
+};
+
 using AbilityEffectData = ExpandedVariant<
 	DamageEffectData,
 	BlockEffectData,
 	HeroHealEffectData,
-	ManaRestoreEffectData
+	ManaRestoreEffectData,
+	SlowEffectData
 >;
 
 inline const char* AbilityEffectName(const DamageEffectData&) { return "Damage"; }
 inline const char* AbilityEffectName(const BlockEffectData&) { return "Block"; }
 inline const char* AbilityEffectName(const HeroHealEffectData&) { return "HeroHeal"; }
 inline const char* AbilityEffectName(const ManaRestoreEffectData&) { return "ManaRestore"; }
+inline const char* AbilityEffectName(const SlowEffectData&) { return "Slow"; }
 
 struct AbilityData {
 	std::string name;

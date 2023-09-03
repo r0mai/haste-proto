@@ -137,6 +137,8 @@ void ScenarioEditor::DrawEffectEditor(AbilityEffectData* data) {
 	ImGui::RadioButton("HeroHeal", &data->which, data->IndexOf<HeroHealEffectData>());
 	ImGui::SameLine();
 	ImGui::RadioButton("ManaRestore", &data->which, data->IndexOf<ManaRestoreEffectData>());
+	ImGui::SameLine();
+	ImGui::RadioButton("Slow", &data->which, data->IndexOf<SlowEffectData>());
 
 	data->Visit<void>([this](auto& subData) {
 		DrawEffectEditor(&subData);
@@ -164,6 +166,10 @@ void ScenarioEditor::DrawEffectEditor(HeroHealEffectData* data) {
 
 void ScenarioEditor::DrawEffectEditor(ManaRestoreEffectData* data) {
 	ImGui_IntegerSlider("mana", &data->mana);
+}
+
+void ScenarioEditor::DrawEffectEditor(SlowEffectData* data) {
+	ImGui_IntegerSlider("slow", &data->slow);
 }
 
 void ScenarioEditor::DrawEnemiesEditor(std::vector<EnemyData>* data) {

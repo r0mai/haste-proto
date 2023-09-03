@@ -46,6 +46,8 @@ private:
 
 	void RestoreMana(int mana);
 
+	void Slow(Enemy* target, int slow);
+
 	void ApplyBlock(int block);
 
 	// returns true if hero's casting is finished

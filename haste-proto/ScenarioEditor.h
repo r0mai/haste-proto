@@ -24,6 +24,7 @@ private:
 	void DrawEffectEditor(BlockEffectData* data);
 	void DrawEffectEditor(HeroHealEffectData* data);
 	void DrawEffectEditor(ManaRestoreEffectData* data);
+	void DrawEffectEditor(SlowEffectData* data);
 
 	void DrawEnemiesEditor(std::vector<EnemyData>* data);
 	void DrawEnemyEditor(EnemyData* data);

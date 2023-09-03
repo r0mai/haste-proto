@@ -181,6 +181,10 @@ void Game::ApplyAbilityEffect(AbilityEffect* effect, int targetEnemyIdx) {
 		[&](const ManaRestoreEffect& e) {
 			RestoreMana(e.mana);
 		},
+		[&](const SlowEffect& e) {
+			assert(targetEnemyIdx != kNoTarget);
+			Slow(&state_.enemies[targetEnemyIdx], e.slow);
+		},
 	}, *effect);
 }
 
@@ -207,6 +211,11 @@ void Game::HealHero(int heal) {
 void Game::RestoreMana(int mana) {
 	assert(mana >= 0);
 	state_.hero.mana = std::min(state_.hero.mana + mana, state_.hero.maxMana);
+}
+
+void Game::Slow(Enemy* target, int slow) {
+	assert(slow >= 0);
+	target->castTime -= slow;
 }
 
 void Game::ApplyBlock(int block) {
@@ -312,16 +321,15 @@ bool Game::AdvanceTurn() {
 
 	auto& enemies = state_.enemies;
 	for (auto& enemy : enemies) {
-		if (enemy.sequence.spells.empty()) {
+		auto* spell = enemy.GetNextSpell();
+		if (!spell) {
 			continue;
 		}
 		++enemy.castTime;
-		auto& currentSpell = enemy.sequence.spells[enemy.sequence.currentIdx];
-		if (enemy.castTime >= currentSpell.castTime) {
+		if (enemy.castTime >= spell->castTime) {
 			// casting enemy spell
-			DamageHero(currentSpell.damage);
-			enemy.castTime = 0;
-			enemy.sequence.currentIdx = (enemy.sequence.currentIdx + 1) % enemy.sequence.spells.size();
+			DamageHero(spell->damage);
+			enemy.AdvanceToNextSpell();
 		} 
 	}
 

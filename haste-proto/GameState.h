@@ -33,18 +33,23 @@ struct Enemy {
 	SpellSequence sequence;
 
 	int castTime = 0;
+
+	Spell* GetNextSpell();
+	void AdvanceToNextSpell();
 };
 
 using DamageEffect = DamageEffectData;
 using BlockEffect = BlockEffectData;
 using HeroHealEffect = HeroHealEffectData;
 using ManaRestoreEffect = ManaRestoreEffectData;
+using SlowEffect = SlowEffectData;
 
 using AbilityEffect = std::variant<
 	DamageEffect,
 	BlockEffect,
 	HeroHealEffect,
-	ManaRestoreEffect
+	ManaRestoreEffect,
+	SlowEffect
 >;
 
 struct Ability {

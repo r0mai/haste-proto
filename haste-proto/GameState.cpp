@@ -34,6 +34,19 @@ Enemy::Enemy(const EnemyData& enemy)
 	, maxHp(enemy.maxHp)
 	, sequence(enemy.sequence) {}
 
+Spell* Enemy::GetNextSpell() {
+	if (sequence.spells.empty()) {
+		return nullptr;
+	}
+
+	return &sequence.spells[sequence.currentIdx];
+}
+
+void Enemy::AdvanceToNextSpell() {
+	castTime = 0;
+	sequence.currentIdx = (sequence.currentIdx + 1) % sequence.spells.size();
+}
+
 Ability::Ability(const AbilityData& data)
 	: name(data.name)
 	, castTime(data.castTime)
@@ -43,9 +56,8 @@ Ability::Ability(const AbilityData& data)
 bool Ability::NeedsTarget() const {
 	for (auto& effect : effects) {
 		bool needsTarget = std::visit(Overloaded{
-			[](const DamageEffect& e) {
-				return e.radius >= 0;
-			},
+			[](const DamageEffect& e) { return e.radius >= 0; },
+			[](const SlowEffect& e) { return true; },
 			[](const auto&) { return false; }
 		}, effect);
 		if (needsTarget) {
