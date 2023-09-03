@@ -75,7 +75,7 @@ private:
 		StateGuard guard{ *this };
 		current_ = &Current()["_fields_"];
 
-		value.Visit<void>(
+		value.template Visit<void>(
 			[this](const auto& subValue) {
 				VisitValue(subValue);
 			}
@@ -189,7 +189,7 @@ private:
 		StateGuard guard{ *this };
 		current_ = &fieldsField;
 
-		value.Visit<void>(
+		value.template Visit<void>(
 			[this](auto& subValue) {
 				VisitValue(subValue);
 			}
