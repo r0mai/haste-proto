@@ -64,6 +64,10 @@ void ImGui_HealthBar(
 
 void ImGui_IntegerSlider(const char* label, int* v);
 
+bool ImGui_BeginCenteredTable(const char* label, int columns, float maxColumnSize);
+
+void ImGui_VerticalSpacing(float spacing);
+
 template<typename T, typename NameFunc, typename DrawFunc, typename NewItemFunc>
 void ImGui_VectorEditor(
 	const char* label,

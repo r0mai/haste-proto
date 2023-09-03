@@ -224,21 +224,8 @@ void Game::DrawManaBar() {
 
 void Game::DrawEnemyBar() {
 	auto& enemies = state_.enemies;
-	if (enemies.empty()) {
-		return;
-	}
 
-	auto windowWidth = ImGui::GetContentRegionAvail().x;
-	auto columnWidth = std::min(256.0f, windowWidth / enemies.size());
-
-	float padding = (windowWidth - columnWidth * enemies.size()) / 2.0f;
-	ImGui::Indent(padding);
-
-	if (ImGui::BeginTable("enemy-table", int(enemies.size()))) {
-		for (int i = 0; i < enemies.size(); ++i) {
-			ImGui::TableSetupColumn(std::to_string(i).c_str(), ImGuiTableColumnFlags_WidthFixed, columnWidth);
-		}
-
+	if (ImGui_BeginCenteredTable("enemy-table", enemies.size(), 256.0f)) {
 		for (int i = 0; i < enemies.size(); ++i) {
 			auto& enemy = enemies[i];
 			ImGui::TableNextColumn();

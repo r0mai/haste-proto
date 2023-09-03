@@ -2,6 +2,8 @@
 #include "tinyformat.h"
 #include "Overloaded.h"
 
+#include <algorithm>
+
 namespace r0 {
 
 void ImGui_SetNextWindowPosition(float x, float y, float w, float h) {
@@ -76,27 +78,22 @@ bool ImGui_DrawEnemy(Enemy* enemy, bool selected) {
 
 	ImGui_HorizonalBar(kBarMaxWidth, kHorizonalBarHeight, enemy->hp, enemy->maxHp, kHPBarColor);
 
+	ImGui_VerticalSpacing(20.0f);
+
 	// SpellSequence
 	if (!enemy->sequence.spells.empty()) {
 		auto& sequence = enemy->sequence;
-		// spells to reveal
-		int revealedSpells = 3;
-		if (ImGui::BeginTable("spell-table", revealedSpells)) {
-			for (int i = 0; i < revealedSpells; ++i) {
-				ImGui::TableNextColumn();
-				int spellIdx = (sequence.currentIdx + i) % sequence.spells.size();
-				auto& spell = sequence.spells[spellIdx];
-				ImGui_DrawSpell(&spell);
-			}
-			ImGui::EndTable();
-		}
 
-		auto spellCastTime = sequence.spells[sequence.currentIdx].castTime;
+		auto& nextSpell = sequence.spells[sequence.currentIdx];
+		ImGui_DrawSpell(&nextSpell);
 
-		ImGui_HorizonalBar(
-			kBarMaxWidth, kHorizonalBarHeight,
-			spellCastTime - enemy->castTime, spellCastTime,
-			kCastTimeColor);
+		ImGui_VerticalSpacing(16.0f);
+
+		int turnsLeft = nextSpell.castTime - enemy->castTime;
+		ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(246, 190, 0, 255));
+		ImGui_CenteredTextUnformatted(tfm::format("%s", turnsLeft).c_str());
+		ImGui_CenteredTextUnformatted(tfm::format("turn%s", turnsLeft > 1 ? "s" : "").c_str());
+		ImGui::PopStyleColor();
 	}
 
 
@@ -107,7 +104,6 @@ bool ImGui_DrawEnemy(Enemy* enemy, bool selected) {
 
 void ImGui_DrawSpell(Spell* spell) {
 	ImGui_CenteredTextUnformatted(tfm::format("%s damage", spell->damage).c_str());
-	ImGui_CenteredTextUnformatted(tfm::format("%s turns", spell->castTime).c_str());
 }
 
 void ImGui_CenteredTextUnformatted(const char* text) {
@@ -283,6 +279,32 @@ void ImGui_HealthBar(
 
 void ImGui_IntegerSlider(const char* label, int* v) {
 	ImGui::DragInt(label, v, 0.2f, 0, 1000);
+}
+
+bool ImGui_BeginCenteredTable(const char* label, int columns, float maxColumnSize) {
+	if (columns == 0) {
+		return false;
+	}
+
+	auto windowWidth = ImGui::GetContentRegionAvail().x;
+	auto columnWidth = std::min(maxColumnSize, windowWidth / columns);
+
+	float padding = (windowWidth - columnWidth * columns) / 2.0f;
+	ImGui::Indent(padding);
+
+	bool begin = ImGui::BeginTable(label, columns);
+
+	if (begin) {
+		for (int i = 0; i < columns; ++i) {
+			ImGui::TableSetupColumn(nullptr, ImGuiTableColumnFlags_WidthFixed, columnWidth);
+		}
+	}
+
+	return begin;
+}
+
+void ImGui_VerticalSpacing(float spacing) {
+	ImGui::Dummy(ImVec2{ 0.0f, spacing });
 }
 
 } // namespace r0
