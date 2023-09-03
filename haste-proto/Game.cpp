@@ -26,6 +26,9 @@ void Game::Reload() {
 
 	{
 		auto json = Write(editor_.scenario);
+		editor_.scenario = {};
+		Read(json, editor_.scenario);
+		json = Write(editor_.scenario);
 		std::cout << json.dump(4) << std::endl;
 	}
 }
