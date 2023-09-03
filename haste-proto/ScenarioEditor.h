@@ -13,6 +13,7 @@ public:
 
 	ScenarioData scenario;
 
+
 private:
 	void DrawHeroEditor(HeroData* data);
 	void DrawAbilitiesEditor(std::vector<AbilityData>* data);
@@ -29,6 +30,12 @@ private:
 	void DrawSpellSequenceEditor(SpellSequenceData* data);
 	void DrawSpellListEditor(std::vector<SpellData>* data);
 	void DrawSpellEditor(SpellData* data);
+
+	void DrawSaveTab(ScenarioData* data);
+	bool DrawLoadTab(ScenarioData* data);
+
+	std::string loadStr_;
+	std::string loadStatusStr_;
 };
 
 } // namespace r0

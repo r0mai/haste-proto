@@ -90,7 +90,7 @@ public:
 	template<typename T>
 	bool Read(T& value) {
 		VisitValue(value);
-		return hasError_;
+		return !hasError_;
 	}
 
 	template<typename T>

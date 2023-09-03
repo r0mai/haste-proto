@@ -3,6 +3,7 @@
 
 #include "ScenarioEditor.h"
 #include "ImguiDraw.h"
+#include "Serialization.h"
 
 #include "tinyformat.h"
 
@@ -81,6 +82,14 @@ bool ScenarioEditor::DrawUI() {
 		}
 		if (ImGui::BeginTabItem("Enemies")) {
 			DrawEnemiesEditor(&scenario.enemies);
+			ImGui::EndTabItem();
+		}
+		if (ImGui::BeginTabItem("Save")) {
+			DrawSaveTab(&scenario);
+			ImGui::EndTabItem();
+		}
+		if (ImGui::BeginTabItem("Load")) {
+			reload |= DrawLoadTab(&scenario);
 			ImGui::EndTabItem();
 		}
 		ImGui::EndTabBar();
@@ -221,6 +230,40 @@ void ScenarioEditor::DrawSpellEditor(SpellData* data) {
 	ImGui_IntegerSlider("Cast", &data->castTime);
 	ImGui::SameLine();
 	ImGui_IntegerSlider("Damage", &data->damage);
+}
+
+void ScenarioEditor::DrawSaveTab(ScenarioData* data) {
+	auto jsonStr = Write(*data).dump(2);
+	ImGui::InputTextMultiline("JSON", &jsonStr, ImVec2{ 400, 220 }, ImGuiInputTextFlags_ReadOnly);
+}
+
+bool ScenarioEditor::DrawLoadTab(ScenarioData* data) {
+	ImGui::InputTextMultiline("JSON", &loadStr_, ImVec2{ 400, 220 });
+
+	bool reload = false;
+	if (ImGui::Button("Load")) {
+		// TODO error checking
+		auto json = nlohmann::json::parse(loadStr_, nullptr, /* allow exceptions */ false);
+
+		if (json.is_discarded()) {
+			loadStatusStr_ = "Failed to parse JSON";
+		} else {
+			ScenarioData newData;
+
+			if (!Read(json, newData)) {
+				loadStatusStr_ = "Failed to read JSON";
+			} else {
+				loadStatusStr_ = "Success";
+				*data = newData;
+				reload = true;
+			}
+		}
+	}
+
+	ImGui::SameLine();
+	ImGui::TextUnformatted(loadStatusStr_.c_str());
+
+	return reload;
 }
 
 } // namespace r0
