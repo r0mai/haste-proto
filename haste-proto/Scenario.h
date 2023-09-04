@@ -46,6 +46,8 @@ struct EnemyData {
 };
 
 struct DamageEffectData {
+	static constexpr const char* kName = "DamageEffect";
+
 	int damage = 0;
 
 	// 0: just the target
@@ -60,6 +62,8 @@ struct DamageEffectData {
 };
 
 struct BlockEffectData {
+	static constexpr const char* kName = "BlockEffect";
+
 	int block = 0;
 
 	template<typename Self, typename Visitor>
@@ -69,6 +73,8 @@ struct BlockEffectData {
 };
 
 struct HeroHealEffectData {
+	static constexpr const char* kName = "HeroHealEffect";
+
 	int heal = 0;
 
 	template<typename Self, typename Visitor>
@@ -78,6 +84,8 @@ struct HeroHealEffectData {
 };
 
 struct ManaRestoreEffectData {
+	static constexpr const char* kName = "ManaRestoreEffect";
+
 	int mana = 0;
 
 	template<typename Self, typename Visitor>
@@ -88,6 +96,8 @@ struct ManaRestoreEffectData {
 
 // increases cast time of current spell of the enemy
 struct SlowEffectData {
+	static constexpr const char* kName = "SlowEffect";
+
 	int slow = 0;
 
 	template<typename Self, typename Visitor>
@@ -103,12 +113,6 @@ using AbilityEffectData = ExpandedVariant<
 	ManaRestoreEffectData,
 	SlowEffectData
 >;
-
-inline const char* AbilityEffectName(const DamageEffectData&) { return "Damage"; }
-inline const char* AbilityEffectName(const BlockEffectData&) { return "Block"; }
-inline const char* AbilityEffectName(const HeroHealEffectData&) { return "HeroHeal"; }
-inline const char* AbilityEffectName(const ManaRestoreEffectData&) { return "ManaRestore"; }
-inline const char* AbilityEffectName(const SlowEffectData&) { return "Slow"; }
 
 struct AbilityData {
 	std::string name;

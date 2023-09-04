@@ -74,7 +74,7 @@ ScenarioEditor::ScenarioEditor() {
 bool ScenarioEditor::DrawUI() {
 	bool reload = ImGui::Button("Restart");
 
-	ImGui::PushItemWidth(120.0f);
+	ImGui::PushItemWidth(160.0f);
 	if (ImGui::BeginTabBar("editor-tab-bar")) {
 		if (ImGui::BeginTabItem("Hero")) {
 			DrawHeroEditor(&scenario.hero);
@@ -120,7 +120,7 @@ void ScenarioEditor::DrawAbilityEditor(AbilityData* data) {
 	ImGui::TextUnformatted("Effects:");
 	ImGui_VectorEditor("effects", &data->effects, 8,
 		[](AbilityEffectData* effect) {
-			return effect->Visit<const char*>([](const auto& x) { return AbilityEffectName(x); });
+			return effect->Visit<const char*>([]<typename T>(const T&) { return T::kName; });
 		},
 		[this](AbilityEffectData* effect) { DrawEffectEditor(effect); },
 		[]() { return AbilityEffectData{}; }
@@ -128,17 +128,7 @@ void ScenarioEditor::DrawAbilityEditor(AbilityData* data) {
 }
 
 void ScenarioEditor::DrawEffectEditor(AbilityEffectData* data) {
-	ImGui::TextUnformatted("Type:");
-	ImGui::SameLine();
-	ImGui::RadioButton("Damage", &data->which, data->IndexOf<DamageEffectData>());
-	ImGui::SameLine();
-	ImGui::RadioButton("Block", &data->which, data->IndexOf<BlockEffectData>());
-	ImGui::SameLine();
-	ImGui::RadioButton("HeroHeal", &data->which, data->IndexOf<HeroHealEffectData>());
-	ImGui::SameLine();
-	ImGui::RadioButton("ManaRestore", &data->which, data->IndexOf<ManaRestoreEffectData>());
-	ImGui::SameLine();
-	ImGui::RadioButton("Slow", &data->which, data->IndexOf<SlowEffectData>());
+	VariantTypeChooser("Type", data);
 
 	data->Visit<void>([this](auto& subData) {
 		DrawEffectEditor(&subData);
