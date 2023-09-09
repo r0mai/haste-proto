@@ -1,12 +1,12 @@
 #pragma once
 
-#include "Scenario.h"
+#include "Data.h"
 
 namespace r0 {
 
-class ScenarioEditor {
+class ScenarioDataEditor {
 public:
-	ScenarioEditor();
+	ScenarioDataEditor();
 
 	// returns true if scenario should be reloaded
 	bool DrawUI();

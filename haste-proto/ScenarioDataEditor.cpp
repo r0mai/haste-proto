@@ -1,7 +1,7 @@
 #include "imgui.h"
 #include "imgui_stdlib.h"
 
-#include "ScenarioEditor.h"
+#include "ScenarioDataEditor.h"
 #include "ImguiDraw.h"
 #include "Serialization.h"
 
@@ -9,7 +9,7 @@
 
 namespace r0 {
 
-ScenarioEditor::ScenarioEditor() {
+ScenarioDataEditor::ScenarioDataEditor() {
 	SkillData strikeSkills{
 		.name = "Strike",
 		.castTime = 5,
@@ -71,7 +71,7 @@ ScenarioEditor::ScenarioEditor() {
 	scenario.enemies.push_back(EnemyData{ "Dumbledore", 100, SpellSequenceData({SpellData{10}, SpellData{20}, SpellData{15}}) });
 }
 
-bool ScenarioEditor::DrawUI() {
+bool ScenarioDataEditor::DrawUI() {
 	bool reload = ImGui::Button("Restart");
 
 	ImGui::PushItemWidth(160.0f);
@@ -99,12 +99,12 @@ bool ScenarioEditor::DrawUI() {
 	return reload;
 }
 
-void ScenarioEditor::DrawHeroEditor(HeroData* data) {
+void ScenarioDataEditor::DrawHeroEditor(HeroData* data) {
 	ImGui_IntegerSlider("Max HP", &data->maxHp);
 	DrawAbilitiesEditor(&scenario.hero.skills);
 }
 
-void ScenarioEditor::DrawAbilitiesEditor(std::vector<SkillData>* data) {
+void ScenarioDataEditor::DrawAbilitiesEditor(std::vector<SkillData>* data) {
 	ImGui::Text("Abilities:");
 	ImGui_VectorEditor("abilities", data, 8,
 		[](SkillData* ability) { return ability->name; },
@@ -113,7 +113,7 @@ void ScenarioEditor::DrawAbilitiesEditor(std::vector<SkillData>* data) {
 	);
 }
 
-void ScenarioEditor::DrawAbilityEditor(SkillData* data) {
+void ScenarioDataEditor::DrawAbilityEditor(SkillData* data) {
 	ImGui::InputText("Name", &data->name);
 	ImGui::SameLine();
 	ImGui_IntegerSlider("Mana cost", &data->manaCost);
@@ -129,7 +129,7 @@ void ScenarioEditor::DrawAbilityEditor(SkillData* data) {
 	);
 }
 
-void ScenarioEditor::DrawEffectEditor(SkillEffectData* data) {
+void ScenarioDataEditor::DrawEffectEditor(SkillEffectData* data) {
 	ImGui_VariantTypeChooser("Type", data);
 
 	data->Visit<void>([this](auto& subData) {
@@ -137,7 +137,7 @@ void ScenarioEditor::DrawEffectEditor(SkillEffectData* data) {
 	});
 }
 
-void ScenarioEditor::DrawEffectEditor(DamageEffectData* data) {
+void ScenarioDataEditor::DrawEffectEditor(DamageEffectData* data) {
 	ImGui_IntegerSlider("damage", &data->damage);
 	bool isAOE = data->radius == -1;
 	if (ImGui::Checkbox("AOE", &isAOE)) {
@@ -149,23 +149,23 @@ void ScenarioEditor::DrawEffectEditor(DamageEffectData* data) {
 	}
 }
 
-void ScenarioEditor::DrawEffectEditor(BlockEffectData* data) {
+void ScenarioDataEditor::DrawEffectEditor(BlockEffectData* data) {
 	ImGui_IntegerSlider("block", &data->block);
 }
 
-void ScenarioEditor::DrawEffectEditor(HeroHealEffectData* data) {
+void ScenarioDataEditor::DrawEffectEditor(HeroHealEffectData* data) {
 	ImGui_IntegerSlider("heal", &data->heal);
 }
 
-void ScenarioEditor::DrawEffectEditor(ManaRestoreEffectData* data) {
+void ScenarioDataEditor::DrawEffectEditor(ManaRestoreEffectData* data) {
 	ImGui_IntegerSlider("mana", &data->mana);
 }
 
-void ScenarioEditor::DrawEffectEditor(SlowEffectData* data) {
+void ScenarioDataEditor::DrawEffectEditor(SlowEffectData* data) {
 	ImGui_IntegerSlider("slow", &data->slow);
 }
 
-void ScenarioEditor::DrawEnemiesEditor(std::vector<EnemyData>* data) {
+void ScenarioDataEditor::DrawEnemiesEditor(std::vector<EnemyData>* data) {
 	ImGui_VectorEditor("enemies", data, 5,
 		[](EnemyData* enemy) {
 			return enemy->name.c_str();
@@ -179,18 +179,18 @@ void ScenarioEditor::DrawEnemiesEditor(std::vector<EnemyData>* data) {
 	);
 }
 
-void ScenarioEditor::DrawEnemyEditor(EnemyData* data) {
+void ScenarioDataEditor::DrawEnemyEditor(EnemyData* data) {
 	ImGui::InputText("Name", &data->name);
 	ImGui_IntegerSlider("Max HP", &data->maxHp);
 	DrawSpellSequenceEditor(&data->sequence);
 }
 
-void ScenarioEditor::DrawSpellSequenceEditor(SpellSequenceData* data) {
+void ScenarioDataEditor::DrawSpellSequenceEditor(SpellSequenceData* data) {
 	ImGui::TextUnformatted("Spell sequence:");
 	DrawSpellListEditor(&data->spells);
 }
 
-void ScenarioEditor::DrawSpellListEditor(std::vector<SpellData>* data) {
+void ScenarioDataEditor::DrawSpellListEditor(std::vector<SpellData>* data) {
 	for (int i = 0; i < data->size(); ++i) {
 		ImGui::PushID(i);
 		auto* item = &(*data)[i];
@@ -225,18 +225,18 @@ void ScenarioEditor::DrawSpellListEditor(std::vector<SpellData>* data) {
 	}
 }
 
-void ScenarioEditor::DrawSpellEditor(SpellData* data) {
+void ScenarioDataEditor::DrawSpellEditor(SpellData* data) {
 	ImGui_IntegerSlider("Cast", &data->castTime);
 	ImGui::SameLine();
 	ImGui_IntegerSlider("Damage", &data->damage);
 }
 
-void ScenarioEditor::DrawSaveTab(ScenarioData* data) {
+void ScenarioDataEditor::DrawSaveTab(ScenarioData* data) {
 	auto jsonStr = Write(*data).dump(2);
 	ImGui::InputTextMultiline("JSON", &jsonStr, ImVec2{ 400, 220 }, ImGuiInputTextFlags_ReadOnly);
 }
 
-bool ScenarioEditor::DrawLoadTab(ScenarioData* data) {
+bool ScenarioDataEditor::DrawLoadTab(ScenarioData* data) {
 	ImGui::InputTextMultiline("JSON", &loadStr_, ImVec2{ 400, 220 });
 
 	bool reload = false;

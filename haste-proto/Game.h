@@ -2,7 +2,7 @@
 
 #include "ImguiDraw.h"
 #include "GameState.h"
-#include "ScenarioEditor.h"
+#include "ScenarioDataEditor.h"
 #include <GLFW/glfw3.h>
 #include <glm/vec2.hpp>
 
@@ -102,7 +102,7 @@ private:
 
 
 	GLFWwindow* window_;
-	ScenarioEditor editor_;
+	ScenarioDataEditor editor_;
 	GameState state_;
 
 	std::vector<std::string> logLines_;

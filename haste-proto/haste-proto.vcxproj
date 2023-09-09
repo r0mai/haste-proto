@@ -147,7 +147,7 @@
     <ClCompile Include="imgui_tables.cpp" />
     <ClCompile Include="imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="ScenarioEditor.cpp" />
+    <ClCompile Include="ScenarioDataEditor.cpp" />
     <ClCompile Include="Serialization.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -167,8 +167,8 @@
     <ClInclude Include="imstb_truetype.h" />
     <ClInclude Include="json.hpp" />
     <ClInclude Include="Overloaded.h" />
-    <ClInclude Include="Scenario.h" />
-    <ClInclude Include="ScenarioEditor.h" />
+    <ClInclude Include="Data.h" />
+    <ClInclude Include="ScenarioDataEditor.h" />
     <ClInclude Include="Serialization.h" />
     <ClInclude Include="tinyformat.h" />
     <ClInclude Include="ExpandedVariant.h" />

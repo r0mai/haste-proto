@@ -60,7 +60,7 @@
     <ClCompile Include="GameState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ScenarioEditor.cpp">
+    <ClCompile Include="ScenarioDataEditor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="imgui_stdlib.cpp">
@@ -116,10 +116,10 @@
     <ClInclude Include="Overloaded.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Scenario.h">
+    <ClInclude Include="Data.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ScenarioEditor.h">
+    <ClInclude Include="ScenarioDataEditor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ExpandedVariant.h">
