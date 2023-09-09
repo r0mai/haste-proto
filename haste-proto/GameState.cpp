@@ -7,18 +7,18 @@ namespace r0 {
 
 namespace {
 
-std::vector<AbilityEffect> Convert(const std::vector<AbilityEffectData>& data) {
-	std::vector<AbilityEffect> res(data.size());
+std::vector<SkillEffect> Convert(const std::vector<SkillEffectData>& data) {
+	std::vector<SkillEffect> res(data.size());
 	for (int i = 0; i < data.size(); ++i) {
 		res[i] = data[i].ToVariant();
 	}
 	return res;
 }
 
-std::vector<Ability> Convert(const std::vector<AbilityData>& data) {
-	std::vector<Ability> res(data.size());
+std::vector<Skill> Convert(const std::vector<SkillData>& data) {
+	std::vector<Skill> res(data.size());
 	for (int i = 0; i < data.size(); ++i) {
-		res[i] = Ability(data[i]);
+		res[i] = Skill(data[i]);
 	}
 	return res;
 }
@@ -47,13 +47,13 @@ void Enemy::AdvanceToNextSpell() {
 	sequence.currentIdx = (sequence.currentIdx + 1) % sequence.spells.size();
 }
 
-Ability::Ability(const AbilityData& data)
+Skill::Skill(const SkillData& data)
 	: name(data.name)
 	, castTime(data.castTime)
 	, manaCost(data.manaCost)
 	, effects(Convert(data.effects)) {}
 
-bool Ability::NeedsTarget() const {
+bool Skill::NeedsTarget() const {
 	for (auto& effect : effects) {
 		bool needsTarget = std::visit(Overloaded{
 			[](const DamageEffect& e) { return e.radius >= 0; },
@@ -68,7 +68,7 @@ bool Ability::NeedsTarget() const {
 }
 
 Hero::Hero(const HeroData& data)
-	: abilities(Convert(data.abilities))
+	: skills(Convert(data.skills))
 	, hp(data.maxHp)
 	, maxHp(data.maxHp)
 	, mana(data.maxMana)

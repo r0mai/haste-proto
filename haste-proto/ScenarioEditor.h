@@ -16,10 +16,10 @@ public:
 
 private:
 	void DrawHeroEditor(HeroData* data);
-	void DrawAbilitiesEditor(std::vector<AbilityData>* data);
-	void DrawAbilityEditor(AbilityData* data);
+	void DrawAbilitiesEditor(std::vector<SkillData>* data);
+	void DrawAbilityEditor(SkillData* data);
 
-	void DrawEffectEditor(AbilityEffectData* data);
+	void DrawEffectEditor(SkillEffectData* data);
 	void DrawEffectEditor(DamageEffectData* data);
 	void DrawEffectEditor(BlockEffectData* data);
 	void DrawEffectEditor(HeroHealEffectData* data);

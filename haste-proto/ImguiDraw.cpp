@@ -11,28 +11,28 @@ void ImGui_SetNextWindowPosition(float x, float y, float w, float h) {
 	ImGui::SetNextWindowSize(ImVec2{ w, h });
 }
 
-bool ImGui_DrawAbility(Ability* ability) {
-	ImGui::PushID(ability);
+bool ImGui_DrawSkill(Skill* skill) {
+	ImGui::PushID(skill);
 
 	auto origCursorPos = ImGui::GetCursorPos();
 	auto availSize = ImGui::GetContentRegionAvail();
 
-	ImGui::TextUnformatted(ability->name.c_str());
-	ImGui::Text("Time: %d", ability->castTime);
-	ImGui::Text("Cost: %d", ability->manaCost);
+	ImGui::TextUnformatted(skill->name.c_str());
+	ImGui::Text("Time: %d", skill->castTime);
+	ImGui::Text("Cost: %d", skill->manaCost);
 
-	if (ability->effects.size() == 1) {
-		ImGui_DrawAbilityEffect(&ability->effects[0]);
+	if (skill->effects.size() == 1) {
+		ImGui_DrawSkillEffect(&skill->effects[0]);
 	} else {
-		ImGui::Text("%d effects", int(ability->effects.size()));
+		ImGui::Text("%d effects", int(skill->effects.size()));
 	}
 
 	auto [isPressed, isHovered] = ImGui_HighlightButton(origCursorPos, availSize, false);
 
 	if (isHovered) {
 		ImGui::BeginTooltip();
-		for (auto& effect : ability->effects) {
-			ImGui_DrawAbilityEffect(&effect);
+		for (auto& effect : skill->effects) {
+			ImGui_DrawSkillEffect(&effect);
 		}
 		ImGui::EndTooltip();
 	}
@@ -41,7 +41,7 @@ bool ImGui_DrawAbility(Ability* ability) {
 	return isPressed;
 }
 
-void ImGui_DrawAbilityEffect(AbilityEffect* effect) {
+void ImGui_DrawSkillEffect(SkillEffect* effect) {
 	std::visit(Overloaded{
 		[&](const DamageEffect& e) {
 			if (e.radius == -1) {

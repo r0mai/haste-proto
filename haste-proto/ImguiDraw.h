@@ -24,8 +24,8 @@ void ImGui_CenteredTextUnformatted(const char* text);
 // [0, 1]
 void ImGui_AlignedTextUnformatted(const char* text, const ImVec2& align);
 
-bool ImGui_DrawAbility(Ability* ability);
-void ImGui_DrawAbilityEffect(AbilityEffect* effect);
+bool ImGui_DrawSkill(Skill* skill);
+void ImGui_DrawSkillEffect(SkillEffect* effect);
 bool ImGui_DrawEnemy(Enemy* enemy, bool selected);
 void ImGui_DrawSpell(Spell* spell);
 

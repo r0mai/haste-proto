@@ -106,7 +106,7 @@ struct SlowEffectData {
 	}
 };
 
-using AbilityEffectData = ExpandedVariant<
+using SkillEffectData = ExpandedVariant<
 	DamageEffectData,
 	BlockEffectData,
 	HeroHealEffectData,
@@ -114,12 +114,12 @@ using AbilityEffectData = ExpandedVariant<
 	SlowEffectData
 >;
 
-struct AbilityData {
+struct SkillData {
 	std::string name;
 	int castTime = 1;
 	int manaCost = 10;
 	
-	std::vector<AbilityEffectData> effects;
+	std::vector<SkillEffectData> effects;
 
 	template<typename Self, typename Visitor>
 	static void ApplyVisitor(Self& self, Visitor& visitor) {
@@ -131,13 +131,13 @@ struct AbilityData {
 };
 
 struct HeroData {
-	std::vector<AbilityData> abilities;
+	std::vector<SkillData> skills;
 	int maxHp = 100;
 	int maxMana = 100;
 
 	template<typename Self, typename Visitor>
 	static void ApplyVisitor(Self& self, Visitor& visitor) {
-		visitor.Visit(self.abilities, "abilities");
+		visitor.Visit(self.skills, "skills");
 		visitor.Visit(self.maxHp, "maxHp");
 		visitor.Visit(self.maxMana, "maxMana");
 	}

@@ -9,7 +9,7 @@
 namespace r0 {
 
 // Spell: enemy castable
-// Ability: hero castable
+// Skill: hero castable
 
 using Spell = SpellData;
 
@@ -44,7 +44,7 @@ using HeroHealEffect = HeroHealEffectData;
 using ManaRestoreEffect = ManaRestoreEffectData;
 using SlowEffect = SlowEffectData;
 
-using AbilityEffect = std::variant<
+using SkillEffect = std::variant<
 	DamageEffect,
 	BlockEffect,
 	HeroHealEffect,
@@ -52,9 +52,9 @@ using AbilityEffect = std::variant<
 	SlowEffect
 >;
 
-struct Ability {
-	Ability() = default;
-	Ability(const AbilityData& data);
+struct Skill {
+	Skill() = default;
+	Skill(const SkillData& data);
 
 	std::string name;
 	int castTime = 1;
@@ -62,14 +62,14 @@ struct Ability {
 
 	bool NeedsTarget() const;
 	
-	std::vector<AbilityEffect> effects;
+	std::vector<SkillEffect> effects;
 };
 
 struct Hero {
 	Hero() = default;
 	Hero(const HeroData& data);
 
-	std::vector<Ability> abilities;
+	std::vector<Skill> skills;
 
 	int hp = 100;
 	int maxHp = 100;
@@ -85,10 +85,10 @@ struct Hero {
 };
 
 constexpr int kNoTarget = -1;
-constexpr int kNoAbility = -1;
+constexpr int kNoSkill = -1;
 
 enum class InteractionState {
-	kChoosingAbility,
+	kChoosingSkill,
 	kAnimatingTurns
 };
 
@@ -103,9 +103,9 @@ struct GameState {
 
 	// InteractionState
 	int targetedEnemyIdx = kNoTarget; // runtime state
-	int castedAbilityIdx = kNoAbility; // runtime state
+	int castedSkillIdx = kNoSkill; // runtime state
 
-	InteractionState interactionState = InteractionState::kChoosingAbility; // runtime state
+	InteractionState interactionState = InteractionState::kChoosingSkill; // runtime state
 	float timeSinceLastTurn = 0.0f; // runtime state
 };
 

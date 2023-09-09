@@ -10,42 +10,42 @@
 namespace r0 {
 
 ScenarioEditor::ScenarioEditor() {
-	AbilityData strikeAbility{
+	SkillData strikeSkills{
 		.name = "Strike",
 		.castTime = 5,
 		.manaCost = 30,
 		.effects = {DamageEffectData{.damage = 20, .radius = 0}}
 	};
 
-	AbilityData sliceAbility{
+	SkillData sliceSkills{
 		.name = "Slice",
 		.castTime = 2,
 		.manaCost = 10,
 		.effects = {DamageEffectData{.damage = 8, .radius = 0}}
 	};
 
-	AbilityData stompAbility{
+	SkillData stompSkills{
 		.name = "Stomp",
 		.castTime = 5,
 		.manaCost = 30,
 		.effects = {DamageEffectData{.damage = 8, .radius = -1}}
 	};
 
-	AbilityData slashAbility{
+	SkillData slashSkills{
 		.name = "Slash",
 		.castTime = 2,
 		.manaCost = 10,
 		.effects = {DamageEffectData{.damage = 6, .radius = 1}}
 	};
 
-	AbilityData blockAbility{
+	SkillData blockSkills{
 		.name = "Block",
 		.castTime = 1,
 		.manaCost = 5,
 		.effects = {BlockEffectData{.block = 20}}
 	};
 
-	AbilityData restAbility{
+	SkillData restSkills{
 		.name = "Rest",
 		.castTime = 8,
 		.manaCost = 0,
@@ -56,13 +56,13 @@ ScenarioEditor::ScenarioEditor() {
 	};
 
 	// init to something
-	scenario.hero.abilities = {
-		strikeAbility,
-		sliceAbility,
-		stompAbility,
-		slashAbility,
-		blockAbility,
-		restAbility,
+	scenario.hero.skills = {
+		strikeSkills,
+		sliceSkills,
+		stompSkills,
+		slashSkills,
+		blockSkills,
+		restSkills,
 	};
 
 	scenario.enemies.push_back(EnemyData{ "Elden Beast", 100, SpellSequenceData({SpellData{10, 2}, SpellData{20}}) });
@@ -101,19 +101,19 @@ bool ScenarioEditor::DrawUI() {
 
 void ScenarioEditor::DrawHeroEditor(HeroData* data) {
 	ImGui_IntegerSlider("Max HP", &data->maxHp);
-	DrawAbilitiesEditor(&scenario.hero.abilities);
+	DrawAbilitiesEditor(&scenario.hero.skills);
 }
 
-void ScenarioEditor::DrawAbilitiesEditor(std::vector<AbilityData>* data) {
+void ScenarioEditor::DrawAbilitiesEditor(std::vector<SkillData>* data) {
 	ImGui::Text("Abilities:");
 	ImGui_VectorEditor("abilities", data, 8,
-		[](AbilityData* ability) { return ability->name; },
-		[this](AbilityData* ability) { DrawAbilityEditor(ability); },
-		[]() { return AbilityData{ .name = "New" }; }
+		[](SkillData* ability) { return ability->name; },
+		[this](SkillData* ability) { DrawAbilityEditor(ability); },
+		[]() { return SkillData{ .name = "New" }; }
 	);
 }
 
-void ScenarioEditor::DrawAbilityEditor(AbilityData* data) {
+void ScenarioEditor::DrawAbilityEditor(SkillData* data) {
 	ImGui::InputText("Name", &data->name);
 	ImGui::SameLine();
 	ImGui_IntegerSlider("Mana cost", &data->manaCost);
@@ -121,15 +121,15 @@ void ScenarioEditor::DrawAbilityEditor(AbilityData* data) {
 	ImGui_IntegerSlider("Cast time", &data->castTime);
 	ImGui::TextUnformatted("Effects:");
 	ImGui_VectorEditor("effects", &data->effects, 8,
-		[](AbilityEffectData* effect) {
+		[](SkillEffectData* effect) {
 			return effect->Visit<const char*>([]<typename T>(const T&) { return T::kName; });
 		},
-		[this](AbilityEffectData* effect) { DrawEffectEditor(effect); },
-		[]() { return AbilityEffectData{}; }
+		[this](SkillEffectData* effect) { DrawEffectEditor(effect); },
+		[]() { return SkillEffectData{}; }
 	);
 }
 
-void ScenarioEditor::DrawEffectEditor(AbilityEffectData* data) {
+void ScenarioEditor::DrawEffectEditor(SkillEffectData* data) {
 	ImGui_VariantTypeChooser("Type", data);
 
 	data->Visit<void>([this](auto& subData) {

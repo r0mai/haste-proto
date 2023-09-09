@@ -35,14 +35,14 @@ void Game::Reload() {
 
 void Game::LogicUpdate(float deltaTime) {
 	switch (state_.interactionState) {
-	case InteractionState::kChoosingAbility:
+	case InteractionState::kChoosingSkill:
 		// nothing to do
 		break;
 	case InteractionState::kAnimatingTurns:
 		state_.timeSinceLastTurn += deltaTime;
 		while (state_.timeSinceLastTurn >= kTimeBetweenTurns) {
 			if (AdvanceTurn()) {
-				state_.interactionState = InteractionState::kChoosingAbility;
+				state_.interactionState = InteractionState::kChoosingSkill;
 				break;
 			}
 			state_.timeSinceLastTurn -= kTimeBetweenTurns;
@@ -52,9 +52,9 @@ void Game::LogicUpdate(float deltaTime) {
 }
 
 void Game::DrawHeroWidget() {
-	ImGui_SetNextWindowPosition(kAbilityBarX, kAbilityBarY, kAbilityBarWidth, kAbilityBarHeight);
-	if (ImGui::Begin("ability-button-bar", nullptr, ImGuiWindowFlags_NoDecoration)) {
-		DrawAbilityButtonBar();
+	ImGui_SetNextWindowPosition(kSkillBarX, kSkillBarY, kSkillBarWidth, kSkillBarHeight);
+	if (ImGui::Begin("skill-button-bar", nullptr, ImGuiWindowFlags_NoDecoration)) {
+		DrawSkillButtonBar();
 	}
 	ImGui::End();
 
@@ -90,71 +90,71 @@ void Game::DrawHeroWidget() {
 	ImGui::End();
 }
 
-void Game::DrawAbilityButtonBar() {
-	auto& abilities = state_.hero.abilities;
-	if (ImGui::BeginTable("ability-table", kAbilitySlots)) {
-		for (int i = 0; i < kAbilitySize; ++i) {
+void Game::DrawSkillButtonBar() {
+	auto& skills = state_.hero.skills;
+	if (ImGui::BeginTable("skill-table", kSkillSlots)) {
+		for (int i = 0; i < kSkillSize; ++i) {
 			ImGui::TableNextColumn();
-			if (i >= abilities.size()) {
-				// TODO render empty ability
+			if (i >= skills.size()) {
+				// TODO render empty skill
 				continue;
 			}
 
-			auto& ability = abilities[i];
-			bool isPressed = ImGui_DrawAbility(&ability);
+			auto& skill = skills[i];
+			bool isPressed = ImGui_DrawSkill(&skill);
 			if (!isPressed) {
 				continue;
 			}
 
-			if (!HasEnoughMana(&ability)) {
-				Log("Not enough mana to cast %s", ability.name);
+			if (!HasEnoughMana(&skill)) {
+				Log("Not enough mana to cast %s", skill.name);
 				continue;
 			}
 
-			if (ability.NeedsTarget()) {
+			if (skill.NeedsTarget()) {
 				if (state_.targetedEnemyIdx == kNoTarget) {
-					Log("%s ability needs a target", ability.name);
+					Log("%s skill needs a target", skill.name);
 					continue;
 				}
-				StartCastingAbility(i);
+				StartCastingSkill(i);
 			} else {
-				StartCastingAbility(i);
+				StartCastingSkill(i);
 			}
 		}
 		ImGui::EndTable();
 	}
 }
 
-bool Game::HasEnoughMana(Ability* ability) const {
-	return state_.hero.mana >= ability->manaCost;
+bool Game::HasEnoughMana(Skill* skill) const {
+	return state_.hero.mana >= skill->manaCost;
 }
 
 
-void Game::StartCastingAbility(int abilityIdx) {
-	state_.castedAbilityIdx = abilityIdx;
+void Game::StartCastingSkill(int skillIdx) {
+	state_.castedSkillIdx = skillIdx;
 	state_.hero.castTime = 0;
 	state_.interactionState = InteractionState::kAnimatingTurns;
 	state_.timeSinceLastTurn = 0.0f;
 }
 
-void Game::CastAbility(Ability* ability, int targetEnemyIdx) {
+void Game::CastSkill(Skill* skill, int targetEnemyIdx) {
 	// check for mana again just in case
-	if (!HasEnoughMana(ability)) {
-		Log("Not enough mana to case %s [when casting!]", ability->name);
+	if (!HasEnoughMana(skill)) {
+		Log("Not enough mana to case %s [when casting!]", skill->name);
 		return;
 	}
 
-	state_.hero.mana = std::clamp(state_.hero.mana - ability->manaCost, 0, state_.hero.maxMana);
+	state_.hero.mana = std::clamp(state_.hero.mana - skill->manaCost, 0, state_.hero.maxMana);
 
-	assert(ability->NeedsTarget() != (targetEnemyIdx == kNoTarget));
+	assert(skill->NeedsTarget() != (targetEnemyIdx == kNoTarget));
 
 	auto& enemies = state_.enemies;
-	for (auto& effect : ability->effects) {
-		ApplyAbilityEffect(&effect, targetEnemyIdx);
+	for (auto& effect : skill->effects) {
+		ApplySkillEffect(&effect, targetEnemyIdx);
 	}
 }
 
-void Game::ApplyAbilityEffect(AbilityEffect* effect, int targetEnemyIdx) {
+void Game::ApplySkillEffect(SkillEffect* effect, int targetEnemyIdx) {
 	std::visit(Overloaded{
 		[&](const DamageEffect& e) {
 			auto& enemies = state_.enemies;
@@ -243,7 +243,7 @@ void Game::DrawEnemyBar() {
 			if (enemyClicked) {
 				state_.targetedEnemyIdx = isSelected ? kNoTarget : i;
 				state_.hero.castTime = 0;
-				state_.castedAbilityIdx = kNoAbility;
+				state_.castedSkillIdx = kNoSkill;
 			}
 		}
 		ImGui::EndTable();
@@ -255,7 +255,7 @@ void Game::DrawCentralPanel() {
 		if (ImGui::BeginTabItem("Game")) {
 
 			ImGui::Text("Turn %d", state_.turnIdx);
-			if (state_.interactionState == InteractionState::kChoosingAbility) {
+			if (state_.interactionState == InteractionState::kChoosingSkill) {
 				if (ImGui::Button("Pass")) {
 					AdvanceTurn();
 				}
@@ -282,14 +282,14 @@ void Game::DrawCentralPanel() {
 }
 
 void Game::DrawHeroCastBar() {
-	if (state_.castedAbilityIdx == kNoAbility) {
+	if (state_.castedSkillIdx == kNoSkill) {
 		return;
 	}
-	auto& ability = state_.hero.abilities[state_.castedAbilityIdx];
+	auto& skill = state_.hero.skills[state_.castedSkillIdx];
 	ImGui_HorizonalBar(
 		kHeroCastBarWidth, kHorizonalBarHeight,
-		state_.hero.castTime, ability.castTime,
-		kCastTimeColor, ability.name.c_str());
+		state_.hero.castTime, skill.castTime,
+		kCastTimeColor, skill.name.c_str());
 }
 
 bool Game::AdvanceTurn() {
@@ -297,25 +297,25 @@ bool Game::AdvanceTurn() {
 
 	bool finishedCasting = false;
 
-	if (state_.castedAbilityIdx != kNoAbility) {
+	if (state_.castedSkillIdx != kNoSkill) {
 		auto& hero = state_.hero;
 		++hero.castTime;
 
-		auto& ability = hero.abilities[state_.castedAbilityIdx];
+		auto& skill = hero.skills[state_.castedSkillIdx];
 
-		if (hero.castTime >= ability.castTime) {
-			if (ability.NeedsTarget()) {
+		if (hero.castTime >= skill.castTime) {
+			if (skill.NeedsTarget()) {
 				if (state_.targetedEnemyIdx != -1) {
-					CastAbility(&ability, state_.targetedEnemyIdx);
+					CastSkill(&skill, state_.targetedEnemyIdx);
 				} else {
-					Log("%s ability needs a target [when casting]", ability.name);
+					Log("%s skill needs a target [when casting]", skill.name);
 				}
 			} else {
-				CastAbility(&ability, kNoTarget);
+				CastSkill(&skill, kNoTarget);
 			}
 			finishedCasting = true;
 			state_.hero.castTime = 0;
-			state_.castedAbilityIdx = kNoAbility;
+			state_.castedSkillIdx = kNoSkill;
 		}
 	}
 
