@@ -83,15 +83,15 @@ bool ImGui_DrawEnemy(Enemy* enemy, bool selected) {
 
 	ImGui_VerticalSpacing(20.0f);
 
-	auto* nextSpell = enemy->GetNextSpell();
+	auto* currentSpell = enemy->GetCurrentSpell();
 
 	// SpellSequence
-	if (nextSpell) {
-		ImGui_DrawSpell(nextSpell);
+	if (currentSpell) {
+		ImGui_DrawSpell(currentSpell);
 
 		ImGui_VerticalSpacing(16.0f);
 
-		int turnsLeft = nextSpell->castTime - enemy->castTime;
+		int turnsLeft = currentSpell->castTime - enemy->castTime;
 		ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(246, 190, 0, 255));
 		ImGui_CenteredTextUnformatted(tfm::format("%s", turnsLeft).c_str());
 		ImGui_CenteredTextUnformatted(tfm::format("turn%s", turnsLeft > 1 ? "s" : "").c_str());

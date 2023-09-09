@@ -321,14 +321,14 @@ bool Game::AdvanceTurn() {
 
 	auto& enemies = state_.enemies;
 	for (auto& enemy : enemies) {
-		auto* spell = enemy.GetNextSpell();
-		if (!spell) {
+		auto* currentSpell = enemy.GetCurrentSpell();
+		if (!currentSpell) {
 			continue;
 		}
 		++enemy.castTime;
-		if (enemy.castTime >= spell->castTime) {
+		if (enemy.castTime >= currentSpell->castTime) {
 			// casting enemy spell
-			DamageHero(spell->damage);
+			DamageHero(currentSpell->damage);
 			enemy.AdvanceToNextSpell();
 		} 
 	}

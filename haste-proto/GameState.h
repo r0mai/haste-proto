@@ -34,7 +34,7 @@ struct Enemy {
 
 	int castTime = 0;
 
-	Spell* GetNextSpell();
+	Spell* GetCurrentSpell();
 	void AdvanceToNextSpell();
 };
 

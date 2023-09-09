@@ -34,7 +34,7 @@ Enemy::Enemy(const EnemyData& enemy)
 	, maxHp(enemy.maxHp)
 	, sequence(enemy.sequence) {}
 
-Spell* Enemy::GetNextSpell() {
+Spell* Enemy::GetCurrentSpell() {
 	if (sequence.spells.empty()) {
 		return nullptr;
 	}
