@@ -151,6 +151,8 @@
     <ClCompile Include="Serialization.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BuffData.h" />
+    <ClInclude Include="SkillEffectData.h" />
     <ClInclude Include="emscripten_mainloop_stub.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameState.h" />

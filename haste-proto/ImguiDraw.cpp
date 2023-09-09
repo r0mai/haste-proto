@@ -43,7 +43,7 @@ bool ImGui_DrawSkill(Skill* skill) {
 
 void ImGui_DrawSkillEffect(SkillEffect* effect) {
 	std::visit(Overloaded{
-		[&](const DamageEffect& e) {
+		[&](const DamageSkillEffect& e) {
 			if (e.radius == -1) {
 				ImGui::Text("%d AOE dmg", e.damage);
 			} else if (e.radius == 0) {
@@ -52,16 +52,16 @@ void ImGui_DrawSkillEffect(SkillEffect* effect) {
 				ImGui::Text("%d dmg r=%d", e.damage, e.radius);
 			}
 		},
-		[](const BlockEffect& e) {
+		[](const BlockSkillEffect& e) {
 			ImGui::Text("%d block", e.block);
 		},
-		[](const HeroHealEffect& e) {
+		[](const HeroHealSkillEffect& e) {
 			ImGui::Text("Heal %d", e.heal);
 		},
-		[](const ManaRestoreEffect& e) {
+		[](const ManaRestoreSkillEffect& e) {
 			ImGui::Text("Mana +%d", e.mana);
 		},
-		[](const SlowEffect& e) {
+		[](const SlowSkillEffect& e) {
 			ImGui::Text("Slow %d", e.slow);
 		},
 	}, *effect);

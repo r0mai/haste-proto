@@ -19,12 +19,12 @@ private:
 	void DrawAbilitiesEditor(std::vector<SkillData>* data);
 	void DrawAbilityEditor(SkillData* data);
 
-	void DrawEffectEditor(SkillEffectData* data);
-	void DrawEffectEditor(DamageEffectData* data);
-	void DrawEffectEditor(BlockEffectData* data);
-	void DrawEffectEditor(HeroHealEffectData* data);
-	void DrawEffectEditor(ManaRestoreEffectData* data);
-	void DrawEffectEditor(SlowEffectData* data);
+	void DrawSkillEffectEditor(SkillEffectData* data);
+	void DrawSkillEffectEditor(DamageSkillEffectData* data);
+	void DrawSkillEffectEditor(BlockSkillEffectData* data);
+	void DrawSkillEffectEditor(HeroHealSkillEffectData* data);
+	void DrawSkillEffectEditor(ManaRestoreSkillEffectData* data);
+	void DrawSkillEffectEditor(SlowSkillEffectData* data);
 
 	void DrawEnemiesEditor(std::vector<EnemyData>* data);
 	void DrawEnemyEditor(EnemyData* data);

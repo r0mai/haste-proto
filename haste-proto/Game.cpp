@@ -156,7 +156,7 @@ void Game::CastSkill(Skill* skill, int targetEnemyIdx) {
 
 void Game::ApplySkillEffect(SkillEffect* effect, int targetEnemyIdx) {
 	std::visit(Overloaded{
-		[&](const DamageEffect& e) {
+		[&](const DamageSkillEffect& e) {
 			auto& enemies = state_.enemies;
 			int beginIdx;
 			int endIdx;
@@ -172,16 +172,16 @@ void Game::ApplySkillEffect(SkillEffect* effect, int targetEnemyIdx) {
 				DamageEnemy(&enemies[i], e.damage);
 			}
 		},
-		[&](const BlockEffect& e) {
+		[&](const BlockSkillEffect& e) {
 			ApplyBlock(e.block);
 		},
-		[&](const HeroHealEffect& e) {
+		[&](const HeroHealSkillEffect& e) {
 			HealHero(e.heal);
 		},
-		[&](const ManaRestoreEffect& e) {
+		[&](const ManaRestoreSkillEffect& e) {
 			RestoreMana(e.mana);
 		},
-		[&](const SlowEffect& e) {
+		[&](const SlowSkillEffect& e) {
 			assert(targetEnemyIdx != kNoTarget);
 			Slow(&state_.enemies[targetEnemyIdx], e.slow);
 		},

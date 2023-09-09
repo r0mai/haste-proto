@@ -38,18 +38,18 @@ struct Enemy {
 	void AdvanceToNextSpell();
 };
 
-using DamageEffect = DamageEffectData;
-using BlockEffect = BlockEffectData;
-using HeroHealEffect = HeroHealEffectData;
-using ManaRestoreEffect = ManaRestoreEffectData;
-using SlowEffect = SlowEffectData;
+using DamageSkillEffect = DamageSkillEffectData;
+using BlockSkillEffect = BlockSkillEffectData;
+using HeroHealSkillEffect = HeroHealSkillEffectData;
+using ManaRestoreSkillEffect = ManaRestoreSkillEffectData;
+using SlowSkillEffect = SlowSkillEffectData;
 
 using SkillEffect = std::variant<
-	DamageEffect,
-	BlockEffect,
-	HeroHealEffect,
-	ManaRestoreEffect,
-	SlowEffect
+	DamageSkillEffect,
+	BlockSkillEffect,
+	HeroHealSkillEffect,
+	ManaRestoreSkillEffect,
+	SlowSkillEffect
 >;
 
 struct Skill {

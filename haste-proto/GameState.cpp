@@ -56,8 +56,8 @@ Skill::Skill(const SkillData& data)
 bool Skill::NeedsTarget() const {
 	for (auto& effect : effects) {
 		bool needsTarget = std::visit(Overloaded{
-			[](const DamageEffect& e) { return e.radius >= 0; },
-			[](const SlowEffect& e) { return true; },
+			[](const DamageSkillEffect& e) { return e.radius >= 0; },
+			[](const SlowSkillEffect& e) { return true; },
 			[](const auto&) { return false; }
 		}, effect);
 		if (needsTarget) {

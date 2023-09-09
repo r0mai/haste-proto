@@ -10,59 +10,59 @@
 namespace r0 {
 
 ScenarioDataEditor::ScenarioDataEditor() {
-	SkillData strikeSkills{
+	SkillData strikeSkill{
 		.name = "Strike",
 		.castTime = 5,
 		.manaCost = 30,
-		.effects = {DamageEffectData{.damage = 20, .radius = 0}}
+		.effects = {DamageSkillEffectData{.damage = 20, .radius = 0}}
 	};
 
-	SkillData sliceSkills{
+	SkillData sliceSkill{
 		.name = "Slice",
 		.castTime = 2,
 		.manaCost = 10,
-		.effects = {DamageEffectData{.damage = 8, .radius = 0}}
+		.effects = {DamageSkillEffectData{.damage = 8, .radius = 0}}
 	};
 
-	SkillData stompSkills{
+	SkillData stompSkill{
 		.name = "Stomp",
 		.castTime = 5,
 		.manaCost = 30,
-		.effects = {DamageEffectData{.damage = 8, .radius = -1}}
+		.effects = {DamageSkillEffectData{.damage = 8, .radius = -1}}
 	};
 
-	SkillData slashSkills{
+	SkillData slashSkill{
 		.name = "Slash",
 		.castTime = 2,
 		.manaCost = 10,
-		.effects = {DamageEffectData{.damage = 6, .radius = 1}}
+		.effects = {DamageSkillEffectData{.damage = 6, .radius = 1}}
 	};
 
-	SkillData blockSkills{
+	SkillData blockSkill{
 		.name = "Block",
 		.castTime = 1,
 		.manaCost = 5,
-		.effects = {BlockEffectData{.block = 20}}
+		.effects = {BlockSkillEffectData{.block = 20}}
 	};
 
-	SkillData restSkills{
+	SkillData restSkill{
 		.name = "Rest",
 		.castTime = 8,
 		.manaCost = 0,
 		.effects = {
-			HeroHealEffectData{.heal = 50},
-			ManaRestoreEffectData{.mana = 50}
+			HeroHealSkillEffectData{.heal = 50},
+			ManaRestoreSkillEffectData{.mana = 50}
 		}
 	};
 
 	// init to something
 	scenario.hero.skills = {
-		strikeSkills,
-		sliceSkills,
-		stompSkills,
-		slashSkills,
-		blockSkills,
-		restSkills,
+		strikeSkill,
+		sliceSkill,
+		stompSkill,
+		slashSkill,
+		blockSkill,
+		restSkill,
 	};
 
 	scenario.enemies.push_back(EnemyData{ "Elden Beast", 100, SpellSequenceData({SpellData{10, 2}, SpellData{20}}) });
@@ -119,25 +119,25 @@ void ScenarioDataEditor::DrawAbilityEditor(SkillData* data) {
 	ImGui_IntegerSlider("Mana cost", &data->manaCost);
 	ImGui::SameLine();
 	ImGui_IntegerSlider("Cast time", &data->castTime);
-	ImGui::TextUnformatted("Effects:");
+	ImGui::TextUnformatted("SkillEffects:");
 	ImGui_VectorEditor("effects", &data->effects, 8,
 		[](SkillEffectData* effect) {
 			return effect->Visit<const char*>([]<typename T>(const T&) { return T::kName; });
 		},
-		[this](SkillEffectData* effect) { DrawEffectEditor(effect); },
+		[this](SkillEffectData* effect) { DrawSkillEffectEditor(effect); },
 		[]() { return SkillEffectData{}; }
 	);
 }
 
-void ScenarioDataEditor::DrawEffectEditor(SkillEffectData* data) {
+void ScenarioDataEditor::DrawSkillEffectEditor(SkillEffectData* data) {
 	ImGui_VariantTypeChooser("Type", data);
 
 	data->Visit<void>([this](auto& subData) {
-		DrawEffectEditor(&subData);
+		DrawSkillEffectEditor(&subData);
 	});
 }
 
-void ScenarioDataEditor::DrawEffectEditor(DamageEffectData* data) {
+void ScenarioDataEditor::DrawSkillEffectEditor(DamageSkillEffectData* data) {
 	ImGui_IntegerSlider("damage", &data->damage);
 	bool isAOE = data->radius == -1;
 	if (ImGui::Checkbox("AOE", &isAOE)) {
@@ -149,19 +149,19 @@ void ScenarioDataEditor::DrawEffectEditor(DamageEffectData* data) {
 	}
 }
 
-void ScenarioDataEditor::DrawEffectEditor(BlockEffectData* data) {
+void ScenarioDataEditor::DrawSkillEffectEditor(BlockSkillEffectData* data) {
 	ImGui_IntegerSlider("block", &data->block);
 }
 
-void ScenarioDataEditor::DrawEffectEditor(HeroHealEffectData* data) {
+void ScenarioDataEditor::DrawSkillEffectEditor(HeroHealSkillEffectData* data) {
 	ImGui_IntegerSlider("heal", &data->heal);
 }
 
-void ScenarioDataEditor::DrawEffectEditor(ManaRestoreEffectData* data) {
+void ScenarioDataEditor::DrawSkillEffectEditor(ManaRestoreSkillEffectData* data) {
 	ImGui_IntegerSlider("mana", &data->mana);
 }
 
-void ScenarioDataEditor::DrawEffectEditor(SlowEffectData* data) {
+void ScenarioDataEditor::DrawSkillEffectEditor(SlowSkillEffectData* data) {
 	ImGui_IntegerSlider("slow", &data->slow);
 }
 

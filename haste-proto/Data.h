@@ -5,6 +5,8 @@
 #include <variant>
 #include "ExpandedVariant.h"
 
+#include "SkillEffectData.h"
+
 namespace r0 {
 
 struct SpellData {
@@ -44,75 +46,6 @@ struct EnemyData {
 		visitor.Visit(self.sequence, "sequence");
 	}
 };
-
-struct DamageEffectData {
-	static constexpr const char* kName = "DamageEffect";
-
-	int damage = 0;
-
-	// 0: just the target
-	// -1: AOE
-	int radius = 0;
-
-	template<typename Self, typename Visitor>
-	static void ApplyVisitor(Self& self, Visitor& visitor) {
-		visitor.Visit(self.damage, "damage");
-		visitor.Visit(self.radius, "radius");
-	}
-};
-
-struct BlockEffectData {
-	static constexpr const char* kName = "BlockEffect";
-
-	int block = 0;
-
-	template<typename Self, typename Visitor>
-	static void ApplyVisitor(Self& self, Visitor& visitor) {
-		visitor.Visit(self.block, "block");
-	}
-};
-
-struct HeroHealEffectData {
-	static constexpr const char* kName = "HeroHealEffect";
-
-	int heal = 0;
-
-	template<typename Self, typename Visitor>
-	static void ApplyVisitor(Self& self, Visitor& visitor) {
-		visitor.Visit(self.heal, "heal");
-	}
-};
-
-struct ManaRestoreEffectData {
-	static constexpr const char* kName = "ManaRestoreEffect";
-
-	int mana = 0;
-
-	template<typename Self, typename Visitor>
-	static void ApplyVisitor(Self& self, Visitor& visitor) {
-		visitor.Visit(self.mana, "mana");
-	}
-};
-
-// increases cast time of current spell of the enemy
-struct SlowEffectData {
-	static constexpr const char* kName = "SlowEffect";
-
-	int slow = 0;
-
-	template<typename Self, typename Visitor>
-	static void ApplyVisitor(Self& self, Visitor& visitor) {
-		visitor.Visit(self.slow, "slow");
-	}
-};
-
-using SkillEffectData = ExpandedVariant<
-	DamageEffectData,
-	BlockEffectData,
-	HeroHealEffectData,
-	ManaRestoreEffectData,
-	SlowEffectData
->;
 
 struct SkillData {
 	std::string name;
