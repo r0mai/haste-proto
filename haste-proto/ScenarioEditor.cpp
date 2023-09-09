@@ -128,7 +128,7 @@ void ScenarioEditor::DrawAbilityEditor(AbilityData* data) {
 }
 
 void ScenarioEditor::DrawEffectEditor(AbilityEffectData* data) {
-	VariantTypeChooser("Type", data);
+	ImGui_VariantTypeChooser("Type", data);
 
 	data->Visit<void>([this](auto& subData) {
 		DrawEffectEditor(&subData);

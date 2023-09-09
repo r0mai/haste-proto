@@ -121,7 +121,7 @@ void ImGui_VectorEditor(
 }
 
 template<typename... Ts>
-bool VariantTypeChooser(const char* label, ExpandedVariant<Ts...>* variant) {
+bool ImGui_VariantTypeChooser(const char* label, ExpandedVariant<Ts...>* variant) {
 	const char* previewValue = variant->Visit<const char*>([]<typename T>(const T&) { return T::kName; });
 
 	bool changed = false;
