@@ -134,7 +134,7 @@
     <ClInclude Include="Serialization.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SkillEffectData.h">
+    <ClInclude Include="SkillData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="BuffData.h">

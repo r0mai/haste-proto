@@ -72,4 +72,20 @@ using SkillEffectData = ExpandedVariant<
 	SlowSkillEffectData
 >;
 
-}
+struct SkillData {
+	std::string name;
+	int castTime = 1;
+	int manaCost = 10;
+
+	std::vector<SkillEffectData> effects;
+
+	template<typename Self, typename Visitor>
+	static void ApplyVisitor(Self& self, Visitor& visitor) {
+		visitor.Visit(self.name, "name");
+		visitor.Visit(self.castTime, "castTime");
+		visitor.Visit(self.manaCost, "manaCost");
+		visitor.Visit(self.effects, "effects");
+	}
+};
+
+} // namespace r0
