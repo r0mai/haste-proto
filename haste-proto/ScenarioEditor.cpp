@@ -115,7 +115,9 @@ void ScenarioEditor::DrawAbilitiesEditor(std::vector<AbilityData>* data) {
 
 void ScenarioEditor::DrawAbilityEditor(AbilityData* data) {
 	ImGui::InputText("Name", &data->name);
+	ImGui::SameLine();
 	ImGui_IntegerSlider("Mana cost", &data->manaCost);
+	ImGui::SameLine();
 	ImGui_IntegerSlider("Cast time", &data->castTime);
 	ImGui::TextUnformatted("Effects:");
 	ImGui_VectorEditor("effects", &data->effects, 8,
@@ -142,6 +144,7 @@ void ScenarioEditor::DrawEffectEditor(DamageEffectData* data) {
 		data->radius = isAOE ? -1 : 0;
 	}
 	if (!isAOE) {
+		ImGui::SameLine();
 		ImGui_IntegerSlider("radius", &data->radius);
 	}
 }
