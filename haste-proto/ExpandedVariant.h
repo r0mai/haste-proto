@@ -64,6 +64,32 @@ struct ExpandedVariant {
 		return invokers[which](std::move(func), values);
 	}
 
+	template<typename F>
+	void VisitAll(F func) {
+		using InvokerType = void(*)(F&, int, TupleType&);
+		static const InvokerType invokers[] = {
+			[](F& func, int which, TupleType& t) {
+				return func(which, std::get<Ts>(t));
+			}...
+		};
+		for (int i = 0; i < sizeof...(Ts); ++i) {
+			invokers[i](func, i, values);
+		}
+	}
+
+	template<typename F>
+	void VisitAll(F func) const {
+		using InvokerType = void(*)(F&, int, const TupleType&);
+		static const InvokerType invokers[] = {
+			[](F& func, int which, const TupleType& t) {
+				return func(which, std::get<Ts>(t));
+			}...
+		};
+		for (int i = 0; i < sizeof...(Ts); ++i) {
+			invokers[i](func, i, values);
+		}
+	}
+
 	VariantType ToVariant() const {
 		return Visit<VariantType>([](const auto& value) {
 			return VariantType(value);

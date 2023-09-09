@@ -120,39 +120,25 @@ void ImGui_VectorEditor(
 	}
 }
 
-namespace detail {
-
-template<int I, typename... Ts>
-bool VariantTypeChooserImpl(ExpandedVariant<Ts...>* variant) {
-	
-	bool isSelected = I == variant->which;
-	const char* name = std::tuple_element_t<I, typename ExpandedVariant<Ts...>::TupleType>::kName;
-	bool changed = false;
-	if (ImGui::Selectable(name, isSelected)) {
-		variant->which = I;
-		changed = true;
-	}
-
-	if (isSelected) {
-		ImGui::SetItemDefaultFocus();
-	}
-
-	if constexpr (I + 1 < sizeof...(Ts)) {
-		return changed | VariantTypeChooserImpl<I + 1>(variant);
-	} else {
-		return false;
-	}
-}
-
-} // namespace detail
-
 template<typename... Ts>
 bool VariantTypeChooser(const char* label, ExpandedVariant<Ts...>* variant) {
 	const char* previewValue = variant->Visit<const char*>([]<typename T>(const T&) { return T::kName; });
 
 	bool changed = false;
 	if (ImGui::BeginCombo(label, previewValue)) {
-		changed |= detail::VariantTypeChooserImpl<0>(variant);
+		variant->VisitAll([&changed, variant]<typename T>(int which, T& value) {
+			const char* name = T::kName;
+			bool isSelected = variant->which == which;
+
+			if (ImGui::Selectable(name, isSelected)) {
+				variant->which = which;
+				changed = true;
+			}
+
+			if (isSelected) {
+				ImGui::SetItemDefaultFocus();
+			}
+		});
 
 		ImGui::EndCombo();
 	}
