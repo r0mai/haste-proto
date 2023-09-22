@@ -5,21 +5,46 @@
 
 namespace r0 {
 
-struct ManaFlowBuffEffect {
+struct ManaFlowBuffEffectData {
+	static constexpr const char* kName = "ManaFlowBuffEffectData";
+
 	int mana = 0;
+
+	template<typename Self, typename Visitor>
+	static void ApplyVisitor(Self& self, Visitor& visitor) {
+		visitor.Visit(self.mana, "mana");
+	}
 };
 
-struct DamageFlowBuffEffect {
+struct DamageFlowBuffEffectData {
+	static constexpr const char* kName = "DamageFlowBuffEffectData";
+
 	int damage = 0;
+
+	template<typename Self, typename Visitor>
+	static void ApplyVisitor(Self& self, Visitor& visitor) {
+		visitor.Visit(self.damage, "damage");
+	}
 };
 
-using BuffEffect = ExpandedVariant<
-	ManaFlowBuffEffect,
-	DamageFlowBuffEffect
+using BuffEffectData = ExpandedVariant<
+	ManaFlowBuffEffectData,
+	DamageFlowBuffEffectData
 >;
 
-struct Buff {
-	std::vector<BuffEffect> effects;
+struct BuffData {
+	std::string name;
+
+	std::vector<BuffEffectData> effects;
+
+	int duration = 1;
+
+	template<typename Self, typename Visitor>
+	static void ApplyVisitor(Self& self, Visitor& visitor) {
+		visitor.Visit(self.name, "name");
+		visitor.Visit(self.effects, "effects");
+		visitor.Visit(self.duration, "duration");
+	}
 };
 
 } // namespace r0

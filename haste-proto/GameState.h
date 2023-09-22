@@ -65,6 +65,25 @@ struct Skill {
 	std::vector<SkillEffect> effects;
 };
 
+using ManaFlowBuffEffect = ManaFlowBuffEffectData;
+using DamageFlowBuffEffect = DamageFlowBuffEffectData;
+
+using BuffEffect = std::variant<
+	ManaFlowBuffEffect,
+	DamageFlowBuffEffect
+>;
+
+struct Buff {
+	Buff() = default;
+	Buff(const BuffData& data);
+
+	std::string name;
+
+	std::vector<BuffEffect> effects;
+
+	int duration = 1;
+};
+
 struct Hero {
 	Hero() = default;
 	Hero(const HeroData& data);
@@ -100,6 +119,9 @@ struct GameState {
 	std::vector<Enemy> enemies;
 
 	int turnIdx = 1;
+
+	// static data
+	std::unordered_map<std::string, BuffData> buffs;
 
 	// InteractionState
 	int targetedEnemyIdx = kNoTarget; // runtime state

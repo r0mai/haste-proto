@@ -7,8 +7,9 @@ namespace r0 {
 
 namespace {
 
-std::vector<SkillEffect> Convert(const std::vector<SkillEffectData>& data) {
-	std::vector<SkillEffect> res(data.size());
+template<typename... Ts>
+std::vector<std::variant<Ts...>> Convert(const std::vector<ExpandedVariant<Ts...>>& data) {
+	std::vector<std::variant<Ts...>> res(data.size());
 	for (int i = 0; i < data.size(); ++i) {
 		res[i] = data[i].ToVariant();
 	}
@@ -73,6 +74,11 @@ Hero::Hero(const HeroData& data)
 	, maxHp(data.maxHp)
 	, mana(data.maxMana)
 	, maxMana(data.maxMana) {}
+
+Buff::Buff(const BuffData& data)
+	: name(data.name)
+	, effects(Convert(data.effects))
+	, duration(data.duration) {}
 
 GameState::GameState(const ScenarioData& scenario) {
 	hero = Hero(scenario.hero);
