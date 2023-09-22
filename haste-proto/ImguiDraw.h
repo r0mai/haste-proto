@@ -69,7 +69,7 @@ bool ImGui_BeginCenteredTable(const char* label, int columns, float maxColumnSiz
 void ImGui_VerticalSpacing(float spacing);
 
 template<typename T, typename NameFunc, typename DrawFunc, typename NewItemFunc>
-void ImGui_VectorEditor(
+void ImGui_VectorTabEditor(
 	const char* label,
 	std::vector<T>* data,
 	int maxSize,
@@ -117,6 +117,35 @@ void ImGui_VectorEditor(
 			}
 		}
 		ImGui::EndTabBar();
+	}
+}
+
+template<typename T, typename NameFunc, typename DrawFunc, typename NewItemFunc>
+void ImGui_VectorCollapsingHeaderEditor(
+	const char* label,
+	std::vector<T>* data,
+	NameFunc nameFunc,
+	DrawFunc drawFunc,
+	NewItemFunc newItemFunc)
+{
+	if (ImGui::BeginTable(label, 2)) {
+		for (int i = 0; i < data->size(); ++i) {
+			auto& buffData = (*data)[i];
+
+			ImGui::TableNextRow();
+			ImGui::TableNextColumn();
+
+			if (ImGui::CollapsingHeader(tfm::format("%s###%s", nameFunc(&buffData), i).c_str())) {
+				drawFunc(&buffData);
+			}
+
+			ImGui::TableNextColumn();
+			if (ImGui_RedButton("X")) {
+				data->erase(data->begin() + i);
+				--i;
+			}
+		}
+		ImGui::EndTable();
 	}
 }
 

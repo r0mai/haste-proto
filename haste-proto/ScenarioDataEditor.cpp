@@ -131,7 +131,7 @@ void ScenarioDataEditor::DrawHeroEditor(HeroData* data) {
 
 void ScenarioDataEditor::DrawAbilitiesEditor(std::vector<SkillData>* data) {
 	ImGui::Text("Abilities:");
-	ImGui_VectorEditor("abilities", data, 8,
+	ImGui_VectorTabEditor("abilities", data, 8,
 		[](SkillData* ability) { return ability->name; },
 		[this](SkillData* ability) { DrawAbilityEditor(ability); },
 		[]() { return SkillData{ .name = "New" }; }
@@ -145,7 +145,7 @@ void ScenarioDataEditor::DrawAbilityEditor(SkillData* data) {
 	ImGui::SameLine();
 	ImGui_IntegerSlider("Cast time", &data->castTime);
 	ImGui::TextUnformatted("SkillEffects:");
-	ImGui_VectorEditor("effects", &data->effects, 8,
+	ImGui_VectorTabEditor("effects", &data->effects, 8,
 		[](SkillEffectData* effect) {
 			return effect->Visit<const char*>([]<typename T>(const T&) { return T::kName; });
 		},
@@ -191,7 +191,7 @@ void ScenarioDataEditor::DrawSkillEffectEditor(SlowSkillEffectData* data) {
 }
 
 void ScenarioDataEditor::DrawEnemiesEditor(std::vector<EnemyData>* data) {
-	ImGui_VectorEditor("enemies", data, 5,
+	ImGui_VectorTabEditor("enemies", data, 5,
 		[](EnemyData* enemy) {
 			return enemy->name.c_str();
 		},
@@ -257,32 +257,17 @@ void ScenarioDataEditor::DrawSpellEditor(SpellData* data) {
 }
 
 void ScenarioDataEditor::DrawBuffListEditor(std::vector<BuffData>* data) {
-	int i = 0;
-	if (ImGui::BeginTable("buff-table", 2)) {
-		for (int i = 0; i < data->size(); ++i) {
-			auto& buffData = (*data)[i];
-
-			ImGui::TableNextRow();
-			ImGui::TableNextColumn();
-
-			if (ImGui::CollapsingHeader(tfm::format("%s###%s", buffData.name, i).c_str())) {
-				DrawBuffEditor(&buffData);
-			}
-
-			ImGui::TableNextColumn();
-			if (ImGui_RedButton("X")) {
-				data->erase(data->begin() + i);
-				--i;
-			}
-		}
-		ImGui::EndTable();
-	}
+	ImGui_VectorCollapsingHeaderEditor("buffs", data,
+		[](BuffData* buff) { return buff->name; },
+		[this](BuffData* buff) { DrawBuffEditor(buff); },
+		[]() { return BuffData{}; }
+	);
 }
 
 void ScenarioDataEditor::DrawBuffEditor(BuffData* data) {
 	ImGui::InputText("Name", &data->name);
 	ImGui_IntegerSlider("Duration", &data->duration);
-	ImGui_VectorEditor("effects", &data->effects, 8,
+	ImGui_VectorTabEditor("effects", &data->effects, 8,
 		[](BuffEffectData* effect) {
 			return effect->Visit<const char*>([]<typename T>(const T&) { return T::kName; });
 		},
