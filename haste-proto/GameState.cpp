@@ -82,8 +82,16 @@ Buff::Buff(const BuffData& data)
 
 GameState::GameState(const ScenarioData& scenario) {
 	hero = Hero(scenario.hero);
-	for (auto& enemy : scenario.enemies) {
-		enemies.push_back(Enemy(enemy));
+	for (auto& enemyData : scenario.enemies) {
+		enemies.push_back(Enemy(enemyData));
+	}
+
+	for (auto& buffData : scenario.buffs) {
+		if (buffs.count(buffData.name)) {
+			tfm::printfln("Error: Duplicate buff name found '%s'", buffData.name);
+		}
+
+		buffs[buffData.name] = Buff(buffData);
 	}
 }
 

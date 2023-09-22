@@ -35,15 +35,15 @@ using BuffEffectData = ExpandedVariant<
 struct BuffData {
 	std::string name;
 
-	std::vector<BuffEffectData> effects;
-
 	int duration = 1;
+
+	std::vector<BuffEffectData> effects; 
 
 	template<typename Self, typename Visitor>
 	static void ApplyVisitor(Self& self, Visitor& visitor) {
 		visitor.Visit(self.name, "name");
-		visitor.Visit(self.effects, "effects");
 		visitor.Visit(self.duration, "duration");
+		visitor.Visit(self.effects, "effects");
 	}
 };
 

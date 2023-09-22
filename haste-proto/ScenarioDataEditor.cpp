@@ -69,6 +69,27 @@ ScenarioDataEditor::ScenarioDataEditor() {
 	scenario.enemies.push_back(EnemyData{ "Diablo", 100, SpellSequenceData({SpellData{5, 1}, SpellData{20}}) });
 	scenario.enemies.push_back(EnemyData{ "Lich King", 100, {} });
 	scenario.enemies.push_back(EnemyData{ "Dumbledore", 100, SpellSequenceData({SpellData{10}, SpellData{20}, SpellData{15}}) });
+
+	BuffData poisonBuff = {
+		.name = "Poison",
+		.duration = 5,
+		.effects = {
+			DamageFlowBuffEffectData{.damage = 5}
+		}
+	};
+
+	BuffData manaRestoreBuff = {
+		.name = "Mana Restore",
+		.duration = 3,
+		.effects = {
+			ManaFlowBuffEffectData{.mana = 5}
+		}
+	};
+
+	scenario.buffs = {
+		poisonBuff,
+		manaRestoreBuff
+	};
 }
 
 bool ScenarioDataEditor::DrawUI() {
@@ -82,6 +103,10 @@ bool ScenarioDataEditor::DrawUI() {
 		}
 		if (ImGui::BeginTabItem("Enemies")) {
 			DrawEnemiesEditor(&scenario.enemies);
+			ImGui::EndTabItem();
+		}
+		if (ImGui::BeginTabItem("Buffs")) {
+			DrawBuffListEditor(&scenario.buffs);
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("Save")) {
@@ -228,6 +253,57 @@ void ScenarioDataEditor::DrawSpellListEditor(std::vector<SpellData>* data) {
 void ScenarioDataEditor::DrawSpellEditor(SpellData* data) {
 	ImGui_IntegerSlider("Cast", &data->castTime);
 	ImGui::SameLine();
+	ImGui_IntegerSlider("Damage", &data->damage);
+}
+
+void ScenarioDataEditor::DrawBuffListEditor(std::vector<BuffData>* data) {
+	int i = 0;
+	if (ImGui::BeginTable("buff-table", 2)) {
+		for (int i = 0; i < data->size(); ++i) {
+			auto& buffData = (*data)[i];
+
+			ImGui::TableNextRow();
+			ImGui::TableNextColumn();
+
+			if (ImGui::CollapsingHeader(tfm::format("%s###%s", buffData.name, i).c_str())) {
+				DrawBuffEditor(&buffData);
+			}
+
+			ImGui::TableNextColumn();
+			if (ImGui_RedButton("X")) {
+				data->erase(data->begin() + i);
+				--i;
+			}
+		}
+		ImGui::EndTable();
+	}
+}
+
+void ScenarioDataEditor::DrawBuffEditor(BuffData* data) {
+	ImGui::InputText("Name", &data->name);
+	ImGui_IntegerSlider("Duration", &data->duration);
+	ImGui_VectorEditor("effects", &data->effects, 8,
+		[](BuffEffectData* effect) {
+			return effect->Visit<const char*>([]<typename T>(const T&) { return T::kName; });
+		},
+		[this](BuffEffectData* effect) { DrawBuffEffectEditor(effect); },
+		[]() { return BuffEffectData{}; }
+	);
+}
+
+void ScenarioDataEditor::DrawBuffEffectEditor(BuffEffectData* data) {
+	ImGui_VariantTypeChooser("Type", data);
+
+	data->Visit<void>([this](auto& subData) {
+		DrawBuffEffectEditor(&subData);
+	});
+}
+
+void ScenarioDataEditor::DrawBuffEffectEditor(ManaFlowBuffEffectData* data) {
+	ImGui_IntegerSlider("Mana", &data->mana);
+}
+
+void ScenarioDataEditor::DrawBuffEffectEditor(DamageFlowBuffEffectData* data) {
 	ImGui_IntegerSlider("Damage", &data->damage);
 }
 

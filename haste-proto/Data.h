@@ -65,10 +65,14 @@ struct ScenarioData {
 	HeroData hero;
 	std::vector<EnemyData> enemies;
 
+	// static data (probably shouldn't be part of the scenario)
+	std::vector<BuffData> buffs;
+
 	template<typename Self, typename Visitor>
 	static void ApplyVisitor(Self& self, Visitor& visitor) {
 		visitor.Visit(self.hero, "hero");
 		visitor.Visit(self.enemies, "enemies");
+		visitor.Visit(self.buffs, "buffs");
 	}
 };
 

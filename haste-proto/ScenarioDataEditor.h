@@ -32,6 +32,12 @@ private:
 	void DrawSpellListEditor(std::vector<SpellData>* data);
 	void DrawSpellEditor(SpellData* data);
 
+	void DrawBuffListEditor(std::vector<BuffData>* data);
+	void DrawBuffEditor(BuffData* data);
+	void DrawBuffEffectEditor(BuffEffectData* data);
+	void DrawBuffEffectEditor(ManaFlowBuffEffectData* data);
+	void DrawBuffEffectEditor(DamageFlowBuffEffectData* data);
+
 	void DrawSaveTab(ScenarioData* data);
 	bool DrawLoadTab(ScenarioData* data);
 

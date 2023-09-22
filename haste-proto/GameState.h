@@ -121,7 +121,7 @@ struct GameState {
 	int turnIdx = 1;
 
 	// static data
-	std::unordered_map<std::string, BuffData> buffs;
+	std::unordered_map<std::string, Buff> buffs;
 
 	// InteractionState
 	int targetedEnemyIdx = kNoTarget; // runtime state
