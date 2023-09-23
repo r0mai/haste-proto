@@ -204,11 +204,32 @@ void ScenarioDataEditor::DrawSkillEffectEditor(SlowSkillEffectData* data) {
 void ScenarioDataEditor::DrawSkillEffectEditor(BuffSkillEffectData* data) {
 	if (ImGui::BeginCombo("Buff Name", data->buffName.c_str())) {
 		for (auto& buff : scenario.buffs) {
-			if (ImGui::Selectable(buff.name.c_str(), buff.name == data->buffName)) {
+			bool isSelected = buff.name == data->buffName;
+			if (ImGui::Selectable(buff.name.c_str(), isSelected)) {
 				data->buffName = buff.name;
 			}
 		}
 		ImGui::EndCombo();
+	}
+
+	bool validBuff = false;
+	for (auto& buff : scenario.buffs) {
+		if (buff.name == data->buffName) {
+			validBuff = true;
+			break;
+		}
+	}
+
+	if (!validBuff) {
+		ImGui::SameLine();
+		ImGui::PushStyleColor(ImGuiCol_Text, kErrorRed);
+		ImGui::TextUnformatted("(!)");
+		if (ImGui::IsItemHovered()) {
+			ImGui::BeginTooltip();
+			ImGui::TextUnformatted("Buff doesn't exist");
+			ImGui::EndTooltip();
+		}
+		ImGui::PopStyleColor();
 	}
 }
 

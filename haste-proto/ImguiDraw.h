@@ -16,6 +16,7 @@ constexpr ImU32 kBlockColor = IM_COL32(0, 255, 255, 255);
 constexpr ImU32 kManaBarColor = IM_COL32(0, 0, 255, 255);
 constexpr ImU32 kCastTimeColor = IM_COL32(0xF6, 0xBE, 0x00, 255);
 
+constexpr ImU32 kErrorRed = IM_COL32(246, 0, 0, 255);
 constexpr ImU32 kHighlightYellow = IM_COL32(246, 190, 0, 255);
 
 constexpr float kHorizonalBarHeight = 32.0f;
