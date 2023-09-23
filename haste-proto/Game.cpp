@@ -228,6 +228,27 @@ void Game::RestoreMana(int mana) {
 	state_.hero.mana = std::min(state_.hero.mana + mana, state_.hero.maxMana);
 }
 
+void Game::LoseMana(int mana) {
+	assert(mana >= 0);
+	state_.hero.mana = std::max(state_.hero.mana - mana, 0);
+}
+
+void Game::AdjustHeroHealth(int offset) {
+	if (offset > 0) {
+		HealHero(offset);
+	} else if (offset < 0) {
+		DamageHero(-offset);
+	}
+}
+
+void Game::AdjustHeroMana(int offset) {
+	if (offset > 0) {
+		RestoreMana(offset);
+	} else if (offset < 0) {
+		LoseMana(-offset);
+	}
+}
+
 void Game::Slow(Enemy* target, int slow) {
 	assert(slow >= 0);
 	target->castTime -= slow;
@@ -331,6 +352,7 @@ bool Game::AdvanceTurn() {
 
 	bool finishedCasting = false;
 
+	// hero update
 	if (state_.castedSkillIdx != kNoSkill) {
 		auto& hero = state_.hero;
 		++hero.castTime;
@@ -353,6 +375,7 @@ bool Game::AdvanceTurn() {
 		}
 	}
 
+	// enemies update
 	auto& enemies = state_.enemies;
 	for (auto& enemy : enemies) {
 		auto* currentSpell = enemy.GetCurrentSpell();
@@ -367,7 +390,32 @@ bool Game::AdvanceTurn() {
 		} 
 	}
 
+	// buffs update
+	auto& buffs = state_.hero.buffs;
+	for (int i = 0; i < buffs.size(); ++i) {
+		auto& buff = buffs[i];
+		ApplyBuff(&buff);
+		if (buff.appliedTime >= buff.duration) {
+			buffs.erase(buffs.begin() + i);
+			--i;
+		}
+	}
+
 	return finishedCasting;
+}
+
+void Game::ApplyBuff(Buff* buff) {
+	for (auto& effect : buff->effects) {
+		std::visit(Overloaded{
+			[&](const ManaFlowBuffEffect& e) {
+				AdjustHeroMana(e.mana);
+			},
+			[&](const DamageFlowBuffEffect& e) {
+				AdjustHeroHealth(e.health);
+			},
+		}, effect);
+	}
+	++buff->appliedTime;
 }
 
 template<typename... Args>

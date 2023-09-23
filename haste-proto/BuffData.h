@@ -19,11 +19,11 @@ struct ManaFlowBuffEffectData {
 struct DamageFlowBuffEffectData {
 	static constexpr const char* kName = "DamageFlowBuffEffectData";
 
-	int damage = 0;
+	int health = 0;
 
 	template<typename Self, typename Visitor>
 	static void ApplyVisitor(Self& self, Visitor& visitor) {
-		visitor.Visit(self.damage, "damage");
+		visitor.Visit(self.health , "health");
 	}
 };
 

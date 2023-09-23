@@ -46,6 +46,10 @@ private:
 	void HealHero(int heal);
 
 	void RestoreMana(int mana);
+	void LoseMana(int mana);
+
+	void AdjustHeroHealth(int offset);
+	void AdjustHeroMana(int offset);
 
 	void Slow(Enemy* target, int slow);
 
@@ -53,6 +57,8 @@ private:
 
 	// returns true if hero's casting is finished
 	bool AdvanceTurn();
+
+	void ApplyBuff(Buff* buff);
 
 	template<typename... Args>
 	void Log(const char* format, const Args&... args);

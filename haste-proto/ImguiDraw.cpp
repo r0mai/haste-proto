@@ -171,10 +171,10 @@ void ImGui_DrawBuff(Buff* buff) {
 void ImGui_DrawBuffEffect(BuffEffect* effect) {
 	std::visit(Overloaded{
 		[](const DamageFlowBuffEffect& e) {
-			if (e.damage > 0) {
-				ImGui::Text("%d dmg / turn", e.damage);
-			} else if (e.damage < 0) {
-				ImGui::Text("%d heal / turn", -e.damage);
+			if (e.health < 0) {
+				ImGui::Text("%d dmg / turn", -e.health);
+			} else if (e.health > 0) {
+				ImGui::Text("%d heal / turn", e.health);
 			}
 		},
 		[](const ManaFlowBuffEffect& e) {

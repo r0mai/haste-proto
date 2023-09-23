@@ -14,7 +14,7 @@ ScenarioDataEditor::ScenarioDataEditor() {
 		.name = "Mend Heal",
 		.duration = 5,
 		.effects = {
-			DamageFlowBuffEffectData{.damage = 2}
+			DamageFlowBuffEffectData{.health = 2}
 		}
 	};
 
@@ -315,7 +315,7 @@ void ScenarioDataEditor::DrawBuffEffectEditor(ManaFlowBuffEffectData* data) {
 }
 
 void ScenarioDataEditor::DrawBuffEffectEditor(DamageFlowBuffEffectData* data) {
-	ImGui_IntegerSlider("Damage", &data->damage);
+	ImGui_IntegerSlider("Health", &data->health);
 }
 
 void ScenarioDataEditor::DrawSaveTab(ScenarioData* data) {
