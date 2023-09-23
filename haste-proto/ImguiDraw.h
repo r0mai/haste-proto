@@ -51,6 +51,7 @@ void ImGui_HorizonalBar(
 
 bool ImGui_DisabledButton(const char* label, bool disabled = true);
 bool ImGui_RedButton(const char* label);
+bool ImGui_GreenButton(const char* label);
 
 void ImGui_ResourceBar(
 	int value,
@@ -128,15 +129,35 @@ void ImGui_VectorCollapsingHeaderEditor(
 	DrawFunc drawFunc,
 	NewItemFunc newItemFunc)
 {
+	static int nodeToClose = -1;
+	static int currentNode = -1;
 	if (ImGui::BeginTable(label, 2)) {
+
+		auto* storage = ImGui::GetStateStorage();
+		// id of table
+		auto id = ImGui::GetItemID();
+		const int nodeToCloseKey = id + 1;
+		const int currentNodeKey = id + 2;
+
+
 		for (int i = 0; i < data->size(); ++i) {
+			ImGui::PushID(i);
 			auto& buffData = (*data)[i];
 
 			ImGui::TableNextRow();
 			ImGui::TableNextColumn();
 
+			if (nodeToClose == i) {
+				ImGui::SetNextItemOpen(false);
+				nodeToClose = -1;
+			}
 			if (ImGui::CollapsingHeader(tfm::format("%s###%s", nameFunc(&buffData), i).c_str())) {
-				drawFunc(&buffData);
+				if (currentNode == i) {
+					drawFunc(&buffData);
+				} else {
+					nodeToClose = currentNode;
+					currentNode = i;
+				}
 			}
 
 			ImGui::TableNextColumn();
@@ -144,8 +165,13 @@ void ImGui_VectorCollapsingHeaderEditor(
 				data->erase(data->begin() + i);
 				--i;
 			}
+			ImGui::PopID();
 		}
 		ImGui::EndTable();
+	}
+
+	if (ImGui_GreenButton("+")) {
+		data->push_back(newItemFunc());
 	}
 }
 
