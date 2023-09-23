@@ -73,10 +73,10 @@ template<typename T, typename NameFunc, typename DrawFunc, typename NewItemFunc>
 void ImGui_VectorTabEditor(
 	const char* label,
 	std::vector<T>* data,
-	int maxSize,
 	NameFunc nameFunc,
 	DrawFunc drawFunc,
-	NewItemFunc newItemFunc)
+	NewItemFunc newItemFunc,
+	int maxSize = INT_MAX)
 {
 	auto tabName = [](auto name, int i) {
 		return tfm::format("%s###%s", name, i);
@@ -122,12 +122,13 @@ void ImGui_VectorTabEditor(
 }
 
 template<typename T, typename NameFunc, typename DrawFunc, typename NewItemFunc>
-void ImGui_VectorCollapsingHeaderEditor(
+void ImGui_VectorRadioButtonEditor(
 	const char* label,
 	std::vector<T>* data,
 	NameFunc nameFunc,
 	DrawFunc drawFunc,
-	NewItemFunc newItemFunc)
+	NewItemFunc newItemFunc,
+	int maxSize = INT_MAX)
 {
 	if (ImGui::BeginTable(label, 2)) {
 		ImGui::TableSetupColumn("buff-list", ImGuiTableColumnFlags_WidthFixed, 200.0f);
@@ -151,7 +152,7 @@ void ImGui_VectorCollapsingHeaderEditor(
 			}
 		}
 
-		if (ImGui_GreenButton("+")) {
+		if (data->size() < maxSize && ImGui_GreenButton("+")) {
 			data->push_back(newItemFunc());
 			selectedIdx = data->size() - 1;
 		}

@@ -16,8 +16,8 @@ public:
 
 private:
 	void DrawHeroEditor(HeroData* data);
-	void DrawAbilitiesEditor(std::vector<SkillData>* data);
-	void DrawAbilityEditor(SkillData* data);
+	void DrawSkillsEditor(std::vector<SkillData>* data);
+	void DrawSkillEditor(SkillData* data);
 
 	void DrawSkillEffectEditor(SkillEffectData* data);
 	void DrawSkillEffectEditor(DamageSkillEffectData* data);

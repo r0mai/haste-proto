@@ -126,26 +126,25 @@ bool ScenarioDataEditor::DrawUI() {
 
 void ScenarioDataEditor::DrawHeroEditor(HeroData* data) {
 	ImGui_IntegerSlider("Max HP", &data->maxHp);
-	DrawAbilitiesEditor(&scenario.hero.skills);
+	DrawSkillsEditor(&scenario.hero.skills);
 }
 
-void ScenarioDataEditor::DrawAbilitiesEditor(std::vector<SkillData>* data) {
-	ImGui::Text("Abilities:");
-	ImGui_VectorTabEditor("abilities", data, 8,
-		[](SkillData* ability) { return ability->name; },
-		[this](SkillData* ability) { DrawAbilityEditor(ability); },
-		[]() { return SkillData{ .name = "New" }; }
+void ScenarioDataEditor::DrawSkillsEditor(std::vector<SkillData>* data) {
+	ImGui::Text("Skills:");
+	ImGui_VectorRadioButtonEditor("skills", data,
+		[](SkillData* skill) { return skill->name; },
+		[this](SkillData* skill) { DrawSkillEditor(skill); },
+		[]() { return SkillData{ .name = "New Skill" }; },
+		8 // maxSize
 	);
 }
 
-void ScenarioDataEditor::DrawAbilityEditor(SkillData* data) {
+void ScenarioDataEditor::DrawSkillEditor(SkillData* data) {
 	ImGui::InputText("Name", &data->name);
-	ImGui::SameLine();
 	ImGui_IntegerSlider("Mana cost", &data->manaCost);
-	ImGui::SameLine();
 	ImGui_IntegerSlider("Cast time", &data->castTime);
 	ImGui::TextUnformatted("SkillEffects:");
-	ImGui_VectorTabEditor("effects", &data->effects, 8,
+	ImGui_VectorTabEditor("effects", &data->effects,
 		[](SkillEffectData* effect) {
 			return effect->Visit<const char*>([]<typename T>(const T&) { return T::kName; });
 		},
@@ -191,12 +190,13 @@ void ScenarioDataEditor::DrawSkillEffectEditor(SlowSkillEffectData* data) {
 }
 
 void ScenarioDataEditor::DrawEnemiesEditor(std::vector<EnemyData>* data) {
-	ImGui_VectorTabEditor("enemies", data, 5,
+	ImGui_VectorRadioButtonEditor("enemies", data,
 		[](EnemyData* enemy) {
-			return enemy->name.c_str();
+			return enemy->name;
 		},
 		[this](EnemyData* enemy) { DrawEnemyEditor(enemy); },
-		[]() { return EnemyData{ .name = "New Enemy" }; }
+		[]() { return EnemyData{ .name = "New Enemy" }; },
+		5 // maxSize
 	);
 }
 
@@ -241,19 +241,23 @@ void ScenarioDataEditor::DrawSpellListEditor(std::vector<SpellData>* data) {
 		ImGui::PopID();
 	}
 
-	if (ImGui::Button("+")) {
+	// There seems to be some sort of ID collision with just '+' here?
+	if (ImGui_GreenButton("+##plus-button")) {
+		tfm::printfln("Adding new spell");
 		data->push_back(SpellData{ .damage = 5, .castTime = 5 });
 	}
 }
 
 void ScenarioDataEditor::DrawSpellEditor(SpellData* data) {
+	ImGui::PushItemWidth(100);
 	ImGui_IntegerSlider("Cast", &data->castTime);
 	ImGui::SameLine();
 	ImGui_IntegerSlider("Damage", &data->damage);
+	ImGui::PopItemWidth();
 }
 
 void ScenarioDataEditor::DrawBuffListEditor(std::vector<BuffData>* data) {
-	ImGui_VectorCollapsingHeaderEditor("buffs", data,
+	ImGui_VectorRadioButtonEditor("buffs", data,
 		[](BuffData* buff) { return buff->name; },
 		[this](BuffData* buff) { DrawBuffEditor(buff); },
 		[]() { return BuffData{.name = "New Buff"}; }
@@ -264,12 +268,13 @@ void ScenarioDataEditor::DrawBuffEditor(BuffData* data) {
 	ImGui::InputText("Name", &data->name);
 	ImGui_IntegerSlider("Duration", &data->duration);
 	ImGui::TextUnformatted("Effects");
-	ImGui_VectorTabEditor("effects", &data->effects, 8,
+	ImGui_VectorTabEditor("effects", &data->effects,
 		[](BuffEffectData* effect) {
 			return effect->Visit<const char*>([]<typename T>(const T&) { return T::kName; });
 		},
 		[this](BuffEffectData* effect) { DrawBuffEffectEditor(effect); },
-		[]() { return BuffEffectData{}; }
+		[]() { return BuffEffectData{}; },
+		8 // maxSize
 	);
 }
 
