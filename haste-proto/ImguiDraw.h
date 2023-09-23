@@ -194,7 +194,7 @@ void ImGui_VectorRadioButtonEditor(
 
 template<typename... Ts>
 bool ImGui_VariantTypeChooser(const char* label, ExpandedVariant<Ts...>* variant) {
-	const char* previewValue = variant->Visit<const char*>([]<typename T>(const T&) { return T::kName; });
+	const char* previewValue = variant->template Visit<const char*>([]<typename T>(const T&) { return T::kName; });
 
 	bool changed = false;
 	if (ImGui::BeginCombo(label, previewValue)) {
