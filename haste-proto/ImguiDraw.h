@@ -129,49 +129,42 @@ void ImGui_VectorCollapsingHeaderEditor(
 	DrawFunc drawFunc,
 	NewItemFunc newItemFunc)
 {
-	static int nodeToClose = -1;
-	static int currentNode = -1;
 	if (ImGui::BeginTable(label, 2)) {
+		ImGui::TableSetupColumn("buff-list", ImGuiTableColumnFlags_WidthFixed, 200.0f);
+		ImGui::TableSetupColumn("buff-editor");
+		ImGui::TableNextRow();
+		ImGui::TableNextColumn();
 
 		auto* storage = ImGui::GetStateStorage();
-		// id of table
-		auto id = ImGui::GetItemID();
-		const int nodeToCloseKey = id + 1;
-		const int currentNodeKey = id + 2;
-
+		int storageKey = ImGui::GetID("#selectedIdx");
+		int selectedIdx = storage->GetInt(storageKey, 0);
 
 		for (int i = 0; i < data->size(); ++i) {
-			ImGui::PushID(i);
-			auto& buffData = (*data)[i];
-
-			ImGui::TableNextRow();
-			ImGui::TableNextColumn();
-
-			if (nodeToClose == i) {
-				ImGui::SetNextItemOpen(false);
-				nodeToClose = -1;
+			auto& item = (*data)[i];
+			if (ImGui::RadioButton(nameFunc(&item).c_str(), i == selectedIdx)) {
+				selectedIdx = i;
 			}
-			if (ImGui::CollapsingHeader(tfm::format("%s###%s", nameFunc(&buffData), i).c_str())) {
-				if (currentNode == i) {
-					drawFunc(&buffData);
-				} else {
-					nodeToClose = currentNode;
-					currentNode = i;
-				}
-			}
-
-			ImGui::TableNextColumn();
+			ImGui::SameLine();
 			if (ImGui_RedButton("X")) {
 				data->erase(data->begin() + i);
 				--i;
 			}
-			ImGui::PopID();
 		}
-		ImGui::EndTable();
-	}
 
-	if (ImGui_GreenButton("+")) {
-		data->push_back(newItemFunc());
+		if (ImGui_GreenButton("+")) {
+			data->push_back(newItemFunc());
+			selectedIdx = data->size() - 1;
+		}
+
+		storage->SetInt(storageKey, selectedIdx);
+
+		ImGui::TableNextColumn();
+
+		if (selectedIdx < data->size()) {
+			drawFunc(&(*data)[selectedIdx]);
+		}
+
+		ImGui::EndTable();
 	}
 }
 

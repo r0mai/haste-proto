@@ -196,11 +196,7 @@ void ScenarioDataEditor::DrawEnemiesEditor(std::vector<EnemyData>* data) {
 			return enemy->name.c_str();
 		},
 		[this](EnemyData* enemy) { DrawEnemyEditor(enemy); },
-		[]() {
-			EnemyData enemy;
-			enemy.name = "Goblin";
-			return enemy;
-		}
+		[]() { return EnemyData{ .name = "New Enemy" }; }
 	);
 }
 
@@ -260,13 +256,14 @@ void ScenarioDataEditor::DrawBuffListEditor(std::vector<BuffData>* data) {
 	ImGui_VectorCollapsingHeaderEditor("buffs", data,
 		[](BuffData* buff) { return buff->name; },
 		[this](BuffData* buff) { DrawBuffEditor(buff); },
-		[]() { return BuffData{}; }
+		[]() { return BuffData{.name = "New Buff"}; }
 	);
 }
 
 void ScenarioDataEditor::DrawBuffEditor(BuffData* data) {
 	ImGui::InputText("Name", &data->name);
 	ImGui_IntegerSlider("Duration", &data->duration);
+	ImGui::TextUnformatted("Effects");
 	ImGui_VectorTabEditor("effects", &data->effects, 8,
 		[](BuffEffectData* effect) {
 			return effect->Visit<const char*>([]<typename T>(const T&) { return T::kName; });
