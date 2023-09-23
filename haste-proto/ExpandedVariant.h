@@ -20,6 +20,14 @@ struct TupleIndexOf<T, std::tuple<U, Types...>> {
 
 template<typename... Ts>
 struct ExpandedVariant {
+private:
+	template<typename T>
+	static consteval size_t CalcTypeIndex() {
+		return VariantType(T{}).index();
+	}
+
+public:
+
 	using TupleType = std::tuple<Ts...>;
 	using VariantType = std::variant<Ts...>;
 
@@ -30,7 +38,7 @@ struct ExpandedVariant {
 
 	template<typename T>
 	ExpandedVariant(const T& value) {
-		constexpr size_t construtedIdx = VariantType(T{}).index();
+		constexpr size_t construtedIdx = CalcTypeIndex<T>();
 		which = construtedIdx;
 		std::get<construtedIdx>(values) = value;
 	}
