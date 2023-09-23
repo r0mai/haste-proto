@@ -139,8 +139,10 @@ void ImGui_DrawBuff(Buff* buff) {
 
 	ImGui_CenteredTextUnformatted(shortName.c_str());
 
+	int turnsLeft = buff->duration - buff->appliedTime;
+
 	ImGui::PushStyleColor(ImGuiCol_Text, kHighlightYellow);
-	ImGui_CenteredTextUnformatted(tfm::format("%s", buff->duration - buff->appliedTime).c_str());
+	ImGui_CenteredTextUnformatted(tfm::format("%s", turnsLeft).c_str());
 	ImGui::PopStyleColor();
 
 	auto [_, highlighted] = ImGui_HighlightButton(origCursorPos, availSize, false);
@@ -154,7 +156,7 @@ void ImGui_DrawBuff(Buff* buff) {
 		}
 
 		ImGui::PushStyleColor(ImGuiCol_Text, kHighlightYellow);
-		ImGui::Text("%d turns left", buff->duration - buff->appliedTime);
+		ImGui::Text("%d turn%s left", turnsLeft, turnsLeft > 1 ? "s" : "");
 		ImGui::PopStyleColor();
 
 		ImGui::EndTooltip();
