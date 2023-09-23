@@ -78,7 +78,7 @@ private:
 
 	// Hero buff bar
 	static constexpr float kHeroBuffBarWidth = kSkillBarWidth;
-	static constexpr float kHeroBuffBarHeight = 32.0f;
+	static constexpr float kHeroBuffBarHeight = 48.0f;
 	static constexpr float kHeroBuffBarX = kSkillBarX;
 	static constexpr float kHeroBuffBarY = kSkillBarY - kHeroBuffBarHeight;
 

@@ -114,7 +114,7 @@ bool ImGui_DrawEnemy(Enemy* enemy, bool selected) {
 		ImGui_VerticalSpacing(16.0f);
 
 		int turnsLeft = currentSpell->castTime - enemy->castTime;
-		ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(246, 190, 0, 255));
+		ImGui::PushStyleColor(ImGuiCol_Text, kHighlightYellow);
 		ImGui_CenteredTextUnformatted(tfm::format("%s", turnsLeft).c_str());
 		ImGui_CenteredTextUnformatted(tfm::format("turn%s", turnsLeft > 1 ? "s" : "").c_str());
 		ImGui::PopStyleColor();
@@ -137,11 +137,45 @@ void ImGui_DrawBuff(Buff* buff) {
 
 	auto shortName = ShortName(buff->name);
 
-	ImGui_AlignedTextUnformatted(shortName.c_str(), ImVec2{0.5f, 0.5f});
+	ImGui_CenteredTextUnformatted(shortName.c_str());
 
-	ImGui_HighlightButton(origCursorPos, availSize, false);
+	ImGui::PushStyleColor(ImGuiCol_Text, kHighlightYellow);
+	ImGui_CenteredTextUnformatted(tfm::format("%s", buff->duration - buff->appliedTime).c_str());
+	ImGui::PopStyleColor();
+
+	auto [_, highlighted] = ImGui_HighlightButton(origCursorPos, availSize, false);
+	if (highlighted) {
+		ImGui::BeginTooltip();
+
+		ImGui::TextUnformatted(buff->name.c_str());
+
+		for (auto& effect : buff->effects) {
+			ImGui_DrawBuffEffect(&effect);
+		}
+
+		ImGui::PushStyleColor(ImGuiCol_Text, kHighlightYellow);
+		ImGui::Text("%d turns left", buff->duration - buff->appliedTime);
+		ImGui::PopStyleColor();
+
+		ImGui::EndTooltip();
+	}
 
 	ImGui::PopID();
+}
+
+void ImGui_DrawBuffEffect(BuffEffect* effect) {
+	std::visit(Overloaded{
+		[](const DamageFlowBuffEffect& e) {
+			if (e.damage > 0) {
+				ImGui::Text("%d dmg / turn", e.damage);
+			} else if (e.damage < 0) {
+				ImGui::Text("%d heal / turn", -e.damage);
+			}
+		},
+		[](const ManaFlowBuffEffect& e) {
+			ImGui::Text("%d mana / turn", e.mana);
+		},
+	}, *effect);
 }
 
 void ImGui_CenteredTextUnformatted(const char* text) {
