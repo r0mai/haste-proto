@@ -31,6 +31,9 @@ void Game::Reload() {
 		json = Write(editor_.scenario);
 		std::cout << json.dump(4) << std::endl;
 	}
+
+	state_.hero.buffs.push_back(state_.buffs.begin()->second);
+	state_.hero.buffs.push_back((++state_.buffs.begin())->second);
 }
 
 void Game::LogicUpdate(float deltaTime) {
@@ -86,6 +89,12 @@ void Game::DrawHeroWidget() {
 	ImGui_SetNextWindowPosition(kHeroCastBarX, kHeroCastBarY, kHeroCastBarWidth, kHeroCastBarHeight);
 	if (ImGui::Begin("hero-cast-bar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground)) {
 		DrawHeroCastBar();
+	}
+	ImGui::End();
+
+	ImGui_SetNextWindowPosition(kHeroBuffBarX, kHeroBuffBarY, kHeroBuffBarWidth, kHeroBuffBarHeight);
+	if (ImGui::Begin("hero-buff-bar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground)) {
+		DrawHeroBuffBar();
 	}
 	ImGui::End();
 }
@@ -290,6 +299,25 @@ void Game::DrawHeroCastBar() {
 		kHeroCastBarWidth, kHorizonalBarHeight,
 		state_.hero.castTime, skill.castTime,
 		kCastTimeColor, skill.name.c_str());
+}
+
+void Game::DrawHeroBuffBar() {
+	auto& buffs = state_.hero.buffs;
+	if (buffs.empty()) {
+		return;
+	}
+	if (ImGui::BeginTable("hero-buff-table", buffs.size())) {
+		for (int i = 0; i < buffs.size(); ++i) {
+			ImGui::TableSetupColumn(tfm::format("%s", i).c_str(), ImGuiTableColumnFlags_WidthFixed, 32.0f);
+		}
+		ImGui::TableNextRow();
+		for (int i = 0; i < buffs.size(); ++i) {
+			ImGui::TableNextColumn();
+			auto& buff = buffs[i];
+			ImGui_DrawBuff(&buff);
+		}
+		ImGui::EndTable();
+	}
 }
 
 bool Game::AdvanceTurn() {

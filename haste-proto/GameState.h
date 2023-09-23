@@ -81,7 +81,8 @@ struct Buff {
 
 	std::vector<BuffEffect> effects;
 
-	int duration = 1;
+	int duration = 5;
+	int appliedTime = 0; // [0 -> duration)
 };
 
 struct Hero {
@@ -101,6 +102,9 @@ struct Hero {
 	int maxMana = 100;
 
 	int castTime = 0;
+
+	// maybe these could just point to the buff list by string id?
+	std::vector<Buff> buffs;
 };
 
 constexpr int kNoTarget = -1;

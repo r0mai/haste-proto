@@ -8,7 +8,7 @@
 
 namespace r0 {
 
-constexpr ImU32 kDefaultBorderColor = IM_COL32(24, 24, 24, 255);
+constexpr ImU32 kDefaultBorderColor = IM_COL32(36, 36, 36, 255);
 constexpr ImU32 kHighlightedBorderColor = IM_COL32(72, 72, 72, 255);
 constexpr ImU32 kSelectedBorderColor = IM_COL32(144, 144, 144, 255);
 constexpr ImU32 kHPBarColor = IM_COL32(255, 0, 0, 255);
@@ -28,6 +28,8 @@ bool ImGui_DrawSkill(Skill* skill);
 void ImGui_DrawSkillEffect(SkillEffect* effect);
 bool ImGui_DrawEnemy(Enemy* enemy, bool selected);
 void ImGui_DrawSpell(Spell* spell);
+
+void ImGui_DrawBuff(Buff* buff);
 
 struct HighlightButtonResult {
 	bool isPressed = false;

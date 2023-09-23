@@ -6,6 +6,28 @@
 
 namespace r0 {
 
+namespace {
+
+std::string ShortName(const std::string& name) {
+	if (name.empty()) {
+		return "<>";
+	}
+
+	std::string result;
+
+	result.push_back(name.front());
+
+	for (int i = 1; i < name.size(); ++i) {
+		if (std::isupper(name[i])) {
+			result.push_back(name[i]);
+		}
+	}
+
+	return result;
+}
+
+} // namespace
+
 void ImGui_SetNextWindowPosition(float x, float y, float w, float h) {
 	ImGui::SetNextWindowPos(ImVec2{ x, y });
 	ImGui::SetNextWindowSize(ImVec2{ w, h });
@@ -105,6 +127,21 @@ bool ImGui_DrawEnemy(Enemy* enemy, bool selected) {
 
 void ImGui_DrawSpell(Spell* spell) {
 	ImGui_CenteredTextUnformatted(tfm::format("%s damage", spell->damage).c_str());
+}
+
+void ImGui_DrawBuff(Buff* buff) {
+	ImGui::PushID(buff);
+
+	auto origCursorPos = ImGui::GetCursorPos();
+	auto availSize = ImGui::GetContentRegionAvail();
+
+	auto shortName = ShortName(buff->name);
+
+	ImGui_AlignedTextUnformatted(shortName.c_str(), ImVec2{0.5f, 0.5f});
+
+	ImGui_HighlightButton(origCursorPos, availSize, false);
+
+	ImGui::PopID();
 }
 
 void ImGui_CenteredTextUnformatted(const char* text) {
