@@ -20,12 +20,6 @@ struct TupleIndexOf<T, std::tuple<U, Types...>> {
 
 template<typename... Ts>
 struct ExpandedVariant {
-private:
-	template<typename T>
-	static consteval size_t CalcTypeIndex() {
-		return VariantType(T{}).index();
-	}
-
 public:
 
 	using TupleType = std::tuple<Ts...>;
@@ -38,9 +32,11 @@ public:
 
 	template<typename T>
 	ExpandedVariant(const T& value) {
-		constexpr size_t construtedIdx = CalcTypeIndex<T>();
-		which = construtedIdx;
-		std::get<construtedIdx>(values) = value;
+		// Constructing a Variant here just so we can get the index() is horrible,
+		// but clang refuses to do this at compile time in ceratain cases
+		VariantType variant(value);
+		which = variant.index();
+		std::visit([this]<typename T>(const T & v) { std::get<T>(values) = v; }, variant);
 	}
 
 	template<typename T>
