@@ -31,9 +31,6 @@ void Game::Reload() {
 		json = Write(editor_.scenario);
 		std::cout << json.dump(4) << std::endl;
 	}
-
-	state_.hero.buffs.push_back(state_.buffs.begin()->second);
-	state_.hero.buffs.push_back((++state_.buffs.begin())->second);
 }
 
 void Game::LogicUpdate(float deltaTime) {
@@ -193,6 +190,15 @@ void Game::ApplySkillEffect(SkillEffect* effect, int targetEnemyIdx) {
 		[&](const SlowSkillEffect& e) {
 			assert(targetEnemyIdx != kNoTarget);
 			Slow(&state_.enemies[targetEnemyIdx], e.slow);
+		},
+		[&](const BuffSkillEffect& e) {
+			auto it = state_.buffs.find(e.buffName);
+			if (it == state_.buffs.end()) {
+				Log("Buff '%s' not found", e.buffName);
+				return;
+			}
+
+			state_.hero.buffs.push_back(it->second);
 		},
 	}, *effect);
 }

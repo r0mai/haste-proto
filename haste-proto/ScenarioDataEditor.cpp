@@ -10,6 +10,27 @@
 namespace r0 {
 
 ScenarioDataEditor::ScenarioDataEditor() {
+	BuffData poisonBuff = {
+		.name = "Mend Heal",
+		.duration = 5,
+		.effects = {
+			DamageFlowBuffEffectData{.damage = 2}
+		}
+	};
+
+	BuffData manaRestoreBuff = {
+		.name = "Mend Mana",
+		.duration = 3,
+		.effects = {
+			ManaFlowBuffEffectData{.mana = 2}
+		}
+	};
+
+	scenario.buffs = {
+		poisonBuff,
+		manaRestoreBuff
+	};
+
 	SkillData strikeSkill{
 		.name = "Strike",
 		.castTime = 5,
@@ -55,6 +76,16 @@ ScenarioDataEditor::ScenarioDataEditor() {
 		}
 	};
 
+	SkillData mendSkill{
+		.name = "Mend",
+		.castTime = 1,
+		.manaCost = 0,
+		.effects = {
+			BuffSkillEffectData{.buffName = "Mend Heal"},
+			BuffSkillEffectData{.buffName = "Mend Mana"}
+		}
+	};
+
 	// init to something
 	scenario.hero.skills = {
 		strikeSkill,
@@ -63,33 +94,13 @@ ScenarioDataEditor::ScenarioDataEditor() {
 		slashSkill,
 		blockSkill,
 		restSkill,
+		mendSkill
 	};
 
 	scenario.enemies.push_back(EnemyData{ "Elden Beast", 100, SpellSequenceData({SpellData{10, 2}, SpellData{20}}) });
 	scenario.enemies.push_back(EnemyData{ "Diablo", 100, SpellSequenceData({SpellData{5, 1}, SpellData{20}}) });
 	scenario.enemies.push_back(EnemyData{ "Lich King", 100, {} });
 	scenario.enemies.push_back(EnemyData{ "Dumbledore", 100, SpellSequenceData({SpellData{10}, SpellData{20}, SpellData{15}}) });
-
-	BuffData poisonBuff = {
-		.name = "Poison",
-		.duration = 5,
-		.effects = {
-			DamageFlowBuffEffectData{.damage = 5}
-		}
-	};
-
-	BuffData manaRestoreBuff = {
-		.name = "Mana Restore",
-		.duration = 3,
-		.effects = {
-			ManaFlowBuffEffectData{.mana = 5}
-		}
-	};
-
-	scenario.buffs = {
-		poisonBuff,
-		manaRestoreBuff
-	};
 }
 
 bool ScenarioDataEditor::DrawUI() {
@@ -188,6 +199,17 @@ void ScenarioDataEditor::DrawSkillEffectEditor(ManaRestoreSkillEffectData* data)
 
 void ScenarioDataEditor::DrawSkillEffectEditor(SlowSkillEffectData* data) {
 	ImGui_IntegerSlider("slow", &data->slow);
+}
+
+void ScenarioDataEditor::DrawSkillEffectEditor(BuffSkillEffectData* data) {
+	if (ImGui::BeginCombo("Buff Name", data->buffName.c_str())) {
+		for (auto& buff : scenario.buffs) {
+			if (ImGui::Selectable(buff.name.c_str(), buff.name == data->buffName)) {
+				data->buffName = buff.name;
+			}
+		}
+		ImGui::EndCombo();
+	}
 }
 
 void ScenarioDataEditor::DrawEnemiesEditor(std::vector<EnemyData>* data) {

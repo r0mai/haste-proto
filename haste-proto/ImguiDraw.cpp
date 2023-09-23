@@ -86,6 +86,9 @@ void ImGui_DrawSkillEffect(SkillEffect* effect) {
 		[](const SlowSkillEffect& e) {
 			ImGui::Text("Slow %d", e.slow);
 		},
+		[](const BuffSkillEffect& e) {
+			ImGui::Text("Buff '%s'", e.buffName.c_str());
+		},
 	}, *effect);
 }
 

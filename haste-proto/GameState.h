@@ -43,13 +43,15 @@ using BlockSkillEffect = BlockSkillEffectData;
 using HeroHealSkillEffect = HeroHealSkillEffectData;
 using ManaRestoreSkillEffect = ManaRestoreSkillEffectData;
 using SlowSkillEffect = SlowSkillEffectData;
+using BuffSkillEffect = BuffSkillEffectData;
 
 using SkillEffect = std::variant<
 	DamageSkillEffect,
 	BlockSkillEffect,
 	HeroHealSkillEffect,
 	ManaRestoreSkillEffect,
-	SlowSkillEffect
+	SlowSkillEffect,
+	BuffSkillEffect
 >;
 
 struct Skill {

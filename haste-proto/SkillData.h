@@ -64,12 +64,24 @@ struct SlowSkillEffectData {
 	}
 };
 
+struct BuffSkillEffectData {
+	static constexpr const char* kName = "BuffSkillEffect";
+
+	std::string buffName;
+
+	template<typename Self, typename Visitor>
+	static void ApplyVisitor(Self& self, Visitor& visitor) {
+		visitor.Visit(self.buffName, "buffName");
+	}
+};
+
 using SkillEffectData = ExpandedVariant<
 	DamageSkillEffectData,
 	BlockSkillEffectData,
 	HeroHealSkillEffectData,
 	ManaRestoreSkillEffectData,
-	SlowSkillEffectData
+	SlowSkillEffectData,
+	BuffSkillEffectData
 >;
 
 struct SkillData {

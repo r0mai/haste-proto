@@ -25,6 +25,7 @@ private:
 	void DrawSkillEffectEditor(HeroHealSkillEffectData* data);
 	void DrawSkillEffectEditor(ManaRestoreSkillEffectData* data);
 	void DrawSkillEffectEditor(SlowSkillEffectData* data);
+	void DrawSkillEffectEditor(BuffSkillEffectData* data);
 
 	void DrawEnemiesEditor(std::vector<EnemyData>* data);
 	void DrawEnemyEditor(EnemyData* data);
