@@ -135,7 +135,8 @@ void ScenarioDataEditor::DrawSkillsEditor(std::vector<SkillData>* data) {
 		[](SkillData* skill) { return skill->name; },
 		[this](SkillData* skill) { DrawSkillEditor(skill); },
 		[]() { return SkillData{ .name = "New Skill" }; },
-		8 // maxSize
+		8, // maxSize
+		true // reorderable
 	);
 }
 
@@ -196,7 +197,8 @@ void ScenarioDataEditor::DrawEnemiesEditor(std::vector<EnemyData>* data) {
 		},
 		[this](EnemyData* enemy) { DrawEnemyEditor(enemy); },
 		[]() { return EnemyData{ .name = "New Enemy" }; },
-		5 // maxSize
+		5, // maxSize
+		true // reorderable
 	);
 }
 

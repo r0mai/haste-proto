@@ -128,10 +128,11 @@ void ImGui_VectorRadioButtonEditor(
 	NameFunc nameFunc,
 	DrawFunc drawFunc,
 	NewItemFunc newItemFunc,
-	int maxSize = INT_MAX)
+	int maxSize = INT_MAX,
+	bool reorderable = false)
 {
 	if (ImGui::BeginTable(label, 2)) {
-		ImGui::TableSetupColumn("buff-list", ImGuiTableColumnFlags_WidthFixed, 200.0f);
+		ImGui::TableSetupColumn("buff-list", ImGuiTableColumnFlags_WidthFixed, 200.0f + (reorderable ? 50.0f : 0.0f));
 		ImGui::TableSetupColumn("buff-editor");
 		ImGui::TableNextRow();
 		ImGui::TableNextColumn();
@@ -141,15 +142,31 @@ void ImGui_VectorRadioButtonEditor(
 		int selectedIdx = storage->GetInt(storageKey, 0);
 
 		for (int i = 0; i < data->size(); ++i) {
+			ImGui::PushID(i);
+			if (reorderable) {
+				if (ImGui_DisabledButton("^", i <= 0)) {
+					std::swap((*data)[i], (*data)[i - 1]);
+				}
+
+				ImGui::SameLine();
+				if (ImGui_DisabledButton("v", i >= data->size() - 1)) {
+					std::swap((*data)[i], (*data)[i + 1]);
+				}
+
+				ImGui::SameLine();
+			}
+
 			auto& item = (*data)[i];
 			if (ImGui::RadioButton(nameFunc(&item).c_str(), i == selectedIdx)) {
 				selectedIdx = i;
 			}
+
 			ImGui::SameLine();
 			if (ImGui_RedButton("X")) {
 				data->erase(data->begin() + i);
 				--i;
 			}
+			ImGui::PopID();
 		}
 
 		if (data->size() < maxSize && ImGui_GreenButton("+")) {
