@@ -36,7 +36,7 @@ public:
 		// but clang refuses to do this at compile time in ceratain cases
 		VariantType variant(value);
 		which = variant.index();
-		std::visit([this]<typename T>(const T & v) { std::get<T>(values) = v; }, variant);
+		std::visit([this]<typename U>(const U& v) { std::get<U>(values) = v; }, variant);
 	}
 
 	template<typename T>
